@@ -1,23 +1,47 @@
 import { Link } from 'react-router-dom';
 import AnnouncementBar from './AnnouncementBar';
 import { useAuth } from '../lib/authContext';
+import { useState } from 'react';
 
 export default function Layout({ children }) {
   const { user, logout } = useAuth();
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
+
+  const handleLogout = () => {
+    setShowLogoutConfirm(true);
+  };
+
+  const confirmLogout = () => {
+    setShowLogoutConfirm(false);
+    logout();
+  };
+
+  const toggleMobileMenu = () => {
+    setShowMobileMenu(!showMobileMenu);
+  };
+
   return (
     <div className="min-h-screen bg-bca-black text-white">
       <header className="sticky top-0 z-20 backdrop-blur bg-black/60 border-b border-white/10">
         <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-3 font-bold text-xl tracking-wide">
-            <img src="/bca-logo.jpg" alt="BCA" className="h-8 w-8 rounded" />
+          {/* Logo and Brand */}
+          <Link to="/" className="flex items-center gap-2 md:gap-3 font-bold text-sm md:text-xl tracking-wide">
+            <img src="/bca-logo.jpg" alt="BCA" className="h-6 w-6 md:h-8 md:w-8 rounded" />
             <span>Bengal Coding Academy</span>
           </Link>
-          <nav className="flex items-center gap-5 text-sm">
-            {!user && <Link to="/" className="hover:text-bca-gold">Home</Link>}
-            <Link to="/batches" className="hover:text-bca-gold">Available Batches</Link>
-            <Link to="/webinars" className="hover:text-bca-cyan">Webinars</Link>
-            <Link to="/announcements" className="hover:text-bca-cyan">Announcements</Link>
-            {user ? (
+
+          {/* Desktop Navigation */}
+          <nav className="hidden md:flex items-center gap-5 text-sm">
+            {!user ? (
+              <>
+                <Link to="/batches" className="hover:text-bca-gold">Available Batches</Link>
+                <Link to="/webinars" className="hover:text-bca-cyan">Webinars</Link>
+                <Link to="/announcements" className="hover:text-bca-cyan">Announcements</Link>
+                <Link to="/login" className="px-3 py-1.5 rounded-xl bg-bca-gold text-black hover:brightness-110">Login</Link>
+                <Link to="/register" className="px-3 py-1.5 rounded-xl border border-white/20">Register</Link>
+              </>
+            ) : (
               <>
                 <Link to="/dashboard" className="hover:text-bca-gold font-semibold text-bca-gold bg-bca-gold/10 px-3 py-1.5 rounded-lg border border-bca-gold/30">
                   My Dashboard
@@ -25,20 +49,147 @@ export default function Layout({ children }) {
                 <Link to="/actions" className="hover:text-bca-gold">Actions</Link>
                 <Link to="/profile" className="hover:text-bca-gold">Profile</Link>
                 <Link to="/purchases" className="hover:text-bca-gold">Purchases</Link>
-                <button onClick={logout} className="px-3 py-1.5 rounded-xl bg-bca-red text-white">Logout</button>
-              </>
-            ) : (
-              <>
-                <Link to="/login" className="px-3 py-1.5 rounded-xl bg-bca-gold text-black hover:brightness-110">Login</Link>
-                <Link to="/register" className="px-3 py-1.5 rounded-xl border border-white/20">Register</Link>
+                <button onClick={handleLogout} className="px-3 py-1.5 rounded-xl bg-bca-red text-white">Logout</button>
               </>
             )}
           </nav>
+
+          {/* Mobile Navigation - Hamburger Menu */}
+          <div className="md:hidden flex items-center gap-3">
+            {user && (
+              <Link to="/dashboard" className="px-2 py-1 rounded-lg bg-bca-gold/10 border border-bca-gold/30 text-bca-gold text-xs">
+                Dashboard
+              </Link>
+            )}
+            <button
+              onClick={toggleMobileMenu}
+              className="relative w-8 h-8 flex flex-col justify-center items-center space-y-1 group"
+            >
+              <span className={`w-6 h-0.5 bg-white transition-all duration-300 ${showMobileMenu ? 'rotate-45 translate-y-1.5' : ''}`}></span>
+              <span className={`w-6 h-0.5 bg-white transition-all duration-300 ${showMobileMenu ? 'opacity-0' : ''}`}></span>
+              <span className={`w-6 h-0.5 bg-white transition-all duration-300 ${showMobileMenu ? '-rotate-45 -translate-y-1.5' : ''}`}></span>
+            </button>
+          </div>
         </div>
+
+        {/* Mobile Menu Overlay */}
+        {showMobileMenu && (
+          <div className="md:hidden absolute top-full left-0 right-0 bg-black/95 backdrop-blur-sm border-b border-white/10">
+            <nav className="px-4 py-6 space-y-4">
+              {!user ? (
+                <>
+                  <Link 
+                    to="/" 
+                    className="block text-white hover:text-bca-gold transition-colors py-2"
+                    onClick={() => setShowMobileMenu(false)}
+                  >
+                    Home
+                  </Link>
+                  <Link 
+                    to="/batches" 
+                    className="block text-white hover:text-bca-gold transition-colors py-2"
+                    onClick={() => setShowMobileMenu(false)}
+                  >
+                    Available Batches
+                  </Link>
+                  <Link 
+                    to="/webinars" 
+                    className="block text-white hover:text-bca-cyan transition-colors py-2"
+                    onClick={() => setShowMobileMenu(false)}
+                  >
+                    Webinars
+                  </Link>
+                  <Link 
+                    to="/announcements" 
+                    className="block text-white hover:text-bca-cyan transition-colors py-2"
+                    onClick={() => setShowMobileMenu(false)}
+                  >
+                    Announcements
+                  </Link>
+                  <div className="pt-4 border-t border-white/10 space-y-3">
+                    <Link 
+                      to="/login" 
+                      className="block w-full text-center px-4 py-2 rounded-xl bg-bca-gold text-black hover:brightness-110"
+                      onClick={() => setShowMobileMenu(false)}
+                    >
+                      Login
+                    </Link>
+                    <Link 
+                      to="/register" 
+                      className="block w-full text-center px-4 py-2 rounded-xl border border-white/20"
+                      onClick={() => setShowMobileMenu(false)}
+                    >
+                      Register
+                    </Link>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <Link 
+                    to="/actions" 
+                    className="block text-white hover:text-bca-gold transition-colors py-2"
+                    onClick={() => setShowMobileMenu(false)}
+                  >
+                    Actions
+                  </Link>
+                  <Link 
+                    to="/profile" 
+                    className="block text-white hover:text-bca-gold transition-colors py-2"
+                    onClick={() => setShowMobileMenu(false)}
+                  >
+                    Profile
+                  </Link>
+                  <Link 
+                    to="/purchases" 
+                    className="block text-white hover:text-bca-gold transition-colors py-2"
+                    onClick={() => setShowMobileMenu(false)}
+                  >
+                    Purchases
+                  </Link>
+                  <div className="pt-4 border-t border-white/10">
+                    <button 
+                      onClick={() => {
+                        setShowMobileMenu(false);
+                        handleLogout();
+                      }}
+                      className="block w-full text-center px-4 py-2 rounded-xl bg-bca-red text-white"
+                    >
+                      Logout
+                    </button>
+                  </div>
+                </>
+              )}
+            </nav>
+          </div>
+        )}
       </header>
       <AnnouncementBar />
       <main>{children}</main>
       <footer className="border-t border-white/10 py-8 text-center text-xs text-white/60">© {new Date().getFullYear()} Bengal Coding Academy</footer>
+
+      {/* Logout Confirmation Modal */}
+      {showLogoutConfirm && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+          <div className="bg-bca-gray-800 rounded-xl p-4 md:p-6 border border-white/10 max-w-md w-full mx-4">
+            <h3 className="text-lg md:text-xl font-semibold text-white mb-3 md:mb-4">Confirm Logout</h3>
+            <p className="text-bca-gray-300 mb-4 md:mb-6 text-sm md:text-base">Are you sure you want to logout? You'll need to login again to access your account.</p>
+            <div className="flex gap-2 md:gap-3 justify-end">
+              <button
+                onClick={() => setShowLogoutConfirm(false)}
+                className="px-3 md:px-4 py-2 rounded-lg border border-white/20 text-white hover:bg-white/10 transition-colors text-sm md:text-base"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmLogout}
+                className="px-3 md:px-4 py-2 rounded-lg bg-bca-red text-white hover:bg-bca-red/80 transition-colors text-sm md:text-base"
+              >
+                Yes, Logout
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

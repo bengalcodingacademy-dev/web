@@ -43,39 +43,39 @@ export default function Landing() {
     <div>
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-black via-[#17002a] to-black" />
-        <div className="relative max-w-6xl mx-auto px-4 py-20 grid md:grid-cols-2 items-center gap-8">
-          <div>
-            <div className="mb-6">
-              <img src="/bca-logo.jpg" alt="BCA" className="h-24 w-24 rounded shadow-[0_0_50px_10px_#00a1ff]" />
+        <div className="relative max-w-6xl mx-auto px-4 py-10 md:py-20 grid md:grid-cols-2 items-center gap-6 md:gap-8">
+          <div className="text-center md:text-left">
+            <div className="mb-4 md:mb-6">
+              <img src="/bca-logo.jpg" alt="BCA" className="h-16 w-16 md:h-24 md:w-24 rounded shadow-[0_0_50px_10px_#00a1ff] mx-auto md:mx-0" />
             </div>
-            <h1 className="text-5xl md:text-6xl font-extrabold tracking-tight">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight">
               Become a job-ready developer
             </h1>
-            <p className="mt-4 text-white/80 max-w-2xl">Industry-ready courses, webinars, and guided roadmaps. Learn by building real projects.</p>
-            <div className="mt-8 flex gap-3">
-              <Link to="/batches" className="px-5 py-3 rounded-xl bg-[#fdb000] text-black shadow-[0_0_40px_#fdb000]">Explore Batches</Link>
-              <Link to="/webinars" className="px-5 py-3 rounded-xl border border-white/20 text-white">Free Webinars</Link>
+            <p className="mt-3 md:mt-4 text-white/80 max-w-2xl mx-auto md:mx-0 text-sm md:text-base">Industry-ready courses, webinars, and guided roadmaps. Learn by building real projects.</p>
+            <div className="mt-6 md:mt-8 flex flex-col sm:flex-row gap-3 justify-center md:justify-start">
+              <Link to="/batches" className="px-4 md:px-5 py-2 md:py-3 rounded-xl bg-[#fdb000] text-black shadow-[0_0_40px_#fdb000] text-sm md:text-base text-center">Explore Batches</Link>
+              <Link to="/webinars" className="px-4 md:px-5 py-2 md:py-3 rounded-xl border border-white/20 text-white text-sm md:text-base text-center">Free Webinars</Link>
             </div>
           </div>
-          <div className="flex justify-center">
-            <img src="/illustrator.png" alt="learn" className="max-w-sm w-full drop-shadow-[0_0_40px_#00a1ff]" />
+          <div className="flex justify-center order-first md:order-last">
+            <img src="/illustrator.png" alt="learn" className="max-w-xs sm:max-w-sm w-full drop-shadow-[0_0_40px_#00a1ff]" />
           </div>
         </div>
       </section>
 
-      <section className="max-w-6xl mx-auto px-4 py-14 grid md:grid-cols-3 gap-6">
+      <section className="max-w-6xl mx-auto px-4 py-8 md:py-14 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
         {features.map((f,i)=> (
-          <div key={i} className="rounded-2xl p-6 border border-white/10 bg-gradient-to-br from-[#1a0b2e] to-[#0b0b0b]">
-            <div className="text-2xl mb-3">{f.icon}</div>
-            <div className="text-xl font-semibold mb-2" style={{color:'#00a1ff'}}>{f.title}</div>
-            <div className="text-white/80 text-sm">{f.body}</div>
+          <div key={i} className="rounded-2xl p-4 md:p-6 border border-white/10 bg-gradient-to-br from-[#1a0b2e] to-[#0b0b0b]">
+            <div className="text-xl md:text-2xl mb-2 md:mb-3">{f.icon}</div>
+            <div className="text-lg md:text-xl font-semibold mb-2" style={{color:'#00a1ff'}}>{f.title}</div>
+            <div className="text-white/80 text-xs md:text-sm">{f.body}</div>
           </div>
         ))}
       </section>
 
-      <section className="max-w-6xl mx-auto px-4 py-14">
-        <h2 className="text-2xl font-semibold mb-6">Featured Courses</h2>
-        <div className="grid md:grid-cols-3 gap-6">
+      <section className="max-w-6xl mx-auto px-4 py-8 md:py-14">
+        <h2 className="text-xl md:text-2xl font-semibold mb-4 md:mb-6">Featured Courses</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
           {loading ? (
             Array.from({ length: 3 }).map((_, i) => <SkeletonCourseCard key={i} />)
           ) : (
@@ -84,9 +84,9 @@ export default function Landing() {
         </div>
       </section>
 
-      <section className="max-w-6xl mx-auto px-4 py-14">
-        <h2 className="text-2xl font-semibold mb-6">What learners say</h2>
-        <div className="grid md:grid-cols-3 gap-6">
+      <section className="max-w-6xl mx-auto px-4 py-8 md:py-14">
+        <h2 className="text-xl md:text-2xl font-semibold mb-4 md:mb-6">What learners say</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
           {loading ? (
             Array.from({ length: 3 }).map((_, i) => (
               <div key={i} className="rounded-xl border border-white/10 p-5 animate-pulse">
@@ -137,35 +137,35 @@ export default function Landing() {
         </div>
       </section>
 
-      <section className="max-w-6xl mx-auto px-4 py-14">
-        <h2 className="text-2xl font-semibold mb-6">Frequently Asked Questions</h2>
-        <div className="grid gap-3">
+      <section className="max-w-6xl mx-auto px-4 py-8 md:py-14">
+        <h2 className="text-xl md:text-2xl font-semibold mb-4 md:mb-6">Frequently Asked Questions</h2>
+        <div className="grid gap-2 md:gap-3">
           {faqs.map((f,i)=> (
-            <details key={i} className="rounded-xl border border-white/10 p-4">
-              <summary className="cursor-pointer select-none text-white">{f.q}</summary>
-              <div className="text-white/70 mt-2">{f.a}</div>
+            <details key={i} className="rounded-xl border border-white/10 p-3 md:p-4">
+              <summary className="cursor-pointer select-none text-white text-sm md:text-base">{f.q}</summary>
+              <div className="text-white/70 mt-2 text-xs md:text-sm">{f.a}</div>
             </details>
           ))}
         </div>
       </section>
 
-      <section className="max-w-6xl mx-auto px-4 py-14">
-        <h2 className="text-2xl font-semibold mb-6">Roadmaps</h2>
-        <div className="grid gap-6">
+      <section className="max-w-6xl mx-auto px-4 py-8 md:py-14">
+        <h2 className="text-xl md:text-2xl font-semibold mb-4 md:mb-6">Roadmaps</h2>
+        <div className="grid gap-4 md:gap-6">
           {courses.map(c => (
-            <div key={c.id} className="rounded-xl border border-white/10 p-5">
-              <div className="flex items-center justify-between">
-                <div className="text-lg font-semibold">{c.title}</div>
-                <Link to={`/course/${c.slug}`} className="" style={{color:'#00a1ff'}}>View</Link>
+            <div key={c.id} className="rounded-xl border border-white/10 p-3 md:p-5">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                <div className="text-base md:text-lg font-semibold">{c.title}</div>
+                <Link to={`/course/${c.slug}`} className="text-sm md:text-base" style={{color:'#00a1ff'}}>View</Link>
               </div>
-              <div className="mt-4 overflow-x-auto">
-                <div className="flex items-center gap-3">
+              <div className="mt-3 md:mt-4 overflow-x-auto">
+                <div className="flex items-center gap-2 md:gap-3">
                   {Array.isArray(c.roadmapJson?.steps) ? c.roadmapJson.steps.map((s,idx)=> (
-                    <div key={idx} className="min-w-[180px] rounded-xl border border-white/10 p-3 text-sm">
+                    <div key={idx} className="min-w-[140px] md:min-w-[180px] rounded-xl border border-white/10 p-2 md:p-3 text-xs md:text-sm">
                       <div className="text-white/80">{s.title || `Step ${idx+1}`}</div>
                       <div className="text-white/60">{s.outcome || ''}</div>
                     </div>
-                  )) : <div className="text-white/60">Roadmap coming soon.</div>}
+                  )) : <div className="text-white/60 text-xs md:text-sm">Roadmap coming soon.</div>}
                 </div>
               </div>
             </div>
