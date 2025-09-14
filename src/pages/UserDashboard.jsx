@@ -2,13 +2,14 @@ import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { api } from '../lib/api';
 import { SkeletonCard, SkeletonCourseCard } from '../components/Skeleton';
+import { RocketIcon, BrainIcon, UsersIcon, StarIcon, TrendingUpIcon, TargetIcon, ShieldIcon, ZapIcon, BookOpenIcon, CalendarIcon, AwardIcon } from '../components/DashboardIcons';
 
 const StatsSection = () => {
   const stats = [
-    { number: "2.5K+", label: "STUDENTS AND ALUMNI" },
-    { number: "4.8/5", label: "PROGRAM RATING" },
-    { number: "85%", label: "AVG. HIKE POST PROGRAM*" },
-    { number: "150+", label: "HIRING COMPANIES*" }
+    { number: "2.5K+", label: "STUDENTS AND ALUMNI", icon: UsersIcon, color: "#00a1ff", glowColor: "rgba(0,161,255,0.3)" },
+    { number: "4.8/5", label: "PROGRAM RATING", icon: StarIcon, color: "#fdb000", glowColor: "rgba(253,176,0,0.3)" },
+    { number: "85%", label: "AVG. HIKE POST PROGRAM*", icon: TrendingUpIcon, color: "#00a1ff", glowColor: "rgba(0,161,255,0.3)" },
+    { number: "150+", label: "HIRING COMPANIES*", icon: TargetIcon, color: "#fdb000", glowColor: "rgba(253,176,0,0.3)" }
   ];
 
   return (
@@ -41,13 +42,21 @@ const StatsSection = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.3 + index * 0.1 }}
-              className="text-center"
+              className="text-center p-6 rounded-xl bg-gradient-to-br from-bca-gray-800/50 to-bca-gray-900/50 border border-bca-gray-700/50 hover:border-cyan-500/30 transition-all duration-300 group relative overflow-hidden"
             >
-              <div className="text-3xl md:text-4xl font-bold text-bca-gold mb-2">
-                {stat.number}
-              </div>
-              <div className="text-sm text-bca-gray-300 uppercase tracking-wider">
-                {stat.label}
+              <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              <div className="relative z-10">
+                <div className="mb-4 flex justify-center">
+                  <div className="p-3 rounded-full bg-gradient-to-br from-cyan-500/20 to-purple-500/20 group-hover:from-cyan-500/30 group-hover:to-purple-500/30 transition-all duration-300 group-hover:shadow-lg" style={{ boxShadow: `0 0 20px ${stat.glowColor}` }}>
+                    <stat.icon className="w-8 h-8" color={stat.color} />
+                  </div>
+                </div>
+                <div className="text-3xl md:text-4xl font-bold text-bca-gold mb-2 group-hover:text-cyan-400 transition-colors duration-300" style={{ textShadow: `0 0 10px ${stat.glowColor}` }}>
+                  {stat.number}
+                </div>
+                <div className="text-sm text-bca-gray-300 uppercase tracking-wider group-hover:text-cyan-200 transition-colors duration-300">
+                  {stat.label}
+                </div>
               </div>
             </motion.div>
           ))}
@@ -263,17 +272,23 @@ export default function UserDashboard() {
   return (
     <div className="min-h-screen bg-bca-black">
       {/* Welcome Section */}
-      <section className="py-12 bg-gradient-to-br from-bca-gray-900 to-bca-black">
-        <div className="max-w-6xl mx-auto px-4">
+      <section className="py-12 bg-gradient-to-br from-bca-gray-900 to-bca-black relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/10 via-purple-500/10 to-yellow-500/10"></div>
+        <div className="max-w-6xl mx-auto px-4 relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             className="text-center"
           >
-            <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
-              Hi {userSummary?.name}, let's start learning & rock the world! 🚀
-            </h1>
-            <p className="text-bca-gray-300 text-lg">
+            <div className="flex items-center justify-center gap-4 mb-6">
+              <div className="p-4 rounded-full bg-gradient-to-br from-cyan-500/20 to-purple-500/20 border border-cyan-500/30 group-hover:border-cyan-400/50 transition-all duration-300 shadow-lg" style={{ boxShadow: '0 0 30px rgba(0,161,255,0.3)' }}>
+                <RocketIcon className="w-12 h-12 text-cyan-400" />
+              </div>
+              <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-white via-cyan-400 to-purple-400 bg-clip-text text-transparent" style={{ textShadow: '0 0 20px rgba(0,161,255,0.3)' }}>
+                Hi {userSummary?.name}, let's start learning & rock the world!
+              </h1>
+            </div>
+            <p className="text-bca-gray-300 text-lg md:text-xl">
               Welcome to your learning journey. Ready to unlock your potential?
             </p>
           </motion.div>
@@ -288,7 +303,12 @@ export default function UserDashboard() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
           >
-            <h2 className="text-3xl font-bold text-white mb-8">Your Courses</h2>
+            <div className="flex items-center gap-3 mb-8">
+              <div className="p-3 rounded-xl bg-gradient-to-br from-cyan-500/20 to-purple-500/20 border border-cyan-500/30 group-hover:border-cyan-400/50 transition-all duration-300" style={{ boxShadow: '0 0 20px rgba(0,161,255,0.2)' }}>
+                <BookOpenIcon className="w-8 h-8 text-cyan-400" />
+              </div>
+              <h2 className="text-3xl font-bold text-white bg-gradient-to-r from-white to-cyan-400 bg-clip-text text-transparent" style={{ textShadow: '0 0 10px rgba(0,161,255,0.3)' }}>Your Courses</h2>
+            </div>
             {userSummary?.courses?.length > 0 ? (
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {userSummary.courses.map((course, index) => (
@@ -297,24 +317,37 @@ export default function UserDashboard() {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.3 + index * 0.1 }}
-                    className="bg-bca-gray-800 rounded-lg p-6 border border-bca-gray-700 hover:border-bca-gold/50 transition-colors"
+                    className="bg-gradient-to-br from-bca-gray-800/80 to-bca-gray-900/80 rounded-xl p-6 border border-bca-gray-700/50 hover:border-cyan-500/50 transition-all duration-300 group relative overflow-hidden backdrop-blur-sm"
                   >
-                    <h3 className="text-xl font-bold text-white mb-2">{course.title}</h3>
-                    <div className="flex items-center justify-between">
-                      <span className="text-bca-gold font-semibold">Enrolled</span>
-                      <button className="px-4 py-2 bg-bca-gold text-black rounded-lg font-medium hover:bg-bca-gold/80 transition-colors">
-                        Start Learning
-                      </button>
+                    <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    <div className="relative z-10">
+                      <div className="flex items-start gap-3 mb-4">
+                        <div className="p-2 rounded-lg bg-gradient-to-br from-cyan-500/20 to-purple-500/20 border border-cyan-500/30 group-hover:border-cyan-400/50 transition-all duration-300" style={{ boxShadow: '0 0 15px rgba(0,161,255,0.2)' }}>
+                          <AwardIcon className="w-6 h-6 text-cyan-400" />
+                        </div>
+                        <h3 className="text-xl font-bold text-white group-hover:text-cyan-300 transition-colors duration-300">{course.title}</h3>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-bca-gold font-semibold group-hover:text-yellow-300 transition-colors duration-300">Enrolled</span>
+                        <button className="px-4 py-2 bg-gradient-to-r from-cyan-500 to-purple-500 text-white rounded-lg font-medium hover:from-cyan-400 hover:to-purple-400 transition-all duration-300 shadow-lg" style={{ boxShadow: '0 0 20px rgba(0,161,255,0.3)' }}>
+                          Start Learning
+                        </button>
+                      </div>
                     </div>
                   </motion.div>
                 ))}
               </div>
             ) : (
               <div className="text-center py-12">
-                <div className="text-6xl mb-4">📚</div>
-                <h3 className="text-xl font-semibold text-white mb-2">No courses yet</h3>
+                <div className="flex justify-center mb-6">
+                  <div className="p-6 rounded-full bg-gradient-to-br from-cyan-500/20 to-purple-500/20 border border-cyan-500/30 group-hover:border-cyan-400/50 transition-all duration-300" style={{ boxShadow: '0 0 30px rgba(0,161,255,0.3)' }}>
+                    <BookOpenIcon className="w-16 h-16 text-cyan-400" />
+                  </div>
+                </div>
+                <h3 className="text-xl font-semibold text-white mb-2 bg-gradient-to-r from-white to-cyan-400 bg-clip-text text-transparent">No courses yet</h3>
                 <p className="text-bca-gray-300 mb-6">Explore our courses and start your learning journey!</p>
-                <a href="/batches" className="px-6 py-3 bg-bca-gold text-black rounded-lg font-medium hover:bg-bca-gold/80 transition-colors">
+                <a href="/batches" className="px-6 py-3 bg-gradient-to-r from-cyan-500 to-purple-500 text-white rounded-lg font-medium hover:from-cyan-400 hover:to-purple-400 transition-all duration-300 shadow-lg inline-flex items-center gap-2" style={{ boxShadow: '0 0 20px rgba(0,161,255,0.3)' }}>
+                  <ZapIcon className="w-5 h-5" color="#fff" />
                   Browse Courses
                 </a>
               </div>
@@ -327,20 +360,27 @@ export default function UserDashboard() {
       <StatsSection />
 
       {/* 1:1 Meeting Section */}
-      <section className="py-16 bg-bca-gray-900">
-        <div className="max-w-6xl mx-auto px-4">
+      <section className="py-16 bg-gradient-to-br from-bca-gray-900 to-bca-black relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-purple-500/10 via-cyan-500/10 to-yellow-500/10"></div>
+        <div className="max-w-6xl mx-auto px-4 relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             className="text-center mb-12"
           >
-            <h2 className="text-3xl font-bold text-white mb-4">Need Personal Guidance?</h2>
-            <p className="text-bca-gray-300 mb-8">Schedule a 1:1 meeting with our expert trainers</p>
+            <div className="flex items-center justify-center gap-4 mb-6">
+              <div className="p-4 rounded-full bg-gradient-to-br from-purple-500/20 to-cyan-500/20 border border-purple-500/30 group-hover:border-purple-400/50 transition-all duration-300 shadow-lg" style={{ boxShadow: '0 0 30px rgba(147,51,234,0.3)' }}>
+                <CalendarIcon className="w-12 h-12 text-purple-400" />
+              </div>
+              <h2 className="text-3xl font-bold text-white bg-gradient-to-r from-white via-purple-400 to-cyan-400 bg-clip-text text-transparent" style={{ textShadow: '0 0 20px rgba(147,51,234,0.3)' }}>Need Personal Guidance?</h2>
+            </div>
+            <p className="text-bca-gray-300 mb-8 text-lg">Schedule a 1:1 meeting with our expert trainers</p>
             
             <button
               onClick={() => setShowMeetingModal(true)}
-              className="px-8 py-4 bg-bca-cyan text-black rounded-lg font-bold text-lg hover:bg-bca-cyan/80 transition-colors shadow-lg"
+              className="px-8 py-4 bg-gradient-to-r from-purple-500 to-cyan-500 text-white rounded-lg font-bold text-lg hover:from-purple-400 hover:to-cyan-400 transition-all duration-300 shadow-lg inline-flex items-center gap-3" style={{ boxShadow: '0 0 30px rgba(147,51,234,0.4)' }}
             >
+              <CalendarIcon className="w-6 h-6" color="#fff" />
               Schedule 1:1 Meeting
             </button>
           </motion.div>

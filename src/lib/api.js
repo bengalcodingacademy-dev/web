@@ -29,15 +29,29 @@ api.interceptors.response.use(
         return Promise.reject(err);
       }
       
+      // Don't redirect or show alerts if we're on public pages
+      if (window.location.pathname === '/login' || 
+          window.location.pathname === '/' || 
+          window.location.pathname === '/batches' ||
+          window.location.pathname === '/webinars' ||
+          window.location.pathname === '/announcements' ||
+          window.location.pathname === '/register' ||
+          window.location.pathname === '/forgot-password' ||
+          window.location.pathname === '/reset-password' ||
+          window.location.pathname.startsWith('/course/')) {
+        return Promise.reject(err);
+      }
+      
       if (errorCode === 'TOKEN_EXPIRED') {
         // Show token expired message
         if (logoutHandler) {
           logoutHandler('Your session has expired. Please login again.');
         }
       } else {
-        // Regular unauthorized
+        // Regular unauthorized - don't redirect to login automatically
+        // Let the component handle this
         if (logoutHandler) {
-          logoutHandler();
+          logoutHandler('Please login to continue.');
         }
       }
     }

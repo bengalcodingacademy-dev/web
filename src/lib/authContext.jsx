@@ -3,6 +3,19 @@ import { onLogout, api, setInitialCheckComplete } from './api';
 
 const AuthContext = createContext(null);
 
+function isPublicPage() {
+  const pathname = window.location.pathname;
+  return pathname === '/' || 
+         pathname === '/batches' ||
+         pathname === '/webinars' ||
+         pathname === '/announcements' ||
+         pathname === '/login' ||
+         pathname === '/register' ||
+         pathname === '/forgot-password' ||
+         pathname === '/reset-password' ||
+         pathname.startsWith('/course/');
+}
+
 export function AuthProvider({ children, navigate }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -26,10 +39,13 @@ export function AuthProvider({ children, navigate }) {
       // Set up logout handler AFTER initial check is complete
       onLogout((message) => {
         setUser(null);
-        navigate('/login');
-        if (message) {
+        // Only redirect to login if it's an auth error (has message) and not on public pages
+        if (message && !isPublicPage()) {
+          navigate('/login');
           alert(message);
         }
+        // For explicit logout (no message), don't redirect - let the logout function handle it
+        // The logout function already redirects to '/' (landing page)
       });
     }
   };

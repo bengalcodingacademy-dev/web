@@ -21,15 +21,15 @@ export default function Login() {
     } catch (e) { setError('We couldn’t log you in. Please check your email and password.'); }
   };
   return (
-    <div className="max-w-md mx-auto px-4 py-10">
-      <h1 className="text-2xl font-semibold mb-4">Login</h1>
-      {error && <div className="mb-3 text-bca-red">{error}</div>}
+    <div className="max-w-md mx-auto px-4 py-8 md:py-10">
+      <h1 className="text-xl md:text-2xl font-semibold mb-4">Login</h1>
+      {error && <div className="mb-3 text-bca-red text-sm md:text-base">{error}</div>}
       <form onSubmit={submit} className="flex flex-col gap-3">
-        <input className="px-3 py-2 rounded-xl bg-black/50 border border-white/10" placeholder="Email" value={email} onChange={e=>setEmail(e.target.value)} />
-        <input type="password" className="px-3 py-2 rounded-xl bg-black/50 border border-white/10" placeholder="Password" value={password} onChange={e=>setPassword(e.target.value)} />
-        <button className="px-4 py-2 rounded-xl bg-bca-gold text-black">Login</button>
+        <input className="px-3 py-2 md:py-3 rounded-xl bg-black/50 border border-white/10 text-sm md:text-base" placeholder="Email" value={email} onChange={e=>setEmail(e.target.value)} />
+        <input type="password" className="px-3 py-2 md:py-3 rounded-xl bg-black/50 border border-white/10 text-sm md:text-base" placeholder="Password" value={password} onChange={e=>setPassword(e.target.value)} />
+        <button className="px-4 py-2 md:py-3 rounded-xl bg-bca-gold text-black text-sm md:text-base">Login</button>
       </form>
-      <div className="mt-3 text-sm"><Link className="text-bca-cyan" to="/forgot-password">Forgot your password?</Link></div>
+      <div className="mt-3 text-xs md:text-sm"><Link className="text-bca-cyan" to="/forgot-password">Forgot your password?</Link></div>
     </div>
   );
 }
