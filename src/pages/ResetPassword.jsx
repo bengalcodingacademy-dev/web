@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { api } from '../lib/api';
+import PasswordInput from '../components/PasswordInput';
 
 export default function ResetPassword() {
   const [params] = useSearchParams();
@@ -20,11 +21,31 @@ export default function ResetPassword() {
   };
   return (
     <div className="max-w-md mx-auto px-4 py-10">
-      <h1 className="text-2xl font-semibold mb-4">Reset password</h1>
-      {msg && <div className="mb-3 text-bca-cyan">{msg}</div>}
-      <form onSubmit={submit} className="flex flex-col gap-3">
-        <input type="password" className="px-3 py-2 rounded-xl bg-black/50 border border-white/10" placeholder="New password" value={password} onChange={e=>setPassword(e.target.value)} />
-        <button className="px-4 py-2 rounded-xl bg-bca-gold text-black">Update password</button>
+      <div className="text-center mb-8">
+        <h1 className="text-2xl md:text-3xl font-bold text-white mb-2">Reset Password</h1>
+        <p className="text-white/60 text-sm md:text-base">Enter your new password</p>
+      </div>
+      {msg && (
+        <div className={`mb-4 p-3 rounded-lg border text-sm md:text-base ${
+          msg.includes('updated') 
+            ? 'bg-green-500/10 border-green-500/20 text-green-400' 
+            : 'bg-red-500/10 border-red-500/20 text-red-400'
+        }`}>
+          {msg}
+        </div>
+      )}
+      <form onSubmit={submit} className="flex flex-col gap-4">
+        <div>
+          <PasswordInput 
+            value={password} 
+            onChange={e=>setPassword(e.target.value)} 
+            placeholder="New password" 
+            className="w-full px-4 py-3 rounded-xl bg-black/50 border border-white/10 text-white placeholder-white/50 text-sm md:text-base focus:outline-none focus:ring-2 focus:ring-bca-gold/50 focus:border-bca-gold/50 transition-all duration-200"
+          />
+        </div>
+        <button className="w-full px-4 py-3 rounded-xl bg-bca-gold text-black font-semibold text-sm md:text-base hover:bg-bca-gold/90 focus:outline-none focus:ring-2 focus:ring-bca-gold/50 transition-all duration-200 shadow-lg">
+          Update Password
+        </button>
       </form>
     </div>
   );

@@ -344,7 +344,7 @@ export default function UserDashboard() {
                     <BookOpenIcon className="w-16 h-16 text-cyan-400" />
                   </div>
                 </div>
-                <h3 className="text-xl font-semibold text-white mb-2 bg-gradient-to-r from-white to-cyan-400 bg-clip-text text-transparent">No courses yet</h3>
+                <h3 className="text-xl font-semibold text-white mb-2 bg-gradient-to-r from-white to-cyan-400 bg-clip-text text-transparent">You have not enrolled in any courses yet</h3>
                 <p className="text-bca-gray-300 mb-6">Explore our courses and start your learning journey!</p>
                 <a href="/batches" className="px-6 py-3 bg-gradient-to-r from-cyan-500 to-purple-500 text-white rounded-lg font-medium hover:from-cyan-400 hover:to-purple-400 transition-all duration-300 shadow-lg inline-flex items-center gap-2" style={{ boxShadow: '0 0 20px rgba(0,161,255,0.3)' }}>
                   <ZapIcon className="w-5 h-5" color="#fff" />

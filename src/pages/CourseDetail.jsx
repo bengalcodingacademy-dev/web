@@ -108,7 +108,7 @@ export default function CourseDetail() {
           animate={{ opacity: 1, y: 0 }}
           className="text-center"
         >
-          <h2 className="text-2xl font-bold text-bca-gold mb-2">Welcome to @supreme-dev Family</h2>
+          <h2 className="text-2xl font-bold text-bca-gold mb-2">Welcome to Bengal Coding Academy Family</h2>
         </motion.div>
       </div>
 
