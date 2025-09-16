@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { api } from '../lib/api';
 import { SkeletonCard, SkeletonCourseCard } from '../components/Skeleton';
@@ -164,6 +165,14 @@ const FAQSection = () => {
       a: "Once your payment is approved, you'll receive access to your course materials and can start learning immediately."
     },
     {
+      q: "How does monthly payment work?",
+      a: "For monthly payment courses, you pay the first month's fee to get enrolled. You'll have access to course content as long as your payments are up to date. Each month's payment is due 30 days after the previous payment."
+    },
+    {
+      q: "What happens if I miss a monthly payment?",
+      a: "If you miss a payment, your course access will be restricted until the payment is made. Contact our support team if you need assistance with payment arrangements."
+    },
+    {
       q: "Can I get a refund if I'm not satisfied?",
       a: "We offer a 7-day money-back guarantee for all courses. Contact support if you need assistance."
     },
@@ -221,22 +230,80 @@ const FAQSection = () => {
   );
 };
 
+// Helper function to get course payment status and access
+const getCoursePaymentStatus = (course, purchases) => {
+  if (!course.isMonthlyPayment) {
+    // Regular course - check if user has purchased it
+    const coursePurchases = purchases.filter(p => p.courseId === course.id);
+    const approvedPurchase = coursePurchases.find(p => p.status === 'PAID');
+    
+    return {
+      type: 'regular',
+      hasAccess: !!approvedPurchase,
+      status: approvedPurchase ? 'enrolled' : 'not_purchased',
+      nextPayment: null,
+      paidMonths: 0,
+      totalMonths: 0
+    };
+  }
+
+  // Monthly payment course
+  const coursePurchases = purchases.filter(p => p.courseId === course.id && p.isMonthlyPayment);
+  const paidPurchases = coursePurchases.filter(p => p.status === 'PAID');
+  const pendingPurchases = coursePurchases.filter(p => p.status === 'PENDING');
+
+  const paidMonths = paidPurchases.length;
+  const totalMonths = course.durationMonths || 0;
+  const hasAccess = paidMonths > 0;
+  
+  // Find next payment due (next month that hasn't been paid)
+  const nextMonthNumber = paidMonths + 1;
+  const nextPayment = nextMonthNumber <= totalMonths ? {
+    monthNumber: nextMonthNumber,
+    amountCents: course.monthlyFeeCents,
+    status: 'PENDING'
+  } : null;
+
+  let status = 'not_enrolled';
+  if (paidMonths === totalMonths) {
+    status = 'completed';
+  } else if (pendingPurchases.length > 0) {
+    status = 'pending';
+  } else if (paidMonths > 0) {
+    status = 'active';
+  }
+
+  return {
+    type: 'monthly',
+    hasAccess,
+    status,
+    nextPayment,
+    paidMonths,
+    totalMonths,
+    monthlyFee: course.monthlyFeeCents
+  };
+};
+
 export default function UserDashboard() {
+  const navigate = useNavigate();
   const [userSummary, setUserSummary] = useState(null);
   const [loading, setLoading] = useState(true);
   const [showMeetingModal, setShowMeetingModal] = useState(false);
   const [meetingRequests, setMeetingRequests] = useState([]);
+  const [purchases, setPurchases] = useState([]);
 
   useEffect(() => {
     const loadData = async () => {
       try {
         setLoading(true);
-        const [summaryRes, requestsRes] = await Promise.all([
+        const [summaryRes, requestsRes, purchasesRes] = await Promise.all([
           api.get('/me/summary'),
-          api.get('/me/meeting-requests')
+          api.get('/me/meeting-requests'),
+          api.get('/purchases/me')
         ]);
         setUserSummary(summaryRes.data);
         setMeetingRequests(requestsRes.data);
+        setPurchases(purchasesRes.data);
       } catch (error) {
         console.error('Error loading dashboard data:', error);
       } finally {
@@ -311,31 +378,106 @@ export default function UserDashboard() {
             </div>
             {userSummary?.courses?.length > 0 ? (
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {userSummary.courses.map((course, index) => (
-                  <motion.div
-                    key={course.id}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.3 + index * 0.1 }}
-                    className="bg-gradient-to-br from-bca-gray-800/80 to-bca-gray-900/80 rounded-xl p-6 border border-bca-gray-700/50 hover:border-cyan-500/50 transition-all duration-300 group relative overflow-hidden backdrop-blur-sm"
-                  >
-                    <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                    <div className="relative z-10">
-                      <div className="flex items-start gap-3 mb-4">
-                        <div className="p-2 rounded-lg bg-gradient-to-br from-cyan-500/20 to-purple-500/20 border border-cyan-500/30 group-hover:border-cyan-400/50 transition-all duration-300" style={{ boxShadow: '0 0 15px rgba(0,161,255,0.2)' }}>
-                          <AwardIcon className="w-6 h-6 text-cyan-400" />
+                {userSummary.courses.map((course, index) => {
+                  const paymentStatus = getCoursePaymentStatus(course, purchases);
+                  return (
+                    <motion.div
+                      key={course.id}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.3 + index * 0.1 }}
+                      className="bg-gradient-to-br from-bca-gray-800/80 to-bca-gray-900/80 rounded-xl p-6 border border-bca-gray-700/50 hover:border-cyan-500/50 transition-all duration-300 group relative overflow-hidden backdrop-blur-sm"
+                    >
+                      <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                      <div className="relative z-10">
+                        <div className="flex items-start gap-3 mb-4">
+                          <div className="p-2 rounded-lg bg-gradient-to-br from-cyan-500/20 to-purple-500/20 border border-cyan-500/30 group-hover:border-cyan-400/50 transition-all duration-300" style={{ boxShadow: '0 0 15px rgba(0,161,255,0.2)' }}>
+                            <AwardIcon className="w-6 h-6 text-cyan-400" />
+                          </div>
+                          <div className="flex-1">
+                            <h3 className="text-xl font-bold text-white group-hover:text-cyan-300 transition-colors duration-300">{course.title}</h3>
+                            {course.isMonthlyPayment && (
+                              <p className="text-sm text-bca-gray-400 mt-1">
+                                Monthly Payment Course
+                              </p>
+                            )}
+                          </div>
                         </div>
-                        <h3 className="text-xl font-bold text-white group-hover:text-cyan-300 transition-colors duration-300">{course.title}</h3>
+
+                        {/* Payment Status */}
+                        {paymentStatus.type === 'monthly' && (
+                          <div className="mb-4 p-3 rounded-lg bg-bca-gray-700/50 border border-bca-gray-600/50">
+                            <div className="flex items-center justify-between mb-2">
+                              <span className="text-sm text-bca-gray-300">Progress</span>
+                              <span className="text-sm font-medium text-bca-gold">
+                                {paymentStatus.paidMonths}/{paymentStatus.totalMonths} months
+                              </span>
+                            </div>
+                            <div className="w-full bg-bca-gray-600 rounded-full h-2 mb-2">
+                              <div 
+                                className="bg-gradient-to-r from-cyan-500 to-purple-500 h-2 rounded-full transition-all duration-300"
+                                style={{ width: `${(paymentStatus.paidMonths / paymentStatus.totalMonths) * 100}%` }}
+                              ></div>
+                            </div>
+                            <div className="flex items-center justify-between text-xs">
+                              <span className={`px-2 py-1 rounded-full font-medium ${
+                                paymentStatus.status === 'completed' ? 'bg-green-500/20 text-green-400' :
+                                paymentStatus.status === 'active' ? 'bg-blue-500/20 text-blue-400' :
+                                paymentStatus.status === 'overdue' ? 'bg-red-500/20 text-red-400' :
+                                paymentStatus.status === 'pending' ? 'bg-yellow-500/20 text-yellow-400' :
+                                'bg-gray-500/20 text-gray-400'
+                              }`}>
+                                {paymentStatus.status === 'completed' ? 'Completed' :
+                                 paymentStatus.status === 'active' ? 'Active' :
+                                 paymentStatus.status === 'overdue' ? 'Payment Overdue' :
+                                 paymentStatus.status === 'pending' ? 'Payment Pending' :
+                                 'Not Enrolled'}
+                              </span>
+                              <span className="text-bca-gray-400">
+                                ₹{paymentStatus.monthlyFee}/month
+                              </span>
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Next Payment Info */}
+                        {paymentStatus.nextPayment && (
+                          <div className="mb-4 p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/30">
+                            <div className="flex items-center gap-2 mb-1">
+                              <span className="text-yellow-400 text-sm font-medium">Next Payment Due</span>
+                            </div>
+                            <p className="text-yellow-300 text-sm">
+                              Month {paymentStatus.nextPayment.monthNumber} - ₹{paymentStatus.nextPayment.amountCents}
+                            </p>
+                            <p className="text-yellow-400/80 text-xs">
+                              Due: {new Date(paymentStatus.nextPayment.dueDate).toLocaleDateString()}
+                            </p>
+                          </div>
+                        )}
+
+                        <div className="flex items-center justify-between">
+                          <span className={`font-semibold ${
+                            paymentStatus.hasAccess ? 'text-bca-gold group-hover:text-yellow-300' : 'text-bca-gray-400'
+                          } transition-colors duration-300`}>
+                            {paymentStatus.hasAccess ? 'Access Granted' : 'Access Restricted'}
+                          </span>
+                          <button 
+                            onClick={() => paymentStatus.hasAccess && navigate(`/course/${course.id}/access`)}
+                            className={`px-4 py-2 rounded-lg font-medium transition-all duration-300 shadow-lg ${
+                              paymentStatus.hasAccess 
+                                ? 'bg-gradient-to-r from-cyan-500 to-purple-500 text-white hover:from-cyan-400 hover:to-purple-400' 
+                                : 'bg-bca-gray-600 text-bca-gray-300 cursor-not-allowed'
+                            }`}
+                            style={paymentStatus.hasAccess ? { boxShadow: '0 0 20px rgba(0,161,255,0.3)' } : {}}
+                            disabled={!paymentStatus.hasAccess}
+                          >
+                            {paymentStatus.hasAccess ? 'Start Learning' : 'Payment Required'}
+                          </button>
+                        </div>
                       </div>
-                      <div className="flex items-center justify-between">
-                        <span className="text-bca-gold font-semibold group-hover:text-yellow-300 transition-colors duration-300">Enrolled</span>
-                        <button className="px-4 py-2 bg-gradient-to-r from-cyan-500 to-purple-500 text-white rounded-lg font-medium hover:from-cyan-400 hover:to-purple-400 transition-all duration-300 shadow-lg" style={{ boxShadow: '0 0 20px rgba(0,161,255,0.3)' }}>
-                          Start Learning
-                        </button>
-                      </div>
-                    </div>
-                  </motion.div>
-                ))}
+                    </motion.div>
+                  );
+                })}
               </div>
             ) : (
               <div className="text-center py-12">
@@ -355,6 +497,7 @@ export default function UserDashboard() {
           </motion.div>
         </div>
       </section>
+
 
       {/* Statistics Section */}
       <StatsSection />

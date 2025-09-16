@@ -9,6 +9,7 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import Profile from './pages/Profile';
 import Purchases from './pages/Purchases';
+import CourseAccess from './pages/CourseAccess';
 import Webinars from './pages/Webinars';
 import Announcements from './pages/Announcements';
 import Actions from './pages/Actions';
@@ -27,6 +28,10 @@ function Protected({ children }) {
   return user ? children : <Navigate to="/login" />;
 }
 
+function RedirectToLanding({ hash }) {
+  return <Navigate to={`/${hash}`} replace />;
+}
+
 export default function App() {
   const navigate = useNavigate();
   return (
@@ -35,7 +40,7 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Landing />} />
           <Route path="/dashboard" element={<Protected><UserDashboard /></Protected>} />
-          <Route path="/batches" element={<Batches />} />
+          <Route path="/batches" element={<Protected><Batches /></Protected>} />
           <Route path="/course/:slug" element={<CourseDetail />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
@@ -43,9 +48,10 @@ export default function App() {
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/profile" element={<Protected><Profile /></Protected>} />
           <Route path="/purchases" element={<Protected><Purchases /></Protected>} />
+          <Route path="/course/:courseId/access" element={<Protected><CourseAccess /></Protected>} />
           <Route path="/actions" element={<Protected><Actions /></Protected>} />
-          <Route path="/webinars" element={<Webinars />} />
-          <Route path="/announcements" element={<Announcements />} />
+          <Route path="/webinars" element={<Protected><Webinars /></Protected>} />
+          <Route path="/announcements" element={<Protected><Announcements /></Protected>} />
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </Layout>

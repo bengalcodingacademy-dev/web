@@ -1,12 +1,13 @@
 import { Link } from 'react-router-dom';
-import AnnouncementBar from './AnnouncementBar';
 import { useAuth } from '../lib/authContext';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { api } from '../lib/api';
 
 export default function Layout({ children }) {
   const { user, logout } = useAuth();
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(0);
 
   const handleLogout = () => {
     setShowLogoutConfirm(true);
@@ -20,6 +21,25 @@ export default function Layout({ children }) {
   const toggleMobileMenu = () => {
     setShowMobileMenu(!showMobileMenu);
   };
+
+  // Load unread announcement count
+  useEffect(() => {
+    if (user) {
+      const loadUnreadCount = async () => {
+        try {
+          const response = await api.get('/announcements/me/unread-count');
+          setUnreadCount(response.data.count);
+        } catch (error) {
+          console.error('Error loading unread count:', error);
+        }
+      };
+      loadUnreadCount();
+      
+      // Refresh unread count every 30 seconds
+      const interval = setInterval(loadUnreadCount, 30000);
+      return () => clearInterval(interval);
+    }
+  }, [user]);
 
   return (
     <div className="min-h-screen bg-bca-black text-white">
@@ -35,9 +55,8 @@ export default function Layout({ children }) {
           <nav className="hidden md:flex items-center gap-5 text-sm">
             {!user ? (
               <>
-                <Link to="/batches" className="hover:text-bca-gold">Available Batches</Link>
-                <Link to="/webinars" className="hover:text-bca-cyan">Webinars</Link>
-                <Link to="/announcements" className="hover:text-bca-cyan">Announcements</Link>
+                <Link to="/#courses" className="hover:text-bca-gold">Available Batches</Link>
+                <Link to="/#webinars" className="hover:text-bca-cyan">Webinars</Link>
                 <Link to="/login" className="px-3 py-1.5 rounded-xl bg-bca-gold text-black hover:brightness-110">Login</Link>
                 <Link to="/register" className="px-3 py-1.5 rounded-xl border border-white/20">Register</Link>
               </>
@@ -45,6 +64,14 @@ export default function Layout({ children }) {
               <>
                 <Link to="/dashboard" className="hover:text-bca-gold font-semibold text-bca-gold bg-bca-gold/10 px-3 py-1.5 rounded-lg border border-bca-gold/30">
                   My Dashboard
+                </Link>
+                <Link to="/announcements" className="hover:text-bca-cyan relative">
+                  Announcements
+                  {unreadCount > 0 && (
+                    <span className="absolute -top-2 -right-2 bg-bca-gold text-black text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+                      {unreadCount > 9 ? '9+' : unreadCount}
+                    </span>
+                  )}
                 </Link>
                 <Link to="/actions" className="hover:text-bca-gold">Actions</Link>
                 <Link to="/profile" className="hover:text-bca-gold">Profile</Link>
@@ -86,25 +113,18 @@ export default function Layout({ children }) {
                     Home
                   </Link>
                   <Link 
-                    to="/batches" 
+                    to="/#courses" 
                     className="block text-white hover:text-bca-gold transition-colors py-2"
                     onClick={() => setShowMobileMenu(false)}
                   >
                     Available Batches
                   </Link>
                   <Link 
-                    to="/webinars" 
+                    to="/#webinars" 
                     className="block text-white hover:text-bca-cyan transition-colors py-2"
                     onClick={() => setShowMobileMenu(false)}
                   >
                     Webinars
-                  </Link>
-                  <Link 
-                    to="/announcements" 
-                    className="block text-white hover:text-bca-cyan transition-colors py-2"
-                    onClick={() => setShowMobileMenu(false)}
-                  >
-                    Announcements
                   </Link>
                   <div className="pt-4 border-t border-white/10 space-y-3">
                     <Link 
@@ -125,6 +145,18 @@ export default function Layout({ children }) {
                 </>
               ) : (
                 <>
+                  <Link 
+                    to="/announcements" 
+                    className="block text-white hover:text-bca-cyan transition-colors py-2 relative"
+                    onClick={() => setShowMobileMenu(false)}
+                  >
+                    Announcements
+                    {unreadCount > 0 && (
+                      <span className="ml-2 bg-bca-gold text-black text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center inline-flex">
+                        {unreadCount > 9 ? '9+' : unreadCount}
+                      </span>
+                    )}
+                  </Link>
                   <Link 
                     to="/actions" 
                     className="block text-white hover:text-bca-gold transition-colors py-2"
@@ -163,7 +195,6 @@ export default function Layout({ children }) {
           </div>
         )}
       </header>
-      <AnnouncementBar />
       <main>{children}</main>
       <footer className="border-t border-white/10 py-8 text-center text-xs text-white/60">© {new Date().getFullYear()} Bengal Coding Academy</footer>
 

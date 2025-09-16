@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { api } from '../lib/api';
 import { CourseCard } from './components/CourseCard';
 import { SkeletonCourseCard } from '../components/Skeleton';
@@ -19,18 +19,22 @@ const features = [
 export default function Landing() {
   const [courses, setCourses] = useState([]);
   const [testimonials, setTestimonials] = useState([]);
+  const [webinars, setWebinars] = useState([]);
   const [loading, setLoading] = useState(true);
+  const location = useLocation();
   
   useEffect(() => {
     const loadData = async () => {
       try {
         setLoading(true);
-        const [coursesRes, testimonialsRes] = await Promise.all([
+        const [coursesRes, testimonialsRes, webinarsRes] = await Promise.all([
           api.get('/courses'),
-          api.get('/testimonials')
+          api.get('/testimonials'),
+          api.get('/webinars')
         ]);
         setCourses(coursesRes.data);
         setTestimonials(testimonialsRes.data);
+        setWebinars(webinarsRes.data);
       } catch (error) {
         console.error('Error loading landing data:', error);
       } finally {
@@ -39,6 +43,22 @@ export default function Landing() {
     };
     loadData();
   }, []);
+
+  // Handle scroll to section based on URL hash
+  useEffect(() => {
+    const hash = location.hash;
+    if (hash) {
+      const element = document.querySelector(hash);
+      if (element) {
+        setTimeout(() => {
+          element.scrollIntoView({ 
+            behavior: 'smooth',
+            block: 'start'
+          });
+        }, 100);
+      }
+    }
+  }, [location.hash]);
   return (
     <div>
       <section className="relative overflow-hidden">
@@ -73,7 +93,67 @@ export default function Landing() {
         ))}
       </section>
 
-      <section className="max-w-6xl mx-auto px-4 py-8 md:py-14">
+      {/* Upcoming Webinars Section */}
+      {webinars.length > 0 && (
+        <section id="webinars" className="max-w-6xl mx-auto px-4 py-8 md:py-14">
+          <h2 className="text-xl md:text-2xl font-semibold mb-4 md:mb-6">Upcoming Webinars</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+            {webinars.slice(0, 3).map((webinar, i) => (
+              <div key={i} className="rounded-xl border border-white/10 p-4 md:p-6 bg-gradient-to-br from-[#1a0b2e] to-[#0b0b0b]">
+                {webinar.imageUrl && (
+                  <img
+                    src={webinar.imageUrl}
+                    alt={webinar.title}
+                    className="w-full h-32 md:h-40 object-cover rounded-lg mb-4"
+                  />
+                )}
+                <div className="text-lg md:text-xl font-semibold mb-2" style={{color:'#00a1ff'}}>
+                  {webinar.title}
+                </div>
+                {webinar.description && (
+                  <div className="text-white/80 text-sm md:text-base mb-3">
+                    {webinar.description}
+                  </div>
+                )}
+                <div className="text-bca-cyan text-sm mb-2">
+                  📅 {new Date(webinar.startTime).toLocaleDateString('en-IN', { 
+                    weekday: 'long', 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                  })}
+                </div>
+                {webinar.presenter && (
+                  <div className="text-bca-gray-400 text-sm mb-3">
+                    👨‍🏫 {webinar.presenter}
+                  </div>
+                )}
+                {webinar.joinLink && (
+                  <a
+                    href={webinar.joinLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-block px-4 py-2 bg-bca-gold text-black rounded-lg hover:bg-bca-gold/80 transition-colors text-sm font-medium"
+                  >
+                    Join Webinar
+                  </a>
+                )}
+              </div>
+            ))}
+          </div>
+          {webinars.length > 3 && (
+            <div className="text-center mt-6">
+              <Link to="/webinars" className="text-bca-cyan hover:text-bca-gold transition-colors">
+                View All Webinars →
+              </Link>
+            </div>
+          )}
+        </section>
+      )}
+
+      <section id="courses" className="max-w-6xl mx-auto px-4 py-8 md:py-14">
         <h2 className="text-xl md:text-2xl font-semibold mb-4 md:mb-6">Featured Courses</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
           {loading ? (

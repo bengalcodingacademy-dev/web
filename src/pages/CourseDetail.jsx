@@ -72,8 +72,28 @@ export default function CourseDetail() {
     if (!agree) return setError('Please agree to the terms and policies.');
     if (!/^\+?\d{8,15}$/.test(mobile)) return setError('Enter your UPI-registered mobile number (8-15 digits).');
     if (txn.length < 6) return setError('Enter a valid transaction ID.');
-    await api.post('/purchases', { courseId: course.id, upiMobile: mobile, upiTxnId: txn });
-    setNotice('Payment submitted. Awaiting admin approval. You will be notified.');
+    
+    // Use unified purchase system for both one-time and monthly payments
+    const purchaseData = {
+      courseId: course.id,
+      upiMobile: mobile,
+      upiTxnId: txn
+    };
+
+    if (course.isMonthlyPayment) {
+      // For monthly payment, add monthly payment fields
+      purchaseData.isMonthlyPayment = true;
+      purchaseData.monthNumber = 1;
+      purchaseData.totalMonths = course.durationMonths;
+      purchaseData.amountCents = course.monthlyFeeCents;
+      setNotice('First month payment submitted. Awaiting admin approval. You will be enrolled once approved.');
+    } else {
+      // For one-time payment
+      purchaseData.amountCents = course.priceCents;
+      setNotice('Payment submitted. Awaiting admin approval. You will be notified.');
+    }
+    
+    await api.post('/purchases', purchaseData);
     setOpen(false);
     navigate('/purchases');
   };
@@ -559,7 +579,7 @@ export default function CourseDetail() {
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.2 }}
-              className="sticky top-8"
+              className="sticky top-20"
             >
               <div className="bg-bca-gray-800 rounded-xl border border-bca-gray-700 overflow-hidden">
                 {/* Course Banner */}
@@ -579,9 +599,31 @@ export default function CourseDetail() {
 
                 {/* Pricing */}
                 <div className="p-6">
-                  <div className="flex items-center gap-3 mb-6">
-                    <span className="text-3xl font-bold text-blue-500">₹{(course.priceCents/100).toFixed(2)}</span>
-                    <span className="text-lg text-bca-gray-400 line-through">₹7000</span>
+                  <div className="mb-6">
+                    {course.isMonthlyPayment ? (
+                      <div>
+                        <div className="flex items-center gap-3 mb-2">
+                          <span className="text-3xl font-bold text-blue-500">₹{course.monthlyFeeCents}</span>
+                          <span className="text-lg text-bca-gray-400">per month</span>
+                        </div>
+                        <div className="text-sm text-bca-gray-300 mb-2">
+                          Duration: {course.durationMonths} months
+                        </div>
+                        <div className="text-sm text-bca-gray-400">
+                          Total: ₹{((course.monthlyFeeCents || 0) * (course.durationMonths || 0)).toLocaleString()}
+                        </div>
+                        <div className="mt-3 p-3 bg-blue-500/10 rounded-lg border border-blue-500/30">
+                          <p className="text-blue-400 text-sm">
+                            💡 Pay monthly - No registration fees! Start with first month payment only.
+                          </p>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-3">
+                        <span className="text-3xl font-bold text-blue-500">₹{(course.priceCents/100).toFixed(2)}</span>
+                        <span className="text-lg text-bca-gray-400 line-through">₹7000</span>
+                      </div>
+                    )}
                   </div>
 
                   {/* Course Includes */}
@@ -637,7 +679,7 @@ export default function CourseDetail() {
                     onClick={startPayment} 
                     className="w-full py-4 bg-bca-gold text-black font-bold text-lg rounded-lg hover:bg-bca-gold/80 transition-colors"
                   >
-                    Buy Now
+                    {course.isMonthlyPayment ? 'Pay First Month' : 'Buy Now'}
                   </button>
                 </div>
               </div>
@@ -706,3 +748,5 @@ export default function CourseDetail() {
     </div>
   );
 }
+
+
