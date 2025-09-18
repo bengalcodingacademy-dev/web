@@ -1,6 +1,8 @@
 import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 import { AuthProvider, useAuth } from './lib/authContext';
 import Layout from './components/Layout';
+import LoadingAnimation from './components/LoadingAnimation';
 import Landing from './pages/Landing';
 import UserDashboard from './pages/UserDashboard';
 import Batches from './pages/Batches';
@@ -10,9 +12,9 @@ import Register from './pages/Register';
 import Profile from './pages/Profile';
 import Purchases from './pages/Purchases';
 import CourseAccess from './pages/CourseAccess';
+import MonthContent from './pages/MonthContent';
 import Webinars from './pages/Webinars';
 import Announcements from './pages/Announcements';
-import Actions from './pages/Actions';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
 
@@ -34,8 +36,28 @@ function RedirectToLanding({ hash }) {
 
 export default function App() {
   const navigate = useNavigate();
+  const [showLoadingAnimation, setShowLoadingAnimation] = useState(true);
+  const [animationKey, setAnimationKey] = useState(0);
+
+  // Animation runs every time the app loads (no localStorage check)
+  const handleAnimationComplete = () => {
+    setShowLoadingAnimation(false);
+  };
+
+  // Function to replay animation (can be called from anywhere)
+  const replayAnimation = () => {
+    setShowLoadingAnimation(true);
+    setAnimationKey(prev => prev + 1); // Force remount of animation component
+  };
+
+  // Make replayAnimation available globally
+  window.replayBCAAnimation = replayAnimation;
+
   return (
     <AuthProvider navigate={navigate}>
+      {showLoadingAnimation && (
+        <LoadingAnimation key={animationKey} onComplete={handleAnimationComplete} />
+      )}
       <Layout>
         <Routes>
           <Route path="/" element={<Landing />} />
@@ -49,7 +71,7 @@ export default function App() {
           <Route path="/profile" element={<Protected><Profile /></Protected>} />
           <Route path="/purchases" element={<Protected><Purchases /></Protected>} />
           <Route path="/course/:courseId/access" element={<Protected><CourseAccess /></Protected>} />
-          <Route path="/actions" element={<Protected><Actions /></Protected>} />
+          <Route path="/course/:courseId/month/:monthNumber" element={<Protected><MonthContent /></Protected>} />
           <Route path="/webinars" element={<Protected><Webinars /></Protected>} />
           <Route path="/announcements" element={<Protected><Announcements /></Protected>} />
           <Route path="*" element={<Navigate to="/" />} />

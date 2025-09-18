@@ -22,6 +22,12 @@ export default function Layout({ children }) {
     setShowMobileMenu(!showMobileMenu);
   };
 
+  const replayAnimation = () => {
+    if (window.replayBCAAnimation) {
+      window.replayBCAAnimation();
+    }
+  };
+
   // Load unread announcement count
   useEffect(() => {
     if (user) {
@@ -46,10 +52,24 @@ export default function Layout({ children }) {
       <header className="sticky top-0 z-20 backdrop-blur bg-black/60 border-b border-white/10">
         <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
           {/* Logo and Brand */}
-          <Link to="/" className="flex items-center gap-2 md:gap-3 font-bold text-sm md:text-xl tracking-wide">
-            <img src="/bca-logo.jpg" alt="BCA" className="h-6 w-6 md:h-8 md:w-8 rounded" />
-            <span>Bengal Coding Academy</span>
-          </Link>
+          <div className="flex items-center gap-4">
+            <Link to="/" className="flex items-center gap-2 md:gap-3 font-bold text-sm md:text-xl tracking-wide">
+              <img src="/bca-logo.jpg" alt="BCA" className="h-6 w-6 md:h-8 md:w-8 rounded" />
+              <span>Bengal Coding Academy</span>
+            </Link>
+            
+            {/* Replay Animation Button */}
+            <button
+              onClick={replayAnimation}
+              className="hidden md:flex items-center gap-1 px-2 py-1 rounded-lg bg-bca-cyan/10 border border-bca-cyan/30 text-bca-cyan hover:bg-bca-cyan/20 hover:border-bca-cyan/50 transition-all duration-300 text-xs"
+              title="Replay BCA Animation"
+            >
+              <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+              </svg>
+              <span>Replay</span>
+            </button>
+          </div>
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-5 text-sm">
@@ -73,7 +93,6 @@ export default function Layout({ children }) {
                     </span>
                   )}
                 </Link>
-                <Link to="/actions" className="hover:text-bca-gold">Actions</Link>
                 <Link to="/profile" className="hover:text-bca-gold">Profile</Link>
                 <Link to="/purchases" className="hover:text-bca-gold">Purchases</Link>
                 <button onClick={handleLogout} className="px-3 py-1.5 rounded-xl bg-bca-red text-white">Logout</button>
@@ -156,13 +175,6 @@ export default function Layout({ children }) {
                         {unreadCount > 9 ? '9+' : unreadCount}
                       </span>
                     )}
-                  </Link>
-                  <Link 
-                    to="/actions" 
-                    className="block text-white hover:text-bca-gold transition-colors py-2"
-                    onClick={() => setShowMobileMenu(false)}
-                  >
-                    Actions
                   </Link>
                   <Link 
                     to="/profile" 

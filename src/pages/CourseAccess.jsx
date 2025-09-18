@@ -22,6 +22,24 @@ const PlayIcon = ({ className }) => (
   </svg>
 );
 
+const VideoIcon = ({ className }) => (
+  <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+  </svg>
+);
+
+const CodeIcon = ({ className }) => (
+  <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+  </svg>
+);
+
+const DocumentIcon = ({ className }) => (
+  <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+  </svg>
+);
+
 export default function CourseAccess() {
   const { courseId } = useParams();
   const navigate = useNavigate();
@@ -32,24 +50,29 @@ export default function CourseAccess() {
   const [selectedMonth, setSelectedMonth] = useState(null);
   const [paymentData, setPaymentData] = useState({ upiMobile: '', upiTxnId: '' });
   const [submitting, setSubmitting] = useState(false);
+  const [courseContent, setCourseContent] = useState([]);
+
+  const loadCourseData = async () => {
+    try {
+      setLoading(true);
+      // Add cache-busting parameter to force fresh data
+      const [courseRes, purchasesRes, contentRes] = await Promise.all([
+        api.get(`/courses/id/${courseId}`),
+        api.get(`/purchases/me?t=${Date.now()}`), // Cache busting
+        api.get(`/course-content/course/${courseId}`)
+      ]);
+      setCourse(courseRes.data);
+      setPurchases(purchasesRes.data);
+      setCourseContent(contentRes.data);
+    } catch (error) {
+      console.error('Error loading course data:', error);
+      navigate('/dashboard');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const loadCourseData = async () => {
-      try {
-        setLoading(true);
-        const [courseRes, purchasesRes] = await Promise.all([
-          api.get(`/courses/id/${courseId}`),
-          api.get('/purchases/me')
-        ]);
-        setCourse(courseRes.data);
-        setPurchases(purchasesRes.data);
-      } catch (error) {
-        console.error('Error loading course data:', error);
-        navigate('/dashboard');
-      } finally {
-        setLoading(false);
-      }
-    };
     loadCourseData();
   }, [courseId, navigate]);
 
@@ -85,7 +108,15 @@ export default function CourseAccess() {
       p.isMonthlyPayment
     );
     
-    return approvedPurchases.map(p => p.monthNumber).sort((a, b) => a - b);
+    const accessibleMonths = approvedPurchases.map(p => p.monthNumber).sort((a, b) => a - b);
+    
+    // Debug logging
+    console.log('Debug - Course ID:', courseId);
+    console.log('Debug - All purchases:', purchases);
+    console.log('Debug - Approved purchases:', approvedPurchases);
+    console.log('Debug - Accessible months:', accessibleMonths);
+    
+    return accessibleMonths;
   };
 
   const getPendingMonths = () => {
@@ -124,6 +155,10 @@ export default function CourseAccess() {
     setSelectedMonth(monthNumber);
     setPaymentData({ upiMobile: '', upiTxnId: '' });
     setShowPaymentModal(true);
+  };
+
+  const handleViewMonthContent = (monthNumber) => {
+    navigate(`/course/${courseId}/month/${monthNumber}`);
   };
 
   const handlePaymentSubmit = async () => {
@@ -303,11 +338,20 @@ export default function CourseAccess() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
           >
-            <div className="flex items-center gap-3 mb-8">
-              <div className="p-3 rounded-xl bg-gradient-to-br from-cyan-500/20 to-purple-500/20 border border-cyan-500/30 group-hover:border-cyan-400/50 transition-all duration-300" style={{ boxShadow: '0 0 20px rgba(0,161,255,0.2)' }}>
-                <BookOpenIcon className="w-8 h-8 text-cyan-400" />
+            <div className="flex items-center justify-between mb-8">
+              <div className="flex items-center gap-3">
+                <div className="p-3 rounded-xl bg-gradient-to-br from-cyan-500/20 to-purple-500/20 border border-cyan-500/30 group-hover:border-cyan-400/50 transition-all duration-300" style={{ boxShadow: '0 0 20px rgba(0,161,255,0.2)' }}>
+                  <BookOpenIcon className="w-8 h-8 text-cyan-400" />
+                </div>
+                <h2 className="text-3xl font-bold text-white bg-gradient-to-r from-white to-cyan-400 bg-clip-text text-transparent" style={{ textShadow: '0 0 10px rgba(0,161,255,0.3)' }}>Course Content</h2>
               </div>
-              <h2 className="text-3xl font-bold text-white bg-gradient-to-r from-white to-cyan-400 bg-clip-text text-transparent" style={{ textShadow: '0 0 10px rgba(0,161,255,0.3)' }}>Course Content</h2>
+              <button
+                onClick={loadCourseData}
+                disabled={loading}
+                className="px-4 py-2 rounded-lg bg-gradient-to-r from-cyan-500/20 to-purple-500/20 border border-cyan-500/30 text-cyan-400 hover:from-cyan-500/30 hover:to-purple-500/30 transition-all duration-300 disabled:opacity-50"
+              >
+                {loading ? 'Refreshing...' : 'Refresh'}
+              </button>
             </div>
 
             {accessibleMonths.length === 0 ? (
@@ -421,10 +465,11 @@ export default function CourseAccess() {
                                 ? 'text-yellow-400' 
                                 : 'text-bca-gray-500'
                           }`}>
-                            {isAccessible ? 'Access Granted' : hasPendingPayment ? 'Payment Pending' : 'Locked'}
+                            {isAccessible ? 'Access Granted' : hasPendingPayment ? 'Approval Pending' : 'Locked'}
                           </span>
                           {isAccessible ? (
                             <button 
+                              onClick={() => handleViewMonthContent(monthNumber)}
                               className="px-4 py-2 rounded-lg font-medium transition-all duration-300 shadow-lg bg-gradient-to-r from-cyan-500 to-purple-500 text-white hover:from-cyan-400 hover:to-purple-400"
                               style={{ boxShadow: '0 0 20px rgba(0,161,255,0.3)' }}
                             >
@@ -435,7 +480,7 @@ export default function CourseAccess() {
                               className="px-4 py-2 rounded-lg font-medium transition-all duration-300 shadow-lg bg-yellow-500/20 text-yellow-400 border border-yellow-500/30 cursor-not-allowed"
                               disabled
                             >
-                              Payment Pending
+                              Approval Pending
                             </button>
                           ) : monthNumber === nextPayableMonth ? (
                             <button 
@@ -506,6 +551,15 @@ export default function CourseAccess() {
                 </div>
               </div>
 
+              {/* QR Code */}
+              <div className="flex justify-center">
+                <img 
+                  src="/QR.jpeg" 
+                  alt="Payment QR Code" 
+                  className="w-40 h-40 rounded-lg border border-bca-gray-600 object-cover"
+                />
+              </div>
+
               <div>
                 <label className="block text-sm font-medium text-bca-gray-300 mb-2">
                   UPI Mobile Number *
@@ -569,6 +623,7 @@ export default function CourseAccess() {
           </motion.div>
         </div>
       )}
+
     </div>
   );
 }

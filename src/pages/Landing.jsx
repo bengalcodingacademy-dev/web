@@ -66,12 +66,19 @@ export default function Landing() {
         <div className="relative max-w-6xl mx-auto px-4 py-10 md:py-20 grid md:grid-cols-2 items-center gap-6 md:gap-8">
           <div className="text-center md:text-left">
             <div className="mb-4 md:mb-6">
-              <img src="/bca-logo.jpg" alt="BCA" className="h-16 w-16 md:h-24 md:w-24 rounded shadow-[0_0_50px_10px_#00a1ff] mx-auto md:mx-0" />
+              <img 
+                src="/bca_illustration.gif" 
+                alt="BCA Illustration" 
+                className="h-16 w-16 md:h-24 md:w-24 rounded shadow-[0_0_50px_10px_#00a1ff] mx-auto md:mx-0 object-cover"
+                style={{
+                  filter: 'brightness(1.1) contrast(1.1)'
+                }}
+              />
             </div>
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight">
               Become a job-ready developer
             </h1>
-            <p className="mt-3 md:mt-4 text-white/80 max-w-2xl mx-auto md:mx-0 text-sm md:text-base">Industry-ready courses, webinars, and guided roadmaps. Learn by building real projects.</p>
+            <p className="mt-3 md:mt-4 text-white/80 max-w-2xl mx-auto md:mx-0 text-sm md:text-base">বাংলায় কাটিং এজ টেকনোলজি শিখুন আর ওয়ার্ল্ড ক্লাস প্রজেক্ট তৈরি করুন</p>
             <div className="mt-6 md:mt-8 flex flex-col sm:flex-row gap-3 justify-center md:justify-start">
               <Link to="/batches" className="px-4 md:px-5 py-2 md:py-3 rounded-xl bg-[#fdb000] text-black shadow-[0_0_40px_#fdb000] text-sm md:text-base text-center">Explore Batches</Link>
               <Link to="/webinars" className="px-4 md:px-5 py-2 md:py-3 rounded-xl border border-white/20 text-white text-sm md:text-base text-center">Free Webinars</Link>
@@ -94,64 +101,71 @@ export default function Landing() {
       </section>
 
       {/* Upcoming Webinars Section */}
-      {webinars.length > 0 && (
-        <section id="webinars" className="max-w-6xl mx-auto px-4 py-8 md:py-14">
-          <h2 className="text-xl md:text-2xl font-semibold mb-4 md:mb-6">Upcoming Webinars</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-            {webinars.slice(0, 3).map((webinar, i) => (
-              <div key={i} className="rounded-xl border border-white/10 p-4 md:p-6 bg-gradient-to-br from-[#1a0b2e] to-[#0b0b0b]">
-                {webinar.imageUrl && (
-                  <img
-                    src={webinar.imageUrl}
-                    alt={webinar.title}
-                    className="w-full h-32 md:h-40 object-cover rounded-lg mb-4"
-                  />
-                )}
-                <div className="text-lg md:text-xl font-semibold mb-2" style={{color:'#00a1ff'}}>
-                  {webinar.title}
-                </div>
-                {webinar.description && (
-                  <div className="text-white/80 text-sm md:text-base mb-3">
-                    {webinar.description}
+      <section id="webinars" className="max-w-6xl mx-auto px-4 py-8 md:py-14">
+        <h2 className="text-xl md:text-2xl font-semibold mb-4 md:mb-6">Upcoming Webinars</h2>
+        {webinars.length > 0 ? (
+          <>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+              {webinars.slice(0, 3).map((webinar, i) => (
+                <div key={i} className="rounded-xl border border-white/10 p-4 md:p-6 bg-gradient-to-br from-[#1a0b2e] to-[#0b0b0b]">
+                  {webinar.imageUrl && (
+                    <img
+                      src={webinar.imageUrl}
+                      alt={webinar.title}
+                      className="w-full h-32 md:h-40 object-cover rounded-lg mb-4"
+                    />
+                  )}
+                  <div className="text-lg md:text-xl font-semibold mb-2" style={{color:'#00a1ff'}}>
+                    {webinar.title}
                   </div>
-                )}
-                <div className="text-bca-cyan text-sm mb-2">
-                  📅 {new Date(webinar.startTime).toLocaleDateString('en-IN', { 
-                    weekday: 'long', 
-                    year: 'numeric', 
-                    month: 'long', 
-                    day: 'numeric',
-                    hour: '2-digit',
-                    minute: '2-digit'
-                  })}
-                </div>
-                {webinar.presenter && (
-                  <div className="text-bca-gray-400 text-sm mb-3">
-                    👨‍🏫 {webinar.presenter}
+                  {webinar.description && (
+                    <div className="text-white/80 text-sm md:text-base mb-3">
+                      {webinar.description}
+                    </div>
+                  )}
+                  <div className="text-bca-cyan text-sm mb-2">
+                    📅 {new Date(webinar.startTime).toLocaleDateString('en-IN', { 
+                      weekday: 'long', 
+                      year: 'numeric', 
+                      month: 'long', 
+                      day: 'numeric',
+                      hour: '2-digit',
+                      minute: '2-digit'
+                    })}
                   </div>
-                )}
-                {webinar.joinLink && (
-                  <a
-                    href={webinar.joinLink}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-block px-4 py-2 bg-bca-gold text-black rounded-lg hover:bg-bca-gold/80 transition-colors text-sm font-medium"
-                  >
-                    Join Webinar
-                  </a>
-                )}
-              </div>
-            ))}
-          </div>
-          {webinars.length > 3 && (
-            <div className="text-center mt-6">
-              <Link to="/webinars" className="text-bca-cyan hover:text-bca-gold transition-colors">
-                View All Webinars →
-              </Link>
+                  {webinar.presenter && (
+                    <div className="text-bca-gray-400 text-sm mb-3">
+                      👨‍🏫 {webinar.presenter}
+                    </div>
+                  )}
+                  {webinar.joinLink && (
+                    <a
+                      href={webinar.joinLink}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-block px-4 py-2 bg-bca-gold text-black rounded-lg hover:bg-bca-gold/80 transition-colors text-sm font-medium"
+                    >
+                      Join Webinar
+                    </a>
+                  )}
+                </div>
+              ))}
             </div>
-          )}
-        </section>
-      )}
+            {webinars.length > 3 && (
+              <div className="text-center mt-6">
+                <a href="#webinars" className="text-bca-cyan hover:text-bca-gold transition-colors">
+                  View All Webinars →
+                </a>
+              </div>
+            )}
+          </>
+        ) : (
+          <div className="text-center py-12">
+            <div className="text-bca-gray-400 text-lg mb-4">No upcoming webinars at the moment</div>
+            <div className="text-bca-gray-500 text-sm">Check back soon for exciting webinars!</div>
+          </div>
+        )}
+      </section>
 
       <section id="courses" className="max-w-6xl mx-auto px-4 py-8 md:py-14">
         <h2 className="text-xl md:text-2xl font-semibold mb-4 md:mb-6">Featured Courses</h2>

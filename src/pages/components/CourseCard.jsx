@@ -1,9 +1,16 @@
 import { Link } from 'react-router-dom';
 
 export function CourseCard({ c }) {
+  const isMonthly = c.isMonthlyPayment;
   const price = c.priceCents || 0;
-  const original = Math.round(price * 1.8);
-  const discount = original > 0 ? Math.round((1 - price / original) * 100) : 0;
+  const monthlyFee = c.monthlyFeeCents || 0;
+  const duration = c.durationMonths || 0;
+  
+  // For monthly payment, calculate total price for discount calculation
+  const totalPrice = isMonthly ? monthlyFee * duration : price;
+  const original = Math.round(totalPrice * 1.8);
+  const discount = original > 0 ? Math.round((1 - totalPrice / original) * 100) : 0;
+  
   return (
     <Link to={`/course/${c.slug}`} className="rounded-2xl border border-white/10 bg-black/40 hover:border-[#00a1ff] transition-colors overflow-hidden">
       {c.imageUrl && (
@@ -13,9 +20,18 @@ export function CourseCard({ c }) {
         <div className="font-semibold leading-snug">{c.title}</div>
         <div className="text-white/70 text-sm mt-1 line-clamp-2">{c.shortDesc}</div>
         <div className="mt-3 flex items-center gap-3">
-          <span className="text-[#fdb000]">₹{(price/100).toFixed(0)}</span>
-          <span className="text-white/40 line-through">₹{(original/100).toFixed(0)}</span>
-          <span className="text-xs px-2 py-0.5 rounded bg-[#00a1ff]/20 text-[#00a1ff]">{discount}% off</span>
+          {isMonthly ? (
+            <>
+              <span className="text-[#fdb000]">₹{monthlyFee}/month</span>
+              <span className="text-white/70 text-xs">{duration} month course</span>
+            </>
+          ) : (
+            <>
+              <span className="text-[#fdb000]">₹{(price/100).toFixed(0)}</span>
+              <span className="text-white/40 line-through">₹{(original/100).toFixed(0)}</span>
+              <span className="text-xs px-2 py-0.5 rounded bg-[#00a1ff]/20 text-[#00a1ff]">{discount}% off</span>
+            </>
+          )}
         </div>
       </div>
     </Link>

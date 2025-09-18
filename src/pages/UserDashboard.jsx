@@ -7,10 +7,10 @@ import { RocketIcon, BrainIcon, UsersIcon, StarIcon, TrendingUpIcon, TargetIcon,
 
 const StatsSection = () => {
   const stats = [
-    { number: "2.5K+", label: "STUDENTS AND ALUMNI", icon: UsersIcon, color: "#00a1ff", glowColor: "rgba(0,161,255,0.3)" },
-    { number: "4.8/5", label: "PROGRAM RATING", icon: StarIcon, color: "#fdb000", glowColor: "rgba(253,176,0,0.3)" },
-    { number: "85%", label: "AVG. HIKE POST PROGRAM*", icon: TrendingUpIcon, color: "#00a1ff", glowColor: "rgba(0,161,255,0.3)" },
-    { number: "150+", label: "HIRING COMPANIES*", icon: TargetIcon, color: "#fdb000", glowColor: "rgba(253,176,0,0.3)" }
+    { number: "2.5K+", label: "STUDENTS AND ALUMNI", icon: UsersIcon, color: "#00a1ff" },
+    { number: "4.8/5", label: "PROGRAM RATING", icon: StarIcon, color: "#fdb000" },
+    { number: "85%", label: "AVG. HIKE POST PROGRAM*", icon: TrendingUpIcon, color: "#00a1ff" },
+    { number: "150+", label: "HIRING COMPANIES*", icon: TargetIcon, color: "#fdb000" }
   ];
 
   return (
@@ -48,11 +48,11 @@ const StatsSection = () => {
               <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
               <div className="relative z-10">
                 <div className="mb-4 flex justify-center">
-                  <div className="p-3 rounded-full bg-gradient-to-br from-cyan-500/20 to-purple-500/20 group-hover:from-cyan-500/30 group-hover:to-purple-500/30 transition-all duration-300 group-hover:shadow-lg" style={{ boxShadow: `0 0 20px ${stat.glowColor}` }}>
+                  <div className="p-3 rounded-full bg-gradient-to-br from-cyan-500/20 to-purple-500/20 group-hover:from-cyan-500/30 group-hover:to-purple-500/30 transition-all duration-300 group-hover:shadow-lg">
                     <stat.icon className="w-8 h-8" color={stat.color} />
                   </div>
                 </div>
-                <div className="text-3xl md:text-4xl font-bold text-bca-gold mb-2 group-hover:text-cyan-400 transition-colors duration-300" style={{ textShadow: `0 0 10px ${stat.glowColor}` }}>
+                <div className="text-3xl md:text-4xl font-bold text-bca-gold mb-2 group-hover:text-cyan-400 transition-colors duration-300">
                   {stat.number}
                 </div>
                 <div className="text-sm text-bca-gray-300 uppercase tracking-wider group-hover:text-cyan-200 transition-colors duration-300">
@@ -386,16 +386,32 @@ export default function UserDashboard() {
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.3 + index * 0.1 }}
-                      className="bg-gradient-to-br from-bca-gray-800/80 to-bca-gray-900/80 rounded-xl p-6 border border-bca-gray-700/50 hover:border-cyan-500/50 transition-all duration-300 group relative overflow-hidden backdrop-blur-sm"
+                      className="bg-gradient-to-br from-bca-gray-800/80 to-bca-gray-900/80 rounded-xl border border-bca-gray-700/50 hover:border-cyan-500/50 transition-all duration-300 group relative overflow-hidden backdrop-blur-sm"
                     >
                       <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                      <div className="relative z-10">
+                      
+                      {/* Course Poster */}
+                      {course.imageUrl && (
+                        <div className="relative h-48 overflow-hidden">
+                          <img 
+                            src={course.imageUrl} 
+                            alt={course.title} 
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+                        </div>
+                      )}
+                      
+                      <div className="relative z-10 p-6">
                         <div className="flex items-start gap-3 mb-4">
                           <div className="p-2 rounded-lg bg-gradient-to-br from-cyan-500/20 to-purple-500/20 border border-cyan-500/30 group-hover:border-cyan-400/50 transition-all duration-300" style={{ boxShadow: '0 0 15px rgba(0,161,255,0.2)' }}>
                             <AwardIcon className="w-6 h-6 text-cyan-400" />
                           </div>
                           <div className="flex-1">
                             <h3 className="text-xl font-bold text-white group-hover:text-cyan-300 transition-colors duration-300">{course.title}</h3>
+                            {course.shortDesc && (
+                              <p className="text-bca-gray-300 text-sm mt-2 line-clamp-2">{course.shortDesc}</p>
+                            )}
                             {course.isMonthlyPayment && (
                               <p className="text-sm text-bca-gray-400 mt-1">
                                 Monthly Payment Course
@@ -404,56 +420,6 @@ export default function UserDashboard() {
                           </div>
                         </div>
 
-                        {/* Payment Status */}
-                        {paymentStatus.type === 'monthly' && (
-                          <div className="mb-4 p-3 rounded-lg bg-bca-gray-700/50 border border-bca-gray-600/50">
-                            <div className="flex items-center justify-between mb-2">
-                              <span className="text-sm text-bca-gray-300">Progress</span>
-                              <span className="text-sm font-medium text-bca-gold">
-                                {paymentStatus.paidMonths}/{paymentStatus.totalMonths} months
-                              </span>
-                            </div>
-                            <div className="w-full bg-bca-gray-600 rounded-full h-2 mb-2">
-                              <div 
-                                className="bg-gradient-to-r from-cyan-500 to-purple-500 h-2 rounded-full transition-all duration-300"
-                                style={{ width: `${(paymentStatus.paidMonths / paymentStatus.totalMonths) * 100}%` }}
-                              ></div>
-                            </div>
-                            <div className="flex items-center justify-between text-xs">
-                              <span className={`px-2 py-1 rounded-full font-medium ${
-                                paymentStatus.status === 'completed' ? 'bg-green-500/20 text-green-400' :
-                                paymentStatus.status === 'active' ? 'bg-blue-500/20 text-blue-400' :
-                                paymentStatus.status === 'overdue' ? 'bg-red-500/20 text-red-400' :
-                                paymentStatus.status === 'pending' ? 'bg-yellow-500/20 text-yellow-400' :
-                                'bg-gray-500/20 text-gray-400'
-                              }`}>
-                                {paymentStatus.status === 'completed' ? 'Completed' :
-                                 paymentStatus.status === 'active' ? 'Active' :
-                                 paymentStatus.status === 'overdue' ? 'Payment Overdue' :
-                                 paymentStatus.status === 'pending' ? 'Payment Pending' :
-                                 'Not Enrolled'}
-                              </span>
-                              <span className="text-bca-gray-400">
-                                ₹{paymentStatus.monthlyFee}/month
-                              </span>
-                            </div>
-                          </div>
-                        )}
-
-                        {/* Next Payment Info */}
-                        {paymentStatus.nextPayment && (
-                          <div className="mb-4 p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/30">
-                            <div className="flex items-center gap-2 mb-1">
-                              <span className="text-yellow-400 text-sm font-medium">Next Payment Due</span>
-                            </div>
-                            <p className="text-yellow-300 text-sm">
-                              Month {paymentStatus.nextPayment.monthNumber} - ₹{paymentStatus.nextPayment.amountCents}
-                            </p>
-                            <p className="text-yellow-400/80 text-xs">
-                              Due: {new Date(paymentStatus.nextPayment.dueDate).toLocaleDateString()}
-                            </p>
-                          </div>
-                        )}
 
                         <div className="flex items-center justify-between">
                           <span className={`font-semibold ${
