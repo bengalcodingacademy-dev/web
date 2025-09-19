@@ -74,21 +74,47 @@ const TypewriterText = ({
     }
   }, [shouldStart, hasStarted]);
 
-  // Split text into lines for better display
+  // Split text into lines for better display - responsive approach
   const renderText = () => {
-    if (displayText.length <= 19) {
+    // Smart break points that work across all screen sizes
+    const breakPoints = {
+      mobile: 12,    // "Become a job" (12 chars) - fits mobile
+      tablet: 19,    // "Become a job-ready" (19 chars) - fits tablet
+      desktop: 25    // "Become a job-ready developer" (25 chars) - fits desktop
+    };
+
+    // Use a more conservative approach for mobile-first design
+    let breakPoint = breakPoints.mobile;
+    
+    // Progressive enhancement based on text length
+    if (displayText.length > breakPoints.mobile && displayText.length <= breakPoints.tablet) {
+      breakPoint = breakPoints.mobile; // Keep mobile break for better mobile experience
+    } else if (displayText.length > breakPoints.tablet) {
+      breakPoint = breakPoints.tablet; // Use tablet break for longer text
+    }
+
+    if (displayText.length <= breakPoint) {
+      // First line only - with proper spacing
       return (
-        <div>
-          <div>{displayText}</div>
+        <div className="min-h-[3rem] flex flex-col justify-center">
+          <div className="whitespace-nowrap overflow-hidden">
+            {displayText}
+            <span className="animate-pulse">|</span>
+          </div>
+          <div className="h-6"></div> {/* Reserve space for second line */}
         </div>
       );
     } else {
-      const firstLine = "Become a job-ready";
-      const secondLine = displayText.substring(19);
+      // Split into two lines with proper mobile handling
+      const firstLine = displayText.substring(0, breakPoint);
+      const secondLine = displayText.substring(breakPoint);
       return (
-        <div>
-          <div>{firstLine}</div>
-          <div>{secondLine}</div>
+        <div className="min-h-[3rem] flex flex-col justify-center">
+          <div className="whitespace-nowrap overflow-hidden">{firstLine}</div>
+          <div className="whitespace-nowrap overflow-hidden">
+            {secondLine}
+            <span className="animate-pulse">|</span>
+          </div>
         </div>
       );
     }
