@@ -263,9 +263,9 @@ export default function CourseAccess() {
         <div className="space-y-8">
           <Shimmer type="card" height="200px" />
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <Shimmer type="card" height="300px" />
-            <Shimmer type="card" height="300px" />
-            <Shimmer type="card" height="300px" />
+            <Shimmer type="card" />
+            <Shimmer type="card" />
+            <Shimmer type="card" />
           </div>
         </div>
       </div>

@@ -41,13 +41,13 @@ export default function Profile() {
     return (
       <div className="max-w-4xl mx-auto px-4 py-10">
         <div className="space-y-6">
-          <Shimmer type="card" height="120px" />
+          <Shimmer type="card" height="200px" />
           <div className="grid sm:grid-cols-3 gap-4">
             <Shimmer type="stats" />
             <Shimmer type="stats" />
             <Shimmer type="stats" />
           </div>
-          <Shimmer type="card" height="100px" />
+          <Shimmer type="form" />
           <Shimmer type="card" height="150px" />
         </div>
       </div>

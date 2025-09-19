@@ -38,10 +38,6 @@ api.interceptors.response.use(
           window.location.pathname === '/register' ||
           window.location.pathname === '/forgot-password' ||
           window.location.pathname === '/reset-password' ||
-          window.location.pathname === '/privacy-policy' ||
-          window.location.pathname === '/terms-and-conditions' ||
-          window.location.pathname === '/cancellation-refund' ||
-          window.location.pathname === '/shipping-delivery' ||
           window.location.pathname.startsWith('/course/')) {
         return Promise.reject(err);
       }

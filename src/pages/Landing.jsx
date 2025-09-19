@@ -153,9 +153,7 @@ export default function Landing() {
       {/* Upcoming Webinars Section */}
       <section id="webinars" className="max-w-6xl mx-auto px-4 py-8 md:py-14">
         <h2 className="text-xl md:text-2xl font-semibold mb-4 md:mb-6">Upcoming Webinars</h2>
-        {loading ? (
-          <Shimmer type="card" count={3} />
-        ) : webinars.length > 0 ? (
+        {webinars.length > 0 ? (
           <>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
               {webinars.slice(0, 3).map((webinar, i) => (

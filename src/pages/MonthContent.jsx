@@ -100,9 +100,7 @@ export default function MonthContent() {
       <div className="min-h-screen bg-bca-gray-900 p-6">
         <div className="max-w-4xl mx-auto">
           <div className="space-y-6">
-            <Shimmer type="card" height="200px" />
-            <Shimmer type="card" height="150px" />
-            <Shimmer type="card" height="180px" />
+            <Shimmer type="card" count={3} />
           </div>
         </div>
       </div>

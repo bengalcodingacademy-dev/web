@@ -1,27 +1,27 @@
-import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
-import { useState, useEffect } from 'react';
-import { AuthProvider, useAuth } from './lib/authContext';
-import Layout from './components/Layout';
-import LoadingAnimation from './components/LoadingAnimation';
-import Shimmer from './components/Shimmer';
-import Landing from './pages/Landing';
-import UserDashboard from './pages/UserDashboard';
-import Batches from './pages/Batches';
-import CourseDetail from './pages/CourseDetail';
-import Login from './pages/Login';
-import Register from './pages/Register';
-import Profile from './pages/Profile';
-import Purchases from './pages/Purchases';
-import CourseAccess from './pages/CourseAccess';
-import MonthContent from './pages/MonthContent';
-import Webinars from './pages/Webinars';
-import Announcements from './pages/Announcements';
-import ForgotPassword from './pages/ForgotPassword';
-import ResetPassword from './pages/ResetPassword';
-import PrivacyPolicy from './pages/PrivacyPolicy';
-import TermsAndConditions from './pages/TermsAndConditions';
-import CancellationRefund from './pages/CancellationRefund';
-import ShippingDelivery from './pages/ShippingDelivery';
+import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { AuthProvider, useAuth } from "./lib/authContext";
+import Layout from "./components/Layout";
+import LoadingAnimation from "./components/LoadingAnimation";
+import Shimmer from "./components/Shimmer";
+import Landing from "./pages/Landing";
+import UserDashboard from "./pages/UserDashboard";
+import Batches from "./pages/Batches";
+import CourseDetail from "./pages/CourseDetail";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import Profile from "./pages/Profile";
+import Purchases from "./pages/Purchases";
+import CourseAccess from "./pages/CourseAccess";
+import MonthContent from "./pages/MonthContent";
+import Webinars from "./pages/Webinars";
+import Announcements from "./pages/Announcements";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
+import TermsConditions from "./pages/TermsConditions";
+import CancellationRefund from "./pages/CancellationRefund";
+import ShippingDelivery from "./pages/ShippingDelivery";
+import MyPrivacyPolicy from "./pages/MyPrivacyPolicy";
 
 function Protected({ children }) {
   const { user, loading } = useAuth();
@@ -44,49 +44,124 @@ export default function App() {
   const [showLoadingAnimation, setShowLoadingAnimation] = useState(true);
   const [animationKey, setAnimationKey] = useState(0);
 
-  // Animation runs every time the app loads (no localStorage check)
+  // Show animation only on first visit
+  useEffect(() => {
+    const hasVisited = localStorage.getItem("visited");
+
+    if (hasVisited) {
+      setShowLoadingAnimation(false);
+    } else {
+      localStorage.setItem("visited", "true");
+      setShowLoadingAnimation(true);
+    }
+  }, []);
+
   const handleAnimationComplete = () => {
     setShowLoadingAnimation(false);
   };
 
-  // Function to replay animation (can be called from anywhere)
-  const replayAnimation = () => {
+  // Optional: allow replay from anywhere
+  window.replayBCAAnimation = () => {
     setShowLoadingAnimation(true);
-    setAnimationKey(prev => prev + 1); // Force remount of animation component
+    setAnimationKey((prev) => prev + 1);
   };
-
-  // Make replayAnimation available globally
-  window.replayBCAAnimation = replayAnimation;
 
   return (
     <AuthProvider navigate={navigate}>
-      {showLoadingAnimation && (
-        <LoadingAnimation key={animationKey} onComplete={handleAnimationComplete} />
+      {showLoadingAnimation ? (
+        <LoadingAnimation
+          key={animationKey}
+          onComplete={handleAnimationComplete}
+        />
+      ) : (
+        <Layout>
+          <Routes>
+            {/* Public Routes */}
+            <Route path="/" element={<Landing />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
+            <Route path="/my-privacy-policy" element={<MyPrivacyPolicy />} />
+            <Route path="/terms-conditions" element={<TermsConditions />} />
+            <Route
+              path="/cancellation-refund"
+              element={<CancellationRefund />}
+            />
+            <Route path="/shipping-delivery" element={<ShippingDelivery />} />
+
+            {/* Protected Routes */}
+            <Route
+              path="/dashboard"
+              element={
+                <Protected>
+                  <UserDashboard />
+                </Protected>
+              }
+            />
+            <Route
+              path="/batches"
+              element={
+                <Protected>
+                  <Batches />
+                </Protected>
+              }
+            />
+            <Route path="/course/:slug" element={<CourseDetail />} />
+            <Route
+              path="/profile"
+              element={
+                <Protected>
+                  <Profile />
+                </Protected>
+              }
+            />
+            <Route
+              path="/purchases"
+              element={
+                <Protected>
+                  <Purchases />
+                </Protected>
+              }
+            />
+            <Route
+              path="/course/:courseId/access"
+              element={
+                <Protected>
+                  <CourseAccess />
+                </Protected>
+              }
+            />
+            <Route
+              path="/course/:courseId/month/:monthNumber"
+              element={
+                <Protected>
+                  <MonthContent />
+                </Protected>
+              }
+            />
+            <Route
+              path="/webinars"
+              element={
+                <Protected>
+                  <Webinars />
+                </Protected>
+              }
+            />
+            <Route
+              path="/announcements"
+              element={
+                <Protected>
+                  <Announcements />
+                </Protected>
+              }
+            />
+
+            {/* Fallback */}
+            <Route path="*" element={<Navigate to="/" />} />
+          </Routes>
+        </Layout>
       )}
-      <Layout>
-        <Routes>
-          <Route path="/" element={<Landing />} />
-          <Route path="/dashboard" element={<Protected><UserDashboard /></Protected>} />
-          <Route path="/batches" element={<Protected><Batches /></Protected>} />
-          <Route path="/course/:slug" element={<CourseDetail />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/forgot-password" element={<ForgotPassword />} />
-          <Route path="/reset-password" element={<ResetPassword />} />
-          <Route path="/profile" element={<Protected><Profile /></Protected>} />
-          <Route path="/purchases" element={<Protected><Purchases /></Protected>} />
-          <Route path="/course/:courseId/access" element={<Protected><CourseAccess /></Protected>} />
-          <Route path="/course/:courseId/month/:monthNumber" element={<Protected><MonthContent /></Protected>} />
-          <Route path="/webinars" element={<Protected><Webinars /></Protected>} />
-          <Route path="/announcements" element={<Protected><Announcements /></Protected>} />
-          {/* Legal Pages - Open Routes */}
-          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-          <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
-          <Route path="/cancellation-refund" element={<CancellationRefund />} />
-          <Route path="/shipping-delivery" element={<ShippingDelivery />} />
-          <Route path="*" element={<Navigate to="/" />} />
-        </Routes>
-      </Layout>
     </AuthProvider>
   );
 }
