@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 export default function LoadingAnimation({ onComplete }) {
   const [showAnimation, setShowAnimation] = useState(true);
   const [videoLoaded, setVideoLoaded] = useState(false);
-  const [soundEnabled, setSoundEnabled] = useState(true);
+  const [videoRef, setVideoRef] = useState(null);
 
   useEffect(() => {
     // Reset states when component mounts
@@ -23,13 +23,48 @@ export default function LoadingAnimation({ onComplete }) {
     return () => clearTimeout(timer);
   }, [onComplete]);
 
-  const handleVideoLoad = () => {
+  // Force video to play when component mounts
+  useEffect(() => {
+    if (videoRef) {
+      const playVideo = async () => {
+        try {
+          await videoRef.play();
+        } catch (error) {
+          console.log('Autoplay prevented, trying again...');
+          // Retry after a short delay
+          setTimeout(async () => {
+            try {
+              await videoRef.play();
+            } catch (retryError) {
+              console.log('Video autoplay failed:', retryError);
+              // Final fallback - try to play after user interaction
+              document.addEventListener('click', async () => {
+                try {
+                  await videoRef.play();
+                } catch (finalError) {
+                  console.log('Final video play attempt failed:', finalError);
+                }
+              }, { once: true });
+            }
+          }, 100);
+        }
+      };
+      playVideo();
+    }
+  }, [videoRef]);
+
+  const handleVideoLoad = async () => {
     setVideoLoaded(true);
+    // Ensure video plays when loaded
+    if (videoRef) {
+      try {
+        await videoRef.play();
+      } catch (error) {
+        console.log('Video play failed on load:', error);
+      }
+    }
   };
 
-  const toggleSound = () => {
-    setSoundEnabled(!soundEnabled);
-  };
 
   return (
     <AnimatePresence>
@@ -40,28 +75,6 @@ export default function LoadingAnimation({ onComplete }) {
           transition={{ duration: 0.5 }}
           className="fixed inset-0 z-[9999] bg-bca-black flex items-center justify-center overflow-hidden"
         >
-          {/* Sound Toggle Button */}
-          <motion.button
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.3, duration: 0.5 }}
-            onClick={toggleSound}
-            className="absolute top-4 right-4 z-30 p-3 rounded-full bg-bca-gray-800/80 border border-bca-cyan/30 hover:border-bca-cyan/50 transition-all duration-300 backdrop-blur-sm"
-            style={{
-              boxShadow: '0 0 20px rgba(0, 195, 255, 0.3)'
-            }}
-          >
-            {soundEnabled ? (
-              <svg className="w-6 h-6 text-bca-cyan" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
-              </svg>
-            ) : (
-              <svg className="w-6 h-6 text-bca-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2" />
-              </svg>
-            )}
-          </motion.button>
           {/* Minimal Neon Background Effects */}
           <div className="absolute inset-0">
             {/* Animated gradient background */}
@@ -124,16 +137,16 @@ export default function LoadingAnimation({ onComplete }) {
             >
               {/* Video */}
               <video
+                ref={setVideoRef}
                 autoPlay
                 loop
                 playsInline
-                muted={!soundEnabled}
+                muted
                 onLoadedData={handleVideoLoad}
                 className="w-full h-auto"
                 style={{
                   filter: 'brightness(1.1) contrast(1.1)'
                 }}
-                volume={0.7}
               >
                 <source src="/BCA_Animation.mp4" type="video/mp4" />
                 Your browser does not support the video tag.

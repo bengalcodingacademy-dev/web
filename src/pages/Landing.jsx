@@ -2,7 +2,8 @@ import { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { api } from '../lib/api';
 import { CourseCard } from './components/CourseCard';
-import { SkeletonCourseCard } from '../components/Skeleton';
+import Shimmer from '../components/Shimmer';
+import TypewriterText from '../components/TypewriterText';
 
 const faqs = [
   { q: 'How do I pay with UPI?', a: 'Buy Now on a course, enter your UPI mobile and transaction ID, and wait for admin approval.' },
@@ -21,6 +22,7 @@ export default function Landing() {
   const [testimonials, setTestimonials] = useState([]);
   const [webinars, setWebinars] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [loadingAnimationComplete, setLoadingAnimationComplete] = useState(false);
   const location = useLocation();
   
   useEffect(() => {
@@ -59,6 +61,16 @@ export default function Landing() {
       }
     }
   }, [location.hash]);
+
+  // Start typewriter animation after loading animation completes
+  useEffect(() => {
+    // Check if we're on the landing page and loading animation should be complete
+    const timer = setTimeout(() => {
+      setLoadingAnimationComplete(true);
+    }, 4000); // 3 seconds for loading animation + 1 second buffer
+
+    return () => clearTimeout(timer);
+  }, []);
   return (
     <div>
       <section className="relative overflow-hidden">
@@ -75,13 +87,51 @@ export default function Landing() {
                 }}
               />
             </div>
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight">
-              Become a job-ready developer
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight text-white">
+              <div className="relative">
+                {/* Invisible placeholder to reserve space for 2 lines */}
+                <div className="invisible">
+                  <div>Become a job-ready</div>
+                  <div>developer in 6 months</div>
+                </div>
+                {/* Actual typewriter text positioned absolutely */}
+                <div className="absolute top-0 left-0">
+                  <TypewriterText 
+                    text="Become a job-ready developer in 6 months"
+                    speed={80}
+                    deleteSpeed={40}
+                    pauseTime={2000}
+                    shouldStart={loadingAnimationComplete}
+                    loop={true}
+                    className="text-white"
+                  />
+                </div>
+              </div>
             </h1>
             <p className="mt-3 md:mt-4 text-white/80 max-w-2xl mx-auto md:mx-0 text-sm md:text-base">বাংলায় কাটিং এজ টেকনোলজি শিখুন আর ওয়ার্ল্ড ক্লাস প্রজেক্ট তৈরি করুন</p>
             <div className="mt-6 md:mt-8 flex flex-col sm:flex-row gap-3 justify-center md:justify-start">
-              <Link to="/batches" className="px-4 md:px-5 py-2 md:py-3 rounded-xl bg-[#fdb000] text-black shadow-[0_0_40px_#fdb000] text-sm md:text-base text-center">Explore Batches</Link>
-              <Link to="/webinars" className="px-4 md:px-5 py-2 md:py-3 rounded-xl border border-white/20 text-white text-sm md:text-base text-center">Free Webinars</Link>
+              <button 
+                onClick={() => {
+                  const element = document.getElementById('courses');
+                  if (element) {
+                    element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                  }
+                }}
+                className="px-4 md:px-5 py-2 md:py-3 rounded-xl bg-[#fdb000] text-black shadow-[0_0_40px_#fdb000] text-sm md:text-base text-center hover:bg-[#fdb000]/90 transition-colors"
+              >
+                Explore Batches
+              </button>
+              <button 
+                onClick={() => {
+                  const element = document.getElementById('webinars');
+                  if (element) {
+                    element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                  }
+                }}
+                className="px-4 md:px-5 py-2 md:py-3 rounded-xl border border-white/20 text-white text-sm md:text-base text-center hover:border-white/40 hover:bg-white/5 transition-all"
+              >
+                Free Webinars
+              </button>
             </div>
           </div>
           <div className="flex justify-center order-first md:order-last">
@@ -103,7 +153,9 @@ export default function Landing() {
       {/* Upcoming Webinars Section */}
       <section id="webinars" className="max-w-6xl mx-auto px-4 py-8 md:py-14">
         <h2 className="text-xl md:text-2xl font-semibold mb-4 md:mb-6">Upcoming Webinars</h2>
-        {webinars.length > 0 ? (
+        {loading ? (
+          <Shimmer type="card" count={3} />
+        ) : webinars.length > 0 ? (
           <>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
               {webinars.slice(0, 3).map((webinar, i) => (
@@ -171,7 +223,7 @@ export default function Landing() {
         <h2 className="text-xl md:text-2xl font-semibold mb-4 md:mb-6">Featured Courses</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
           {loading ? (
-            Array.from({ length: 3 }).map((_, i) => <SkeletonCourseCard key={i} />)
+            <Shimmer type="card" count={3} />
           ) : (
             courses.slice(0,3).map(c => <CourseCard key={c.id} c={c} />)
           )}
@@ -182,13 +234,7 @@ export default function Landing() {
         <h2 className="text-xl md:text-2xl font-semibold mb-4 md:mb-6">What learners say</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
           {loading ? (
-            Array.from({ length: 3 }).map((_, i) => (
-              <div key={i} className="rounded-xl border border-white/10 p-5 animate-pulse">
-                <div className="h-4 bg-bca-gray-700 rounded w-3/4 mb-4"></div>
-                <div className="h-3 bg-bca-gray-700 rounded w-1/2 mb-2"></div>
-                <div className="h-3 bg-bca-gray-700 rounded w-2/3"></div>
-              </div>
-            ))
+            <Shimmer type="card" count={3} />
           ) : testimonials.length > 0 ? (
             testimonials.slice(0, 3).map((t, i) => (
               <div key={i} className="rounded-xl border border-white/10 p-5">

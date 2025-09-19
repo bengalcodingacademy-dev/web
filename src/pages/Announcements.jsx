@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { api } from '../lib/api';
+import Shimmer from '../components/Shimmer';
 
 export default function Announcements() {
   const [list, setList] = useState([]);
@@ -37,13 +38,7 @@ export default function Announcements() {
     return (
       <div className="max-w-6xl mx-auto px-4 py-10">
         <div className="grid gap-4">
-          {Array.from({ length: 3 }).map((_, i) => (
-            <div key={i} className="rounded-xl border border-white/10 p-4 animate-pulse">
-              <div className="h-4 bg-bca-gray-700 rounded w-3/4 mb-2"></div>
-              <div className="h-3 bg-bca-gray-700 rounded w-1/2 mb-2"></div>
-              <div className="h-3 bg-bca-gray-700 rounded w-2/3"></div>
-            </div>
-          ))}
+          <Shimmer type="card" count={3} />
         </div>
       </div>
     );

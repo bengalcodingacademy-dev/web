@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { api } from '../lib/api';
-import { SkeletonCard } from '../components/Skeleton';
+import Shimmer from '../components/Shimmer';
 
 export default function Webinars() {
   const [items, setItems] = useState([]);
@@ -24,7 +24,7 @@ export default function Webinars() {
   if (loading) {
     return (
       <div className="max-w-6xl mx-auto px-4 py-10 grid gap-4">
-        {Array.from({ length: 3 }).map((_, i) => <SkeletonCard key={i} />)}
+        <Shimmer type="card" count={3} />
       </div>
     );
   }

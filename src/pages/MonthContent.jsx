@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { api } from '../lib/api';
-import { SkeletonCard } from '../components/Skeleton';
+import Shimmer from '../components/Shimmer';
 
 const VideoIcon = ({ className }) => (
   <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -100,9 +100,9 @@ export default function MonthContent() {
       <div className="min-h-screen bg-bca-gray-900 p-6">
         <div className="max-w-4xl mx-auto">
           <div className="space-y-6">
-            {Array.from({ length: 3 }).map((_, i) => (
-              <SkeletonCard key={i} />
-            ))}
+            <Shimmer type="card" height="200px" />
+            <Shimmer type="card" height="150px" />
+            <Shimmer type="card" height="180px" />
           </div>
         </div>
       </div>

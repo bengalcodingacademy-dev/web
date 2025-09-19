@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../lib/authContext';
 import { useState, useEffect } from 'react';
 import { api } from '../lib/api';
+import Footer from './Footer';
 
 export default function Layout({ children }) {
   const { user, logout } = useAuth();
@@ -208,7 +209,7 @@ export default function Layout({ children }) {
         )}
       </header>
       <main>{children}</main>
-      <footer className="border-t border-white/10 py-8 text-center text-xs text-white/60">© {new Date().getFullYear()} Bengal Coding Academy</footer>
+      <Footer />
 
       {/* Logout Confirmation Modal */}
       {showLogoutConfirm && (

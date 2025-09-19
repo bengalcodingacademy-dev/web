@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { api } from '../lib/api';
-import { SkeletonCard } from '../components/Skeleton';
+import Shimmer from '../components/Shimmer';
 
 const BookOpenIcon = ({ className }) => (
   <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -261,11 +261,11 @@ export default function CourseAccess() {
     return (
       <div className="max-w-6xl mx-auto px-4 py-8">
         <div className="space-y-8">
-          <SkeletonCard />
+          <Shimmer type="card" height="200px" />
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <SkeletonCard />
-            <SkeletonCard />
-            <SkeletonCard />
+            <Shimmer type="card" height="300px" />
+            <Shimmer type="card" height="300px" />
+            <Shimmer type="card" height="300px" />
           </div>
         </div>
       </div>

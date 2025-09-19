@@ -3,6 +3,7 @@ import { useNavigate, useParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { api } from '../lib/api';
 import { useAuth } from '../lib/authContext';
+import Shimmer from '../components/Shimmer';
 
 // Custom Icons
 const BookOpenIcon = ({ className }) => (
@@ -75,11 +76,7 @@ export default function CourseDetail() {
 
   if (!course) return (
     <div className="max-w-6xl mx-auto px-4 py-10">
-      <div className="animate-pulse">
-        <div className="h-8 bg-bca-gray-700 rounded mb-4"></div>
-        <div className="h-4 bg-bca-gray-700 rounded mb-2"></div>
-        <div className="h-4 bg-bca-gray-700 rounded w-3/4"></div>
-      </div>
+      <Shimmer type="card" height="400px" />
     </div>
   );
 

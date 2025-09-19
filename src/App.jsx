@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { AuthProvider, useAuth } from './lib/authContext';
 import Layout from './components/Layout';
 import LoadingAnimation from './components/LoadingAnimation';
+import Shimmer from './components/Shimmer';
 import Landing from './pages/Landing';
 import UserDashboard from './pages/UserDashboard';
 import Batches from './pages/Batches';
@@ -17,13 +18,17 @@ import Webinars from './pages/Webinars';
 import Announcements from './pages/Announcements';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
+import PrivacyPolicy from './pages/PrivacyPolicy';
+import TermsAndConditions from './pages/TermsAndConditions';
+import CancellationRefund from './pages/CancellationRefund';
+import ShippingDelivery from './pages/ShippingDelivery';
 
 function Protected({ children }) {
   const { user, loading } = useAuth();
   if (loading) {
     return (
       <div className="min-h-screen bg-bca-black flex items-center justify-center">
-        <div className="text-bca-gold text-xl">Loading...</div>
+        <Shimmer type="text" height="60px" width="200px" className="mx-auto" />
       </div>
     );
   }
@@ -74,6 +79,11 @@ export default function App() {
           <Route path="/course/:courseId/month/:monthNumber" element={<Protected><MonthContent /></Protected>} />
           <Route path="/webinars" element={<Protected><Webinars /></Protected>} />
           <Route path="/announcements" element={<Protected><Announcements /></Protected>} />
+          {/* Legal Pages - Open Routes */}
+          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+          <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
+          <Route path="/cancellation-refund" element={<CancellationRefund />} />
+          <Route path="/shipping-delivery" element={<ShippingDelivery />} />
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </Layout>

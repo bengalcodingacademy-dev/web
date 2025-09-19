@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { api } from '../lib/api';
-import { SkeletonCard } from '../components/Skeleton';
+import Shimmer from '../components/Shimmer';
 
 export default function Profile() {
   const [summary, setSummary] = useState(null);
@@ -41,14 +41,14 @@ export default function Profile() {
     return (
       <div className="max-w-4xl mx-auto px-4 py-10">
         <div className="space-y-6">
-          <SkeletonCard />
+          <Shimmer type="card" height="120px" />
           <div className="grid sm:grid-cols-3 gap-4">
-            <SkeletonCard />
-            <SkeletonCard />
-            <SkeletonCard />
+            <Shimmer type="stats" />
+            <Shimmer type="stats" />
+            <Shimmer type="stats" />
           </div>
-          <SkeletonCard />
-          <SkeletonCard />
+          <Shimmer type="card" height="100px" />
+          <Shimmer type="card" height="150px" />
         </div>
       </div>
     );

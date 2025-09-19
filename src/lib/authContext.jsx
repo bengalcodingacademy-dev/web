@@ -13,6 +13,10 @@ function isPublicPage() {
          pathname === '/register' ||
          pathname === '/forgot-password' ||
          pathname === '/reset-password' ||
+         pathname === '/privacy-policy' ||
+         pathname === '/terms-and-conditions' ||
+         pathname === '/cancellation-refund' ||
+         pathname === '/shipping-delivery' ||
          pathname.startsWith('/course/');
 }
 

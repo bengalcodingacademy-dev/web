@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { api } from '../lib/api';
-import { SkeletonCard } from '../components/Skeleton';
+import Shimmer from '../components/Shimmer';
 
 const CalendarIcon = ({ className }) => (
   <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -32,10 +32,10 @@ export default function Purchases() {
     return (
       <div className="max-w-6xl mx-auto px-4 py-8">
         <div className="space-y-8">
-          <SkeletonCard />
+          <Shimmer type="stats" height="120px" />
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <SkeletonCard />
-            <SkeletonCard />
+            <Shimmer type="card" />
+            <Shimmer type="card" />
           </div>
         </div>
       </div>

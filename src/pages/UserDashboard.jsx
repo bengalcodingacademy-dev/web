@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { api } from '../lib/api';
-import { SkeletonCard, SkeletonCourseCard } from '../components/Skeleton';
+import Shimmer from '../components/Shimmer';
 import { RocketIcon, BrainIcon, UsersIcon, StarIcon, TrendingUpIcon, TargetIcon, ShieldIcon, ZapIcon, BookOpenIcon, CalendarIcon, AwardIcon } from '../components/DashboardIcons';
 
 const StatsSection = () => {
@@ -326,10 +326,10 @@ export default function UserDashboard() {
     return (
       <div className="max-w-6xl mx-auto px-4 py-8">
         <div className="space-y-8">
-          <SkeletonCard />
+          <Shimmer type="stats" height="120px" />
           <div className="grid md:grid-cols-2 gap-6">
-            <SkeletonCourseCard />
-            <SkeletonCourseCard />
+            <Shimmer type="card" />
+            <Shimmer type="card" />
           </div>
         </div>
       </div>

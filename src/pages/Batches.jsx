@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { api } from '../lib/api';
 import { CourseCard } from './components/CourseCard';
-import { SkeletonCourseCard } from '../components/Skeleton';
+import Shimmer from '../components/Shimmer';
 
 export default function Batches() {
   const [courses, setCourses] = useState([]);
@@ -26,7 +26,7 @@ export default function Batches() {
     <div className="max-w-6xl mx-auto px-4 py-10">
       <div className="grid md:grid-cols-3 gap-6">
         {loading ? (
-          Array.from({ length: 6 }).map((_, i) => <SkeletonCourseCard key={i} />)
+          <Shimmer type="card" count={6} />
         ) : (
           courses.map(c => <CourseCard key={c.id} c={c} />)
         )}
