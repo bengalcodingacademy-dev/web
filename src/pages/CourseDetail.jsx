@@ -3,6 +3,7 @@ import { useNavigate, useParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { api } from '../lib/api';
 import { useAuth } from '../lib/authContext';
+import Shimmer from '../components/Shimmer';
 
 // Custom Icons
 const BookOpenIcon = ({ className }) => (
@@ -38,6 +39,7 @@ const CheckCircleIcon = ({ className }) => (
 export default function CourseDetail() {
   const { slug } = useParams();
   const [course, setCourse] = useState(null);
+  const [purchases, setPurchases] = useState([]);
   const [open, setOpen] = useState(false);
   const [mobile, setMobile] = useState('');
   const [txn, setTxn] = useState('');
@@ -49,22 +51,50 @@ export default function CourseDetail() {
   const { user } = useAuth();
 
   useEffect(() => { 
-    api.get(`/courses/${slug}`).then(r => setCourse(r.data)); 
-  }, [slug]);
+    const loadData = async () => {
+      try {
+        const courseRes = await api.get(`/courses/${slug}`);
+        setCourse(courseRes.data);
+        
+        // Load purchases if user is logged in
+        if (user) {
+          try {
+            const purchasesRes = await api.get('/purchases/me');
+            setPurchases(purchasesRes.data);
+          } catch (error) {
+            console.error('Error loading purchases:', error);
+            setPurchases([]);
+          }
+        }
+      } catch (error) {
+        console.error('Error loading course:', error);
+      }
+    };
+    
+    loadData();
+  }, [slug, user]);
 
   if (!course) return (
     <div className="max-w-6xl mx-auto px-4 py-10">
-      <div className="animate-pulse">
-        <div className="h-8 bg-bca-gray-700 rounded mb-4"></div>
-        <div className="h-4 bg-bca-gray-700 rounded mb-2"></div>
-        <div className="h-4 bg-bca-gray-700 rounded w-3/4"></div>
-      </div>
+      <Shimmer type="card" height="400px" />
     </div>
   );
+
+  // Check if user has purchased this course
+  const hasPurchasedCourse = () => {
+    if (!user || !course) return false;
+    return purchases.some(purchase => 
+      purchase.courseId === course.id && purchase.status === 'PAID'
+    );
+  };
 
   const startPayment = () => {
     if (!user) return navigate('/login?next=' + encodeURIComponent(`/course/${slug}`));
     setOpen(true);
+  };
+
+  const goToCourse = () => {
+    navigate(`/course/${course.id}/access`);
   };
 
   const submitUPI = async () => {
@@ -72,8 +102,28 @@ export default function CourseDetail() {
     if (!agree) return setError('Please agree to the terms and policies.');
     if (!/^\+?\d{8,15}$/.test(mobile)) return setError('Enter your UPI-registered mobile number (8-15 digits).');
     if (txn.length < 6) return setError('Enter a valid transaction ID.');
-    await api.post('/purchases', { courseId: course.id, upiMobile: mobile, upiTxnId: txn });
-    setNotice('Payment submitted. Awaiting admin approval. You will be notified.');
+    
+    // Use unified purchase system for both one-time and monthly payments
+    const purchaseData = {
+      courseId: course.id,
+      upiMobile: mobile,
+      upiTxnId: txn
+    };
+
+    if (course.isMonthlyPayment) {
+      // For monthly payment, add monthly payment fields
+      purchaseData.isMonthlyPayment = true;
+      purchaseData.monthNumber = 1;
+      purchaseData.totalMonths = course.durationMonths;
+      purchaseData.amountCents = course.monthlyFeeCents;
+      setNotice('First month payment submitted. Awaiting admin approval. You will be enrolled once approved.');
+    } else {
+      // For one-time payment
+      purchaseData.amountCents = course.priceCents;
+      setNotice('Payment submitted. Awaiting admin approval. You will be notified.');
+    }
+    
+    await api.post('/purchases', purchaseData);
     setOpen(false);
     navigate('/purchases');
   };
@@ -559,7 +609,7 @@ export default function CourseDetail() {
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.2 }}
-              className="sticky top-8"
+              className="sticky top-20"
             >
               <div className="bg-bca-gray-800 rounded-xl border border-bca-gray-700 overflow-hidden">
                 {/* Course Banner */}
@@ -568,20 +618,59 @@ export default function CourseDetail() {
                     <img 
                       src={course.imageUrl} 
                       alt={course.title}
-                      className="absolute inset-0 w-full h-full object-cover"
+                      className="w-full h-full object-cover"
                     />
                   )}
-                  <div className="absolute inset-0 bg-black/40"></div>
-                  <div className="relative z-10 text-center text-white">
-                    <h3 className="text-lg font-bold mb-2">DATA STRUCTURES & ALGORITHMS SUPREME 3.0</h3>
-                  </div>
                 </div>
 
                 {/* Pricing */}
                 <div className="p-6">
-                  <div className="flex items-center gap-3 mb-6">
-                    <span className="text-3xl font-bold text-blue-500">₹{(course.priceCents/100).toFixed(2)}</span>
-                    <span className="text-lg text-bca-gray-400 line-through">₹7000</span>
+                  <div className="mb-6">
+                    {hasPurchasedCourse() ? (
+                      <div className="text-center">
+                        <div className="flex items-center justify-center gap-2 mb-3">
+                          <CheckCircleIcon className="w-6 h-6 text-green-400" />
+                          <span className="text-xl font-bold text-green-400">Course Purchased</span>
+                        </div>
+                        <div className="text-sm text-bca-gray-300">
+                          You have access to this course
+                        </div>
+                        {course.isMonthlyPayment && (
+                          <div className="mt-3 p-3 bg-green-500/10 rounded-lg border border-green-500/30">
+                            <p className="text-green-400 text-sm">
+                              ✅ Monthly payment course - Access your monthly content
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                    ) : (
+                      <>
+                        {course.isMonthlyPayment ? (
+                          <div>
+                            <div className="flex items-center gap-3 mb-2">
+                              <span className="text-3xl font-bold text-blue-500">₹{course.monthlyFeeCents}</span>
+                              <span className="text-lg text-bca-gray-400">per month</span>
+                            </div>
+                            <div className="text-sm text-bca-gray-300 mb-2">
+                              Duration: {course.durationMonths} months
+                            </div>
+                            <div className="text-sm text-bca-gray-400">
+                              Total: ₹{((course.monthlyFeeCents || 0) * (course.durationMonths || 0)).toLocaleString()}
+                            </div>
+                            <div className="mt-3 p-3 bg-blue-500/10 rounded-lg border border-blue-500/30">
+                              <p className="text-blue-400 text-sm">
+                                💡 Pay monthly - No registration fees! Start with first month payment only.
+                              </p>
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="flex items-center gap-3">
+                            <span className="text-3xl font-bold text-blue-500">₹{(course.priceCents/100).toFixed(2)}</span>
+                            <span className="text-lg text-bca-gray-400 line-through">₹7000</span>
+                          </div>
+                        )}
+                      </>
+                    )}
                   </div>
 
                   {/* Course Includes */}
@@ -633,12 +722,21 @@ export default function CourseDetail() {
                   </div>
 
                   {/* Buy Now Button */}
-                  <button 
-                    onClick={startPayment} 
-                    className="w-full py-4 bg-bca-gold text-black font-bold text-lg rounded-lg hover:bg-bca-gold/80 transition-colors"
-                  >
-                    Buy Now
-                  </button>
+                  {hasPurchasedCourse() ? (
+                    <button 
+                      onClick={goToCourse} 
+                      className="w-full py-4 bg-gradient-to-r from-green-500 to-emerald-500 text-white font-bold text-lg rounded-lg hover:from-green-400 hover:to-emerald-400 transition-all duration-300 shadow-lg hover:shadow-xl"
+                    >
+                      Go to Course
+                    </button>
+                  ) : (
+                    <button 
+                      onClick={startPayment} 
+                      className="w-full py-4 bg-bca-gold text-black font-bold text-lg rounded-lg hover:bg-bca-gold/80 transition-colors"
+                    >
+                      {course.isMonthlyPayment ? 'Pay First Month' : 'Buy Now'}
+                    </button>
+                  )}
                 </div>
               </div>
             </motion.div>
@@ -657,6 +755,16 @@ export default function CourseDetail() {
             <div className="text-xl font-semibold mb-4">Select your payment system</div>
             <div className="grid gap-3 text-sm">
               <label className="flex items-center gap-2"><input type="radio" checked readOnly /> UPI</label>
+              
+              {/* QR Code */}
+              <div className="flex justify-center mb-4">
+                <img 
+                  src="/QR.jpeg" 
+                  alt="Payment QR Code" 
+                  className="w-48 h-48 rounded-lg border border-bca-gray-600 object-cover"
+                />
+              </div>
+              
               <div className="text-bca-gray-300">
                 By paying with UPI (Google Pay, PhonePe, Paytm), submit your mobile and TrxID below. Admin will verify within 48 hours.
               </div>
@@ -706,3 +814,5 @@ export default function CourseDetail() {
     </div>
   );
 }
+
+

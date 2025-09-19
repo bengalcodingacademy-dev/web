@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { api } from '../lib/api';
 import { CourseCard } from './components/CourseCard';
-import { SkeletonCourseCard } from '../components/Skeleton';
+import Shimmer from '../components/Shimmer';
+import TypewriterText from '../components/TypewriterText';
 
 const faqs = [
   { q: 'How do I pay with UPI?', a: 'Buy Now on a course, enter your UPI mobile and transaction ID, and wait for admin approval.' },
@@ -19,18 +20,23 @@ const features = [
 export default function Landing() {
   const [courses, setCourses] = useState([]);
   const [testimonials, setTestimonials] = useState([]);
+  const [webinars, setWebinars] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [loadingAnimationComplete, setLoadingAnimationComplete] = useState(false);
+  const location = useLocation();
   
   useEffect(() => {
     const loadData = async () => {
       try {
         setLoading(true);
-        const [coursesRes, testimonialsRes] = await Promise.all([
+        const [coursesRes, testimonialsRes, webinarsRes] = await Promise.all([
           api.get('/courses'),
-          api.get('/testimonials')
+          api.get('/testimonials'),
+          api.get('/webinars')
         ]);
         setCourses(coursesRes.data);
         setTestimonials(testimonialsRes.data);
+        setWebinars(webinarsRes.data);
       } catch (error) {
         console.error('Error loading landing data:', error);
       } finally {
@@ -39,6 +45,32 @@ export default function Landing() {
     };
     loadData();
   }, []);
+
+  // Handle scroll to section based on URL hash
+  useEffect(() => {
+    const hash = location.hash;
+    if (hash) {
+      const element = document.querySelector(hash);
+      if (element) {
+        setTimeout(() => {
+          element.scrollIntoView({ 
+            behavior: 'smooth',
+            block: 'start'
+          });
+        }, 100);
+      }
+    }
+  }, [location.hash]);
+
+  // Start typewriter animation after loading animation completes
+  useEffect(() => {
+    // Check if we're on the landing page and loading animation should be complete
+    const timer = setTimeout(() => {
+      setLoadingAnimationComplete(true);
+    }, 4000); // 3 seconds for loading animation + 1 second buffer
+
+    return () => clearTimeout(timer);
+  }, []);
   return (
     <div>
       <section className="relative overflow-hidden">
@@ -46,15 +78,60 @@ export default function Landing() {
         <div className="relative max-w-6xl mx-auto px-4 py-10 md:py-20 grid md:grid-cols-2 items-center gap-6 md:gap-8">
           <div className="text-center md:text-left">
             <div className="mb-4 md:mb-6">
-              <img src="/bca-logo.jpg" alt="BCA" className="h-16 w-16 md:h-24 md:w-24 rounded shadow-[0_0_50px_10px_#00a1ff] mx-auto md:mx-0" />
+              <img 
+                src="/bca_illustration.gif" 
+                alt="BCA Illustration" 
+                className="h-16 w-16 md:h-24 md:w-24 rounded shadow-[0_0_50px_10px_#00a1ff] mx-auto md:mx-0 object-cover"
+                style={{
+                  filter: 'brightness(1.1) contrast(1.1)'
+                }}
+              />
             </div>
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight">
-              Become a job-ready developer
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight text-white">
+              <div className="relative">
+                {/* Invisible placeholder to reserve space for 2 lines */}
+                <div className="invisible">
+                  <div>Become a job-ready</div>
+                  <div>developer in 6 months</div>
+                </div>
+                {/* Actual typewriter text positioned absolutely */}
+                <div className="absolute top-0 left-0">
+                  <TypewriterText 
+                    text="Become a job-ready developer in 6 months"
+                    speed={80}
+                    deleteSpeed={40}
+                    pauseTime={2000}
+                    shouldStart={loadingAnimationComplete}
+                    loop={true}
+                    className="text-white"
+                  />
+                </div>
+              </div>
             </h1>
-            <p className="mt-3 md:mt-4 text-white/80 max-w-2xl mx-auto md:mx-0 text-sm md:text-base">Industry-ready courses, webinars, and guided roadmaps. Learn by building real projects.</p>
+            <p className="mt-3 md:mt-4 text-white/80 max-w-2xl mx-auto md:mx-0 text-sm md:text-base">বাংলায় কাটিং এজ টেকনোলজি শিখুন আর ওয়ার্ল্ড ক্লাস প্রজেক্ট তৈরি করুন</p>
             <div className="mt-6 md:mt-8 flex flex-col sm:flex-row gap-3 justify-center md:justify-start">
-              <Link to="/batches" className="px-4 md:px-5 py-2 md:py-3 rounded-xl bg-[#fdb000] text-black shadow-[0_0_40px_#fdb000] text-sm md:text-base text-center">Explore Batches</Link>
-              <Link to="/webinars" className="px-4 md:px-5 py-2 md:py-3 rounded-xl border border-white/20 text-white text-sm md:text-base text-center">Free Webinars</Link>
+              <button 
+                onClick={() => {
+                  const element = document.getElementById('courses');
+                  if (element) {
+                    element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                  }
+                }}
+                className="px-4 md:px-5 py-2 md:py-3 rounded-xl bg-[#fdb000] text-black shadow-[0_0_40px_#fdb000] text-sm md:text-base text-center hover:bg-[#fdb000]/90 transition-colors"
+              >
+                Explore Batches
+              </button>
+              <button 
+                onClick={() => {
+                  const element = document.getElementById('webinars');
+                  if (element) {
+                    element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                  }
+                }}
+                className="px-4 md:px-5 py-2 md:py-3 rounded-xl border border-white/20 text-white text-sm md:text-base text-center hover:border-white/40 hover:bg-white/5 transition-all"
+              >
+                Free Webinars
+              </button>
             </div>
           </div>
           <div className="flex justify-center order-first md:order-last">
@@ -73,11 +150,78 @@ export default function Landing() {
         ))}
       </section>
 
-      <section className="max-w-6xl mx-auto px-4 py-8 md:py-14">
+      {/* Upcoming Webinars Section */}
+      <section id="webinars" className="max-w-6xl mx-auto px-4 py-8 md:py-14">
+        <h2 className="text-xl md:text-2xl font-semibold mb-4 md:mb-6">Upcoming Webinars</h2>
+        {webinars.length > 0 ? (
+          <>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+              {webinars.slice(0, 3).map((webinar, i) => (
+                <div key={i} className="rounded-xl border border-white/10 p-4 md:p-6 bg-gradient-to-br from-[#1a0b2e] to-[#0b0b0b]">
+                  {webinar.imageUrl && (
+                    <img
+                      src={webinar.imageUrl}
+                      alt={webinar.title}
+                      className="w-full h-32 md:h-40 object-cover rounded-lg mb-4"
+                    />
+                  )}
+                  <div className="text-lg md:text-xl font-semibold mb-2" style={{color:'#00a1ff'}}>
+                    {webinar.title}
+                  </div>
+                  {webinar.description && (
+                    <div className="text-white/80 text-sm md:text-base mb-3">
+                      {webinar.description}
+                    </div>
+                  )}
+                  <div className="text-bca-cyan text-sm mb-2">
+                    📅 {new Date(webinar.startTime).toLocaleDateString('en-IN', { 
+                      weekday: 'long', 
+                      year: 'numeric', 
+                      month: 'long', 
+                      day: 'numeric',
+                      hour: '2-digit',
+                      minute: '2-digit'
+                    })}
+                  </div>
+                  {webinar.presenter && (
+                    <div className="text-bca-gray-400 text-sm mb-3">
+                      👨‍🏫 {webinar.presenter}
+                    </div>
+                  )}
+                  {webinar.joinLink && (
+                    <a
+                      href={webinar.joinLink}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-block px-4 py-2 bg-bca-gold text-black rounded-lg hover:bg-bca-gold/80 transition-colors text-sm font-medium"
+                    >
+                      Join Webinar
+                    </a>
+                  )}
+                </div>
+              ))}
+            </div>
+            {webinars.length > 3 && (
+              <div className="text-center mt-6">
+                <a href="#webinars" className="text-bca-cyan hover:text-bca-gold transition-colors">
+                  View All Webinars →
+                </a>
+              </div>
+            )}
+          </>
+        ) : (
+          <div className="text-center py-12">
+            <div className="text-bca-gray-400 text-lg mb-4">No upcoming webinars at the moment</div>
+            <div className="text-bca-gray-500 text-sm">Check back soon for exciting webinars!</div>
+          </div>
+        )}
+      </section>
+
+      <section id="courses" className="max-w-6xl mx-auto px-4 py-8 md:py-14">
         <h2 className="text-xl md:text-2xl font-semibold mb-4 md:mb-6">Featured Courses</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
           {loading ? (
-            Array.from({ length: 3 }).map((_, i) => <SkeletonCourseCard key={i} />)
+            <Shimmer type="card" count={3} />
           ) : (
             courses.slice(0,3).map(c => <CourseCard key={c.id} c={c} />)
           )}
@@ -88,13 +232,7 @@ export default function Landing() {
         <h2 className="text-xl md:text-2xl font-semibold mb-4 md:mb-6">What learners say</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
           {loading ? (
-            Array.from({ length: 3 }).map((_, i) => (
-              <div key={i} className="rounded-xl border border-white/10 p-5 animate-pulse">
-                <div className="h-4 bg-bca-gray-700 rounded w-3/4 mb-4"></div>
-                <div className="h-3 bg-bca-gray-700 rounded w-1/2 mb-2"></div>
-                <div className="h-3 bg-bca-gray-700 rounded w-2/3"></div>
-              </div>
-            ))
+            <Shimmer type="card" count={3} />
           ) : testimonials.length > 0 ? (
             testimonials.slice(0, 3).map((t, i) => (
               <div key={i} className="rounded-xl border border-white/10 p-5">
