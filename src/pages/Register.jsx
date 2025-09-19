@@ -79,9 +79,9 @@ export default function Register() {
         </div>
         <div>
           <input 
-            type="date" 
+            type="text" 
             className="w-full px-4 py-3 rounded-xl bg-black/50 border border-white/10 text-white placeholder-white/50 text-sm md:text-base focus:outline-none focus:ring-2 focus:ring-bca-gold/50 focus:border-bca-gold/50 transition-all duration-200" 
-            placeholder="Date of birth" 
+            placeholder="Date of Birth" 
             value={dateOfBirth} 
             onChange={e=>setDateOfBirth(e.target.value)} 
           />

@@ -87,15 +87,15 @@ export default function Landing() {
                 }}
               />
             </div>
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight text-white">
-              <div className="relative">
-                {/* Invisible placeholder to reserve space for 2 lines */}
+            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-extrabold tracking-tight text-white">
+              <div className="relative max-w-full overflow-hidden">
+                {/* Invisible placeholder to reserve space for 2 lines - responsive */}
                 <div className="invisible">
-                  <div>Become a job-ready</div>
-                  <div>developer in 6 months</div>
+                  <div className="whitespace-nowrap">Become a job-ready</div>
+                  <div className="whitespace-nowrap">developer in 6 months</div>
                 </div>
                 {/* Actual typewriter text positioned absolutely */}
-                <div className="absolute top-0 left-0">
+                <div className="absolute top-0 left-0 w-full">
                   <TypewriterText 
                     text="Become a job-ready developer in 6 months"
                     speed={80}
@@ -103,7 +103,7 @@ export default function Landing() {
                     pauseTime={2000}
                     shouldStart={loadingAnimationComplete}
                     loop={true}
-                    className="text-white"
+                    className="text-white w-full"
                   />
                 </div>
               </div>
