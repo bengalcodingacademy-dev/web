@@ -32,8 +32,12 @@ export function AuthProvider({ children, navigate }) {
 
   const checkAuthStatus = async () => {
     try {
-      const response = await api.get("/me/summary");
-      setUser(response.data);
+      const response = await api.get("/me");
+      if (response.data.authenticated && response.data.user) {
+        setUser(response.data.user);
+      } else {
+        setUser(null);
+      }
     } catch (error) {
       setUser(null);
     } finally {
@@ -44,7 +48,7 @@ export function AuthProvider({ children, navigate }) {
       onLogout((message) => {
         setUser(null);
 
-        // Redirect only if it’s an auth error & NOT on a public page
+        // Redirect only if it's an auth error & NOT on a public page
         if (message && !isPublicPage()) {
           navigate("/login");
           alert(message);
