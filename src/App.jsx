@@ -1,6 +1,7 @@
 import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { AuthProvider, useAuth } from "./lib/authContext";
+import { clearAllCaches } from "./utils/cacheUtils";
 import Layout from "./components/Layout";
 import LoadingAnimation from "./components/LoadingAnimation";
 import Shimmer from "./components/Shimmer";
@@ -44,8 +45,11 @@ export default function App() {
   const [showLoadingAnimation, setShowLoadingAnimation] = useState(true);
   const [animationKey, setAnimationKey] = useState(0);
 
-  // Show animation only on first visit
+  // Clear caches and show animation only on first visit
   useEffect(() => {
+    // Clear all caches on app initialization
+    clearAllCaches();
+
     const hasVisited = localStorage.getItem("visited");
 
     if (hasVisited) {

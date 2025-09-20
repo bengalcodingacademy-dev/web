@@ -1,0 +1,155 @@
+name: Deploy Web Frontend to DigitalOcean
+
+on:
+  push:
+    branches:
+      - main   # deploy when you push to main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        working-directory: ./
+        run: npm ci
+
+      - name: Build web frontend
+        working-directory: ./
+        env:
+          VITE_API_BASE: ${{ secrets.VITE_API_BASE }}
+        run: npm run build
+
+      - name: Copy files to DigitalOcean
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.DO_HOST }}
+          username: ${{ secrets.DO_USER }}
+          key: ${{ secrets.DO_KEY }}
+          source: "dist/*"
+          target: "~/web-frontend"
+          strip_components: 1
+
+      - name: Deploy web frontend on DigitalOcean
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.DO_HOST }}
+          username: ${{ secrets.DO_USER }}
+          key: ${{ secrets.DO_KEY }}
+          script: |
+            # Update system packages
+            sudo apt-get update
+
+            # Install Nginx if not present
+            if ! command -v nginx >/dev/null 2>&1; then
+              sudo apt-get install -y nginx
+            fi
+
+            # Install Certbot if not present
+            if ! command -v certbot >/dev/null 2>&1; then
+              sudo apt-get install -y certbot python3-certbot-nginx
+            fi
+
+            # Create web frontend directory if it doesn't exist
+            sudo mkdir -p /var/www/bengalcodingacademy.com
+
+            # Copy built files to web root
+            sudo cp -r ~/web-frontend/* /var/www/bengalcodingacademy.com/
+            sudo chown -R www-data:www-data /var/www/bengalcodingacademy.com
+            sudo chmod -R 755 /var/www/bengalcodingacademy.com
+
+            # Configure Nginx for web frontend
+            sudo tee /etc/nginx/sites-available/bengalcodingacademy.com <<EOL
+            server {
+                listen 80;
+                server_name bengalcodingacademy.com www.bengalcodingacademy.com;
+
+                # Security headers
+                add_header X-Frame-Options "SAMEORIGIN" always;
+                add_header X-XSS-Protection "1; mode=block" always;
+                add_header X-Content-Type-Options "nosniff" always;
+                add_header Referrer-Policy "no-referrer-when-downgrade" always;
+                add_header Content-Security-Policy "default-src 'self' http: https: data: blob: 'unsafe-inline' 'unsafe-eval'" always;
+
+                # Gzip compression
+                gzip on;
+                gzip_vary on;
+                gzip_min_length 1024;
+                gzip_proxied expired no-cache no-store private must-revalidate auth;
+                gzip_types text/plain text/css text/xml text/javascript application/x-javascript application/xml+rss application/javascript application/json;
+
+                # Root directory
+                root /var/www/bengalcodingacademy.com;
+                index index.html;
+
+                # Handle client-side routing
+                location / {
+                    try_files \$uri \$uri/ /index.html;
+                }
+
+                # Cache static assets
+                location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot)$ {
+                    expires 1y;
+                    add_header Cache-Control "public, immutable";
+                    try_files \$uri =404;
+                }
+
+                # Cache HTML files for shorter period
+                location ~* \.html$ {
+                    expires 1h;
+                    add_header Cache-Control "public";
+                    try_files \$uri =404;
+                }
+
+                # Security: Deny access to hidden files
+                location ~ /\. {
+                    deny all;
+                }
+            }
+            EOL
+
+            # Enable the site
+            sudo ln -sf /etc/nginx/sites-available/bengalcodingacademy.com /etc/nginx/sites-enabled/
+            sudo rm -f /etc/nginx/sites-enabled/default
+
+            # Test Nginx configuration
+            sudo nginx -t
+
+            # Start/restart Nginx
+            sudo systemctl restart nginx
+            sudo systemctl enable nginx
+
+            # Wait a moment for Nginx to start
+            sleep 5
+
+            # Obtain SSL certificate with Certbot
+            sudo certbot --nginx -d bengalcodingacademy.com -d www.bengalcodingacademy.com --non-interactive --agree-tos --email ${{ secrets.EMAIL }} --redirect
+
+            # Setup automatic certificate renewal
+            echo "0 12 * * * /usr/bin/certbot renew --quiet" | sudo crontab -
+
+            # Show status
+            echo "=== Web Frontend Deployment Status ==="
+            sudo systemctl status nginx --no-pager
+            echo "=== Web Frontend is now available at ==="
+            echo "HTTPS: https://bengalcodingacademy.com"
+            echo "HTTPS: https://www.bengalcodingacademy.com"
+            echo "=== SSL Certificate Status ==="
+            sudo certbot certificates
+
+      - name: Cleanup
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.DO_HOST }}
+          username: ${{ secrets.DO_USER }}
+          key: ${{ secrets.DO_KEY }}
+          script: |
+            rm -rf ~/web-frontend
