@@ -55,10 +55,9 @@ export default function CourseAccess() {
   const loadCourseData = async () => {
     try {
       setLoading(true);
-      // Add cache-busting parameter to force fresh data
       const [courseRes, purchasesRes, contentRes] = await Promise.all([
         api.get(`/courses/id/${courseId}`),
-        api.get(`/purchases/me?t=${Date.now()}`), // Cache busting
+        api.get(`/purchases/me`),
         api.get(`/course-content/course/${courseId}`)
       ]);
       setCourse(courseRes.data);
