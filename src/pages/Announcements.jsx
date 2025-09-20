@@ -1,39 +1,41 @@
-import { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
-import { api } from '../lib/api';
-import Shimmer from '../components/Shimmer';
+import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
+import { api } from "../lib/api";
+import Shimmer from "../components/Shimmer";
 
 export default function Announcements() {
   const [list, setList] = useState([]);
   const [loading, setLoading] = useState(true);
-  
+
   useEffect(() => {
     const loadAnnouncements = async () => {
       try {
         setLoading(true);
-        const response = await api.get('/announcements/me');
+        const response = await api.get("/announcements/me");
         setList(response.data);
       } catch (error) {
-        console.error('Error loading announcements:', error);
+        console.log("Error loading announcements:", error);
       } finally {
         setLoading(false);
       }
     };
     loadAnnouncements();
   }, []);
-  
+
   const markAsRead = async (announcementId) => {
     try {
       await api.post(`/announcements/me/read/${announcementId}`);
       // Update local state to mark as read
-      setList(prev => prev.map(ann => 
-        ann.id === announcementId ? { ...ann, isRead: true } : ann
-      ));
+      setList((prev) =>
+        prev.map((ann) =>
+          ann.id === announcementId ? { ...ann, isRead: true } : ann
+        )
+      );
     } catch (error) {
-      console.error('Error marking announcement as read:', error);
+      console.error("Error marking announcement as read:", error);
     }
   };
-  
+
   if (loading) {
     return (
       <div className="max-w-6xl mx-auto px-4 py-10">
@@ -43,16 +45,20 @@ export default function Announcements() {
       </div>
     );
   }
-  
+
   return (
     <div className="max-w-6xl mx-auto px-4 py-10">
       <h1 className="text-3xl font-bold text-white mb-8">Announcements</h1>
-      
+
       {list.length === 0 ? (
         <div className="text-center py-12">
           <div className="text-6xl mb-4">📢</div>
-          <h2 className="text-xl font-semibold text-white mb-2">No Announcements</h2>
-          <p className="text-bca-gray-400">You don't have any announcements yet.</p>
+          <h2 className="text-xl font-semibold text-white mb-2">
+            No Announcements
+          </h2>
+          <p className="text-bca-gray-400">
+            You don't have any announcements yet.
+          </p>
         </div>
       ) : (
         <div className="grid gap-4">
@@ -63,9 +69,9 @@ export default function Announcements() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.1 }}
               className={`rounded-xl border p-6 transition-all duration-200 ${
-                a.isRead 
-                  ? 'border-white/10 bg-bca-gray-800/50' 
-                  : 'border-bca-gold/50 bg-bca-gray-800 shadow-lg shadow-bca-gold/10'
+                a.isRead
+                  ? "border-white/10 bg-bca-gray-800/50"
+                  : "border-bca-gold/50 bg-bca-gray-800 shadow-lg shadow-bca-gold/10"
               }`}
             >
               <div className="flex items-start justify-between mb-4">
@@ -78,14 +84,14 @@ export default function Announcements() {
                       </span>
                     )}
                   </div>
-                  
+
                   {a.course && (
                     <div className="text-bca-cyan text-sm mb-2 flex items-center gap-2">
                       <span>📚</span>
                       <span>{a.course.title}</span>
                     </div>
                   )}
-                  
+
                   {!a.course && (
                     <div className="text-bca-gold text-sm mb-2 flex items-center gap-2">
                       <span>🌐</span>
@@ -93,22 +99,20 @@ export default function Announcements() {
                     </div>
                   )}
                 </div>
-                
+
                 <div className="text-bca-gray-400 text-sm">
-                  {new Date(a.createdAt).toLocaleDateString('en-IN', {
-                    year: 'numeric',
-                    month: 'short',
-                    day: 'numeric',
-                    hour: '2-digit',
-                    minute: '2-digit'
+                  {new Date(a.createdAt).toLocaleDateString("en-IN", {
+                    year: "numeric",
+                    month: "short",
+                    day: "numeric",
+                    hour: "2-digit",
+                    minute: "2-digit",
                   })}
                 </div>
               </div>
-              
-              <div className="text-white/80 mb-4 leading-relaxed">
-                {a.body}
-              </div>
-              
+
+              <div className="text-white/80 mb-4 leading-relaxed">{a.body}</div>
+
               {!a.isRead && (
                 <button
                   onClick={() => markAsRead(a.id)}
