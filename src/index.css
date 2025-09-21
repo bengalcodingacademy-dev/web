@@ -19,5 +19,14 @@ body,
 }
 body {
   @apply bg-bca-black text-bca-white;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  font-weight: 600;
+}
+
+/* Ensure consistent Bengali text rendering across all devices */
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 /* use shadow via: shadow-[var(--shadow-soft)] */
