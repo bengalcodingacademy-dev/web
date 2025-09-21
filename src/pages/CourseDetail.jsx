@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { api } from '../lib/api';
 import { useAuth } from '../lib/authContext';
 import Shimmer from '../components/Shimmer';
+import RazorpayPayment from '../components/RazorpayPayment';
 
 // Custom Icons
 const BookOpenIcon = ({ className }) => (
@@ -40,12 +41,9 @@ export default function CourseDetail() {
   const { slug } = useParams();
   const [course, setCourse] = useState(null);
   const [purchases, setPurchases] = useState([]);
-  const [open, setOpen] = useState(false);
-  const [mobile, setMobile] = useState('');
-  const [txn, setTxn] = useState('');
-  const [agree, setAgree] = useState(false);
-  const [error, setError] = useState('');
-  const [notice, setNotice] = useState('');
+  const [showPayment, setShowPayment] = useState(false);
+  const [paymentError, setPaymentError] = useState('');
+  const [paymentSuccess, setPaymentSuccess] = useState('');
   const [expandedModules, setExpandedModules] = useState({});
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -90,42 +88,35 @@ export default function CourseDetail() {
 
   const startPayment = () => {
     if (!user) return navigate('/login?next=' + encodeURIComponent(`/course/${slug}`));
-    setOpen(true);
+    setShowPayment(true);
   };
-
+  
   const goToCourse = () => {
     navigate(`/course/${course.id}/access`);
   };
 
-  const submitUPI = async () => {
-    setError(''); setNotice('');
-    if (!agree) return setError('Please agree to the terms and policies.');
-    if (!/^\+?\d{8,15}$/.test(mobile)) return setError('Enter your UPI-registered mobile number (8-15 digits).');
-    if (txn.length < 6) return setError('Enter a valid transaction ID.');
-    
-    // Use unified purchase system for both one-time and monthly payments
-    const purchaseData = {
-      courseId: course.id,
-      upiMobile: mobile,
-      upiTxnId: txn
+  const handlePaymentSuccess = (purchase) => {
+    setPaymentSuccess('Payment successful! You now have access to the course.');
+    setShowPayment(false);
+    // Reload purchases to update the UI
+    const loadPurchases = async () => {
+      try {
+        const purchasesRes = await api.get('/purchases/me');
+        setPurchases(purchasesRes.data);
+      } catch (error) {
+        console.error('Error loading purchases:', error);
+      }
     };
+    loadPurchases();
+    // Navigate to course after a short delay
+    setTimeout(() => {
+      navigate(`/course/${course.id}/access`);
+    }, 2000);
+  };
 
-    if (course.isMonthlyPayment) {
-      // For monthly payment, add monthly payment fields
-      purchaseData.isMonthlyPayment = true;
-      purchaseData.monthNumber = 1;
-      purchaseData.totalMonths = course.durationMonths;
-      purchaseData.amountCents = course.monthlyFeeCents;
-      setNotice('First month payment submitted. Awaiting admin approval. You will be enrolled once approved.');
-    } else {
-      // For one-time payment
-      purchaseData.amountCents = course.priceCents;
-      setNotice('Payment submitted. Awaiting admin approval. You will be notified.');
-    }
-    
-    await api.post('/purchases', purchaseData);
-    setOpen(false);
-    navigate('/purchases');
+  const handlePaymentError = (error) => {
+    setPaymentError(error);
+    setShowPayment(false);
   };
 
   const toggleModule = (index) => {
@@ -744,73 +735,61 @@ export default function CourseDetail() {
         </div>
       </div>
 
-      {/* Payment Modal */}
-      {open && (
+      {/* Payment Success/Error Messages */}
+      {paymentSuccess && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
           <motion.div 
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="w-full max-w-2xl rounded-xl bg-bca-gray-800 border border-bca-gray-700 p-6"
+            className="w-full max-w-md rounded-xl bg-bca-gray-800 border border-green-500/30 p-6 text-center"
           >
-            <div className="text-xl font-semibold mb-4">Select your payment system</div>
-            <div className="grid gap-3 text-sm">
-              <label className="flex items-center gap-2"><input type="radio" checked readOnly /> UPI</label>
-              
-              {/* QR Code */}
-              <div className="flex justify-center mb-4">
-                <img 
-                  src="/QR.jpeg" 
-                  alt="Payment QR Code" 
-                  className="w-48 h-48 rounded-lg border border-bca-gray-600 object-cover"
-                />
-              </div>
-              
-              <div className="text-bca-gray-300">
-                By paying with UPI (Google Pay, PhonePe, Paytm), submit your mobile and TrxID below. Admin will verify within 48 hours.
-              </div>
-              <label className="text-xs uppercase tracking-wide text-bca-gray-400">UPI No.</label>
-              <input 
-                value={mobile} 
-                onChange={e=>setMobile(e.target.value)} 
-                placeholder="Enter your UPI-registered phone number" 
-                className="px-3 py-2 rounded-xl bg-bca-gray-700 border border-bca-gray-600 text-white focus:outline-none focus:border-bca-gold" 
-              />
-              <label className="text-xs uppercase tracking-wide text-bca-gray-400">TrxID</label>
-              <input 
-                value={txn} 
-                onChange={e=>setTxn(e.target.value)} 
-                placeholder="Enter your UPI Transaction ID" 
-                className="px-3 py-2 rounded-xl bg-bca-gray-700 border border-bca-gray-600 text-white focus:outline-none focus:border-bca-gold" 
-              />
-              <label className="flex items-center gap-2 mt-2">
-                <input 
-                  type="checkbox" 
-                  checked={agree} 
-                  onChange={e=>setAgree(e.target.checked)} 
-                  className="rounded"
-                /> 
-                I agree to the terms and conditions, refund policy, and privacy policy.
-              </label>
-              {error && <div className="text-bca-red text-sm">{error}</div>}
-              {notice && <div className="text-bca-cyan text-sm">{notice}</div>}
-              <div className="flex justify-end gap-3 mt-4">
-                <button 
-                  onClick={()=>setOpen(false)} 
-                  className="px-4 py-2 rounded-xl border border-bca-gray-600 hover:bg-bca-gray-700 transition-colors"
-                >
-                  Cancel
-                </button>
-                <button 
-                  onClick={submitUPI} 
-                  className="px-4 py-2 rounded-xl bg-bca-gold text-black hover:bg-bca-gold/80 transition-colors"
-                >
-                  Submit
-                </button>
-              </div>
+            <div className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
+              <svg className="w-8 h-8 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+              </svg>
             </div>
+            <h3 className="text-xl font-bold text-green-400 mb-2">Payment Successful!</h3>
+            <p className="text-bca-gray-300 mb-4">{paymentSuccess}</p>
+            <p className="text-sm text-bca-gray-400">Redirecting to course...</p>
           </motion.div>
         </div>
       )}
+
+      {paymentError && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="w-full max-w-md rounded-xl bg-bca-gray-800 border border-red-500/30 p-6 text-center"
+          >
+            <div className="w-16 h-16 bg-red-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
+              <svg className="w-8 h-8 text-red-400" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+              </svg>
+            </div>
+            <h3 className="text-xl font-bold text-red-400 mb-2">Payment Failed</h3>
+            <p className="text-bca-gray-300 mb-4">{paymentError}</p>
+            <button 
+              onClick={() => setPaymentError('')}
+              className="px-4 py-2 rounded-xl bg-bca-gold text-black hover:bg-bca-gold/80 transition-colors"
+            >
+              Try Again
+            </button>
+          </motion.div>
+        </div>
+      )}
+
+      {/* Razorpay Payment Component */}
+      <RazorpayPayment
+        isOpen={showPayment}
+        onClose={() => setShowPayment(false)}
+        course={course}
+        onSuccess={handlePaymentSuccess}
+        onError={handlePaymentError}
+        isMonthlyPayment={course?.isMonthlyPayment}
+        monthNumber={1}
+        totalMonths={course?.durationMonths}
+      />
     </div>
   );
 }

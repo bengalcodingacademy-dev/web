@@ -48,7 +48,7 @@ api.interceptors.response.use(
           window.location.pathname === '/register' ||
           window.location.pathname === '/forgot-password' ||
           window.location.pathname === '/reset-password' ||
-          window.location.pathname.startsWith('/course/')) {
+          (window.location.pathname.startsWith('/course/') && !window.location.pathname.includes('/access'))) {
         return Promise.reject(err);
       }
       

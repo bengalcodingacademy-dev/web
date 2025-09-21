@@ -18,7 +18,7 @@ function isPublicPage() {
     pathname === "/terms-conditions" ||
     pathname === "/cancellation-refund" ||
     pathname === "/shipping-delivery" ||
-    pathname.startsWith("/course/") // course details public
+    (pathname.startsWith("/course/") && !pathname.includes("/access")) // course details public, but access requires auth
   );
 }
 
