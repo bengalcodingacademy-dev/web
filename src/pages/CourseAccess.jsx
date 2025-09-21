@@ -41,6 +41,12 @@ const DocumentIcon = ({ className }) => (
   </svg>
 );
 
+const CrownIcon = ({ className }) => (
+  <svg className={className} fill="currentColor" viewBox="0 0 24 24">
+    <path d="M5 16L3 8l5.5 5L12 4l3.5 9L21 8l-2 8H5zm2.7-2h8.6l.9-4.4L14 12l-2-4.5L10 12l-3.2-2.4L7.7 14z"/>
+  </svg>
+);
+
 export default function CourseAccess() {
   const { courseId } = useParams();
   const navigate = useNavigate();
