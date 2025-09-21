@@ -5,6 +5,12 @@ import { api } from '../lib/api';
 import Shimmer from '../components/Shimmer';
 import { RocketIcon, BrainIcon, UsersIcon, StarIcon, TrendingUpIcon, TargetIcon, ShieldIcon, ZapIcon, BookOpenIcon, CalendarIcon, AwardIcon } from '../components/DashboardIcons';
 
+const PlayIcon = ({ className }) => (
+  <svg className={className} fill="currentColor" viewBox="0 0 24 24">
+    <path d="M8 5v14l11-7z"/>
+  </svg>
+);
+
 const StatsSection = () => {
   const stats = [
     { number: "2.5K+", label: "STUDENTS AND ALUMNI", icon: UsersIcon, color: "#00a1ff" },
@@ -377,7 +383,7 @@ export default function UserDashboard() {
               <h2 className="text-3xl font-bold text-white bg-gradient-to-r from-white to-cyan-400 bg-clip-text text-transparent" style={{ textShadow: '0 0 10px rgba(0,161,255,0.3)' }}>Your Courses</h2>
             </div>
             {userSummary?.courses?.length > 0 ? (
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch">
                 {userSummary.courses.map((course, index) => {
                   const paymentStatus = getCoursePaymentStatus(course, purchases);
                   return (
@@ -386,7 +392,7 @@ export default function UserDashboard() {
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.3 + index * 0.1 }}
-                      className="bg-gradient-to-br from-bca-gray-800/80 to-bca-gray-900/80 rounded-xl border border-bca-gray-700/50 hover:border-cyan-500/50 transition-all duration-300 group relative overflow-hidden backdrop-blur-sm"
+                      className="bg-gradient-to-br from-bca-gray-800/80 to-bca-gray-900/80 rounded-xl border border-bca-gray-700/50 hover:border-cyan-500/50 transition-all duration-300 group relative overflow-hidden backdrop-blur-sm flex flex-col h-full"
                     >
                       <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                       
@@ -402,42 +408,46 @@ export default function UserDashboard() {
                         </div>
                       )}
                       
-                      <div className="relative z-10 p-6">
-                        <div className="flex items-start gap-3 mb-4">
-                          <div className="p-2 rounded-lg bg-gradient-to-br from-cyan-500/20 to-purple-500/20 border border-cyan-500/30 group-hover:border-cyan-400/50 transition-all duration-300" style={{ boxShadow: '0 0 15px rgba(0,161,255,0.2)' }}>
-                            <AwardIcon className="w-6 h-6 text-cyan-400" />
-                          </div>
-                          <div className="flex-1">
-                            <h3 className="text-xl font-bold text-white group-hover:text-cyan-300 transition-colors duration-300">{course.title}</h3>
-                            {course.shortDesc && (
-                              <p className="text-bca-gray-300 text-sm mt-2 line-clamp-2">{course.shortDesc}</p>
-                            )}
-                            {course.isMonthlyPayment && (
-                              <p className="text-sm text-bca-gray-400 mt-1">
-                                Monthly Payment Course
-                              </p>
-                            )}
+                      <div className="relative z-10 p-6 flex flex-col h-full">
+                        <div className="flex-grow">
+                          <div className="flex items-start gap-3 mb-4">
+                            <div className="p-2 rounded-lg bg-gradient-to-br from-cyan-500/20 to-purple-500/20 border border-cyan-500/30 group-hover:border-cyan-400/50 transition-all duration-300" style={{ boxShadow: '0 0 15px rgba(0,161,255,0.2)' }}>
+                              <AwardIcon className="w-6 h-6 text-cyan-400" />
+                            </div>
+                            <div className="flex-1">
+                              <h3 className="text-xl font-bold text-white group-hover:text-cyan-300 transition-colors duration-300">{course.title}</h3>
+                              {course.shortDesc && (
+                                <p className="text-bca-gray-300 text-sm mt-2 line-clamp-2">{course.shortDesc}</p>
+                              )}
+                              {course.isMonthlyPayment && (
+                                <p className="text-sm text-bca-gray-400 mt-1">
+                                  Monthly Payment Course
+                                </p>
+                              )}
+                            </div>
                           </div>
                         </div>
 
 
-                        <div className="flex items-center justify-between">
-                          <span className={`font-semibold ${
-                            paymentStatus.hasAccess ? 'text-bca-gold group-hover:text-yellow-300' : 'text-bca-gray-400'
-                          } transition-colors duration-300`}>
-                            {paymentStatus.hasAccess ? 'Access Granted' : 'Access Restricted'}
-                          </span>
+                        <div className="flex justify-end">
                           <button 
                             onClick={() => paymentStatus.hasAccess && navigate(`/course/${course.id}/access`)}
-                            className={`px-4 py-2 rounded-lg font-medium transition-all duration-300 shadow-lg ${
+                            className={`px-6 py-3 rounded-xl font-semibold transition-all duration-300 shadow-lg ${
                               paymentStatus.hasAccess 
-                                ? 'bg-gradient-to-r from-cyan-500 to-purple-500 text-white hover:from-cyan-400 hover:to-purple-400' 
+                                ? 'bg-gradient-to-r from-bca-gold to-yellow-400 text-black hover:from-yellow-400 hover:to-bca-gold transform hover:scale-105 active:scale-95' 
                                 : 'bg-bca-gray-600 text-bca-gray-300 cursor-not-allowed'
                             }`}
-                            style={paymentStatus.hasAccess ? { boxShadow: '0 0 20px rgba(0,161,255,0.3)' } : {}}
+                            style={paymentStatus.hasAccess ? { boxShadow: '0 0 25px rgba(255, 193, 7, 0.4)' } : {}}
                             disabled={!paymentStatus.hasAccess}
                           >
-                            {paymentStatus.hasAccess ? 'Start Learning' : 'Payment Required'}
+                            {paymentStatus.hasAccess ? (
+                              <span className="flex items-center gap-2">
+                                <PlayIcon className="w-4 h-4" />
+                                Start Learning
+                              </span>
+                            ) : (
+                              'Payment Required'
+                            )}
                           </button>
                         </div>
                       </div>
@@ -454,8 +464,8 @@ export default function UserDashboard() {
                 </div>
                 <h3 className="text-xl font-semibold text-white mb-2 bg-gradient-to-r from-white to-cyan-400 bg-clip-text text-transparent">You have not enrolled in any courses yet</h3>
                 <p className="text-bca-gray-300 mb-6">Explore our courses and start your learning journey!</p>
-                <a href="/batches" className="px-6 py-3 bg-gradient-to-r from-cyan-500 to-purple-500 text-white rounded-lg font-medium hover:from-cyan-400 hover:to-purple-400 transition-all duration-300 shadow-lg inline-flex items-center gap-2" style={{ boxShadow: '0 0 20px rgba(0,161,255,0.3)' }}>
-                  <ZapIcon className="w-5 h-5" color="#fff" />
+                <a href="/batches" className="px-6 py-3 bg-gradient-to-r from-bca-gold to-yellow-400 text-black rounded-lg font-semibold hover:from-yellow-400 hover:to-bca-gold transition-all duration-300 shadow-lg inline-flex items-center gap-2 transform hover:scale-105 active:scale-95" style={{ boxShadow: '0 0 25px rgba(255, 193, 7, 0.4)' }}>
+                  <ZapIcon className="w-5 h-5" color="#000" />
                   Browse Courses
                 </a>
               </div>
@@ -487,9 +497,9 @@ export default function UserDashboard() {
             
             <button
               onClick={() => setShowMeetingModal(true)}
-              className="px-8 py-4 bg-gradient-to-r from-purple-500 to-cyan-500 text-white rounded-lg font-bold text-lg hover:from-purple-400 hover:to-cyan-400 transition-all duration-300 shadow-lg inline-flex items-center gap-3" style={{ boxShadow: '0 0 30px rgba(147,51,234,0.4)' }}
+              className="px-8 py-4 bg-gradient-to-r from-bca-gold to-yellow-400 text-black rounded-lg font-bold text-lg hover:from-yellow-400 hover:to-bca-gold transition-all duration-300 shadow-lg inline-flex items-center gap-3 transform hover:scale-105 active:scale-95" style={{ boxShadow: '0 0 30px rgba(255, 193, 7, 0.5)' }}
             >
-              <CalendarIcon className="w-6 h-6" color="#fff" />
+              <CalendarIcon className="w-6 h-6" color="#000" />
               Schedule 1:1 Meeting
             </button>
           </motion.div>

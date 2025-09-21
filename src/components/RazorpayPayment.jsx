@@ -1,0 +1,241 @@
+import { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
+import { api } from '../lib/api';
+
+const RazorpayPayment = ({ 
+  isOpen, 
+  onClose, 
+  course, 
+  onSuccess, 
+  onError,
+  isMonthlyPayment = false,
+  monthNumber = 1,
+  totalMonths = 1
+}) => {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  // Reset state when modal opens/closes
+  useEffect(() => {
+    if (isOpen) {
+      setLoading(false);
+      setError('');
+    } else {
+      // Reset state when modal is closed
+      setLoading(false);
+      setError('');
+    }
+  }, [isOpen]);
+
+  const loadRazorpayScript = () => {
+    return new Promise((resolve) => {
+      const script = document.createElement('script');
+      script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+      script.onload = () => resolve(true);
+      script.onerror = () => resolve(false);
+      document.body.appendChild(script);
+    });
+  };
+
+  const handlePayment = async () => {
+    try {
+      setLoading(true);
+      setError('');
+
+      // Load Razorpay script
+      const scriptLoaded = await loadRazorpayScript();
+      if (!scriptLoaded) {
+        throw new Error('Failed to load Razorpay script');
+      }
+
+      // Create order
+      const orderResponse = await api.post('/purchases/create-order', {
+        courseId: course.id,
+        isMonthlyPayment,
+        monthNumber,
+        totalMonths
+      });
+
+      const { order, purchase } = orderResponse.data;
+
+      // Configure Razorpay options
+      const options = {
+        key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+        amount: order.amount,
+        currency: order.currency,
+        name: 'Bengal Coding Academy',
+        description: `${course.title}${isMonthlyPayment ? ` - Month ${monthNumber}` : ''}`,
+        order_id: order.id,
+        method: {
+          netbanking: true,
+          wallet: true,
+          upi: true,
+          card: true,
+          emi: false,
+          paylater: false
+        },
+        // Force UPI to appear as a separate option
+        upi_intent: true,
+        handler: async function (response) {
+          try {
+            // Verify payment
+            const verifyResponse = await api.post('/purchases/verify-payment', {
+              razorpayOrderId: response.razorpay_order_id,
+              razorpayPaymentId: response.razorpay_payment_id,
+              razorpaySignature: response.razorpay_signature
+            });
+
+            if (verifyResponse.data.success) {
+              setLoading(false);
+              onSuccess(verifyResponse.data.purchase);
+            } else {
+              throw new Error('Payment verification failed');
+            }
+          } catch (error) {
+            console.error('Payment verification error:', error);
+            setLoading(false);
+            onError(error.response?.data?.error || 'Payment verification failed');
+          }
+        },
+        prefill: {
+          name: course.title,
+          email: '', // You can get this from user context if available
+          contact: '' // You can get this from user context if available
+        },
+        notes: {
+          courseId: course.id,
+          courseTitle: course.title,
+          isMonthlyPayment: isMonthlyPayment.toString(),
+          monthNumber: monthNumber.toString(),
+          totalMonths: totalMonths.toString()
+        },
+        theme: {
+          color: '#F59E0B', // BCA Gold color
+          backdrop_color: 'rgba(0, 0, 0, 0.8)'
+        },
+        // UPI specific configuration
+        upi: {
+          flow: 'collect'
+        },
+        // Additional payment method preferences
+        payment_capture: 1,
+        readonly: {
+          email: false,
+          contact: false,
+          name: false
+        },
+        modal: {
+          ondismiss: () => {
+            setLoading(false);
+            setError('');
+            onClose();
+          }
+        }
+      };
+
+      // Open Razorpay checkout
+      const razorpay = new window.Razorpay(options);
+      razorpay.open();
+
+    } catch (error) {
+      console.error('Payment error:', error);
+      setError(error.response?.data?.error || 'Failed to initiate payment');
+      setLoading(false);
+    }
+  };
+
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+      <motion.div
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        className="w-full max-w-md rounded-xl bg-bca-gray-800 border border-bca-gray-700 p-6"
+      >
+        <div className="text-center mb-6">
+          <h2 className="text-2xl font-bold text-white mb-2">
+            Complete Your Purchase
+          </h2>
+          <p className="text-bca-gray-300">
+            {course.title}
+            {isMonthlyPayment && ` - Month ${monthNumber}`}
+          </p>
+        </div>
+
+        <div className="mb-6 p-4 bg-bca-gray-700 rounded-lg">
+          <div className="flex justify-between items-center mb-2">
+            <span className="text-bca-gray-300">Amount:</span>
+            <span className="text-xl font-bold text-bca-gold">
+              ₹{isMonthlyPayment ? (course.monthlyFeeCents / 100).toFixed(2) : (course.priceCents / 100).toFixed(2)}
+            </span>
+          </div>
+          {isMonthlyPayment && (
+            <div className="text-sm text-bca-gray-400">
+              Monthly payment • {totalMonths} months total
+            </div>
+          )}
+        </div>
+
+        <div className="mb-6 p-4 bg-blue-500/10 rounded-lg border border-blue-500/30">
+          <div className="flex items-start gap-3">
+            <div className="w-6 h-6 rounded-full bg-blue-500 flex items-center justify-center flex-shrink-0 mt-0.5">
+              <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+              </svg>
+            </div>
+            <div>
+              <p className="text-blue-400 text-sm font-medium">Secure Payment</p>
+              <p className="text-blue-300 text-xs mt-1">
+                Powered by Razorpay • 100% secure and encrypted
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {error && (
+          <div className="mb-4 p-3 bg-red-500/10 border border-red-500/30 rounded-lg">
+            <p className="text-red-400 text-sm">{error}</p>
+          </div>
+        )}
+
+        <div className="flex gap-3">
+          <button
+            onClick={onClose}
+            disabled={loading}
+            className="flex-1 px-4 py-3 rounded-lg border border-bca-gray-600 text-bca-gray-300 hover:bg-bca-gray-700 transition-colors disabled:opacity-50"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={handlePayment}
+            disabled={loading}
+            className="flex-1 px-4 py-3 rounded-lg bg-bca-gold text-black font-semibold hover:bg-bca-gold/80 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+          >
+            {loading ? (
+              <>
+                <div className="w-4 h-4 border-2 border-black/30 border-t-black rounded-full animate-spin"></div>
+                Processing...
+              </>
+            ) : (
+              <>
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clipRule="evenodd" />
+                </svg>
+                Pay Now
+              </>
+            )}
+          </button>
+        </div>
+
+        <div className="mt-4 text-center">
+          <p className="text-xs text-bca-gray-400">
+            By proceeding, you agree to our terms and conditions
+          </p>
+        </div>
+      </motion.div>
+    </div>
+  );
+};
+
+export default RazorpayPayment;
