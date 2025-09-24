@@ -148,7 +148,7 @@ export default function LoadingAnimation({ onComplete }) {
                   filter: 'brightness(1.1) contrast(1.1)'
                 }}
               >
-                <source src="/BCA_Animation.mp4" type="video/mp4" />
+                <source src="https://sauvikbcabucket.s3.ap-south-1.amazonaws.com/assets/BCA_Animation.mp4" type="video/mp4" />
                 Your browser does not support the video tag.
               </video>
 

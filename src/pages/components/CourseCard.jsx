@@ -41,7 +41,7 @@ export function CourseCard({ c, isPurchased = false }) {
       
       <div className="relative z-10 flex flex-col h-full">
         {/* Image Section - Fixed Height */}
-        <div className="relative h-48 overflow-hidden">
+        <div className="relative h-52 overflow-hidden">
           {c.imageUrl ? (
             <>
               <img 
@@ -61,53 +61,64 @@ export function CourseCard({ c, isPurchased = false }) {
         {/* Content Section - Flexible Height */}
         <div className="p-6 flex flex-col flex-grow">
           {/* Title and Description */}
-          <div className="mb-4 flex-grow">
-            <h3 className="text-lg font-bold text-white mb-2 group-hover:text-bca-gold transition-colors duration-300">
+          <div className="mb-6 flex-grow">
+            <h3 className="text-xl font-bold text-white mb-3 group-hover:text-bca-gold transition-colors duration-300">
               {c.title}
             </h3>
-            <div className="text-white/80 text-sm leading-relaxed line-clamp-2">
+            <div className="text-white/80 text-sm leading-relaxed line-clamp-3">
               {c.shortDesc}
             </div>
           </div>
           
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              {isMonthly ? (
-                <>
-                  <span className="text-bca-gold font-bold text-lg">₹{monthlyFee.toFixed(2)}/month</span>
-                  <span className="text-white/70 text-xs bg-white/10 px-2 py-1 rounded-full">
+          {/* Pricing Section - More Spacious */}
+          <div className="mb-4">
+            {isMonthly ? (
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-bca-gold font-bold text-xl">₹{monthlyFee.toFixed(2)}/month</span>
+                  <div className="flex items-center gap-1">
+                    <div className="w-2 h-2 bg-bca-gold rounded-full animate-pulse"></div>
+                    <span className="text-bca-gold text-xs font-medium">Monthly</span>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-white/70 text-sm bg-white/10 px-3 py-1 rounded-full">
                     {duration} month course
                   </span>
-                </>
-              ) : (
-                <>
-                  <span className="text-bca-gold font-bold text-lg">₹{price.toFixed(2)}</span>
-                  <span className="text-white/40 line-through text-sm">₹{original.toFixed(2)}</span>
-                  <span className="text-xs px-2 py-1 rounded-full bg-bca-cyan/20 text-bca-cyan border border-bca-cyan/30">
+                </div>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <span className="text-bca-gold font-bold text-xl">₹{price.toFixed(2)}</span>
+                    <span className="text-white/40 line-through text-sm">₹{original.toFixed(2)}</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <div className="w-2 h-2 bg-bca-gold rounded-full animate-pulse"></div>
+                    <span className="text-bca-gold text-xs font-medium">One-time</span>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs px-3 py-1 rounded-full bg-bca-cyan/20 text-bca-cyan border border-bca-cyan/30">
                     {discount}% off
                   </span>
-                </>
-              )}
-            </div>
-            
-            {/* Course type indicator */}
-            <div className="flex items-center gap-1">
-              <div className="w-2 h-2 bg-bca-gold rounded-full animate-pulse"></div>
-              <span className="text-bca-gold text-xs font-medium">
-                {isMonthly ? 'Monthly' : 'One-time'}
-              </span>
-
-            </div>
+                  <span className="text-white/60 text-xs">
+                    Save ₹{(original - price).toFixed(2)}
+                  </span>
+                </div>
+              </div>
+            )}
           </div>
           
           {/* Action Section - Fixed at Bottom */}
           <div className="mt-auto">
-            <div className={`flex items-center justify-center py-2 px-4 rounded-lg border transition-all duration-300 ${
+            <div className={`flex items-center justify-center py-3 px-6 rounded-xl border transition-all duration-300 font-semibold ${
               isPurchased 
-                ? 'border-green-500/30 bg-green-500/10 text-green-400' 
-                : 'border-bca-gold/30 bg-bca-gold/10 text-bca-gold'
+                ? 'border-green-500/30 bg-green-500/10 text-green-400 hover:bg-green-500/20' 
+                : 'border-bca-gold/30 bg-bca-gold/10 text-bca-gold hover:bg-bca-gold/20'
             }`}>
-              <span className="text-sm font-medium">
+              <span className="text-sm">
                 {isPurchased ? 'Access Course' : 'Explore Course'}
               </span>
               <svg className="w-4 h-4 ml-2 transform group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">

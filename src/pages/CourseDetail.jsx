@@ -45,6 +45,9 @@ export default function CourseDetail() {
   const [paymentError, setPaymentError] = useState('');
   const [paymentSuccess, setPaymentSuccess] = useState('');
   const [expandedModules, setExpandedModules] = useState({});
+  const [showAllIncludes, setShowAllIncludes] = useState(false);
+  const [showAllSidebarIncludes, setShowAllSidebarIncludes] = useState(false);
+  const [showAllDefaultIncludes, setShowAllDefaultIncludes] = useState(false);
   const navigate = useNavigate();
   const { user } = useAuth();
 
@@ -143,39 +146,39 @@ export default function CourseDetail() {
       </div>
 
       {/* Welcome Message */}
-      <div className="max-w-6xl mx-auto px-4 pb-6">
+      <div className="max-w-6xl mx-auto px-4 pb-4 sm:pb-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="text-center"
         >
-          <h2 className="text-2xl font-bold text-bca-gold mb-2">Welcome to Bengal Coding Academy Family</h2>
+          <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-bca-gold mb-2">Welcome to Bengal Coding Academy Family</h2>
         </motion.div>
       </div>
 
       <div className="max-w-6xl mx-auto px-4 pb-16">
-        <div className="grid lg:grid-cols-3 gap-8">
+        <div className="flex flex-col lg:grid lg:grid-cols-3 gap-6 lg:gap-8">
           {/* Main Content */}
-          <div className="lg:col-span-2">
+          <div className="lg:col-span-2 order-1">
             {/* Course Title and Info */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               className="mb-8"
             >
-              <h1 className="text-3xl md:text-4xl font-bold text-white mb-4">{course.title}</h1>
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-4">{course.title}</h1>
               
               {/* Course Info Tags */}
-              <div className="flex flex-wrap gap-4 mb-6">
-                <div className="flex items-center gap-2 px-3 py-1 bg-green-500/20 rounded-full text-green-400 text-sm">
-                  <BookOpenIcon className="w-4 h-4" />
+              <div className="flex flex-wrap gap-2 sm:gap-4 mb-6">
+                <div className="flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-1 bg-green-500/20 rounded-full text-green-400 text-xs sm:text-sm">
+                  <BookOpenIcon className="w-3 h-3 sm:w-4 sm:h-4" />
                   <span>{course.numberOfLectures || 100}+ Lectures</span>
                 </div>
-                <div className="flex items-center gap-2 px-3 py-1 bg-blue-500/20 rounded-full text-blue-400 text-sm">
+                <div className="flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-1 bg-blue-500/20 rounded-full text-blue-400 text-xs sm:text-sm">
                   <span className="capitalize">{course.language || 'Bengali'}</span>
                 </div>
-                <div className="flex items-center gap-2 px-3 py-1 bg-yellow-500/20 rounded-full text-yellow-400 text-sm">
-                  <StarIcon className="w-4 h-4" />
+                <div className="flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-1 bg-yellow-500/20 rounded-full text-yellow-400 text-xs sm:text-sm">
+                  <StarIcon className="w-3 h-3 sm:w-4 sm:h-4" />
                   <span>{course.starRating || 4.9} ★★★★</span>
                 </div>
               </div>
@@ -186,11 +189,11 @@ export default function CourseDetail() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
-              className="mb-8"
+              className="mb-6 sm:mb-8"
             >
-              <h2 className="text-2xl font-bold text-white mb-4">About Course</h2>
+              <h2 className="text-xl sm:text-2xl font-bold text-white mb-3 sm:mb-4">About Course</h2>
               <div 
-                className="text-bca-gray-300 leading-relaxed prose prose-invert max-w-none"
+                className="text-bca-gray-300 leading-relaxed prose prose-invert max-w-none text-sm sm:text-base"
                 dangerouslySetInnerHTML={{ __html: course.aboutCourse || course.longDesc }}
               />
             </motion.div>
@@ -202,95 +205,95 @@ export default function CourseDetail() {
               transition={{ delay: 0.2 }}
               className="mb-8"
             >
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-                <div className="bg-bca-gray-800 rounded-lg p-4 border border-bca-gray-700">
-                  <div className="flex items-center gap-3 mb-2">
-                    <div className="w-8 h-8 bg-blue-500/20 rounded-lg flex items-center justify-center">
-                      <span className="text-blue-400 text-sm">📚</span>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+                <div className="bg-bca-gray-800 rounded-lg p-3 sm:p-4 border border-bca-gray-700">
+                  <div className="flex items-center gap-2 sm:gap-3 mb-2">
+                    <div className="w-6 h-6 sm:w-8 sm:h-8 bg-blue-500/20 rounded-lg flex items-center justify-center">
+                      <span className="text-blue-400 text-xs sm:text-sm">📚</span>
                     </div>
-                    <span className="text-sm text-bca-gray-400">Mode of the Course</span>
+                    <span className="text-xs sm:text-sm text-bca-gray-400">Mode of the Course</span>
                   </div>
-                  <p className="text-white font-medium">LIVE + Recordings</p>
+                  <p className="text-white font-medium text-sm sm:text-base">LIVE + Recordings</p>
                 </div>
 
-                <div className="bg-bca-gray-800 rounded-lg p-4 border border-bca-gray-700">
-                  <div className="flex items-center gap-3 mb-2">
-                    <div className="w-8 h-8 bg-green-500/20 rounded-lg flex items-center justify-center">
-                      <span className="text-green-400 text-sm">📋</span>
+                <div className="bg-bca-gray-800 rounded-lg p-3 sm:p-4 border border-bca-gray-700">
+                  <div className="flex items-center gap-2 sm:gap-3 mb-2">
+                    <div className="w-6 h-6 sm:w-8 sm:h-8 bg-green-500/20 rounded-lg flex items-center justify-center">
+                      <span className="text-green-400 text-xs sm:text-sm">📋</span>
                     </div>
-                    <span className="text-sm text-bca-gray-400">No. Of Lectures</span>
+                    <span className="text-xs sm:text-sm text-bca-gray-400">No. Of Lectures</span>
                   </div>
-                  <p className="text-white font-medium">{course.numberOfLectures || 60} LIVE lectures + Recordings [HomeWork Solutions]</p>
+                  <p className="text-white font-medium text-sm sm:text-base">{course.numberOfLectures || 60} LIVE lectures + Recordings [HomeWork Solutions]</p>
                 </div>
 
-                <div className="bg-bca-gray-800 rounded-lg p-4 border border-bca-gray-700">
-                  <div className="flex items-center gap-3 mb-2">
-                    <div className="w-8 h-8 bg-purple-500/20 rounded-lg flex items-center justify-center">
-                      <span className="text-purple-400 text-sm">🎥</span>
+                <div className="bg-bca-gray-800 rounded-lg p-3 sm:p-4 border border-bca-gray-700">
+                  <div className="flex items-center gap-2 sm:gap-3 mb-2">
+                    <div className="w-6 h-6 sm:w-8 sm:h-8 bg-purple-500/20 rounded-lg flex items-center justify-center">
+                      <span className="text-purple-400 text-xs sm:text-sm">🎥</span>
                     </div>
-                    <span className="text-sm text-bca-gray-400">Class Recording Provided</span>
+                    <span className="text-xs sm:text-sm text-bca-gray-400">Class Recording Provided</span>
                   </div>
-                  <p className="text-white font-medium">Yes [HD Quality]</p>
+                  <p className="text-white font-medium text-sm sm:text-base">Yes [HD Quality]</p>
                 </div>
 
-                <div className="bg-bca-gray-800 rounded-lg p-4 border border-bca-gray-700">
-                  <div className="flex items-center gap-3 mb-2">
-                    <div className="w-8 h-8 bg-orange-500/20 rounded-lg flex items-center justify-center">
-                      <span className="text-orange-400 text-sm">💬</span>
+                <div className="bg-bca-gray-800 rounded-lg p-3 sm:p-4 border border-bca-gray-700">
+                  <div className="flex items-center gap-2 sm:gap-3 mb-2">
+                    <div className="w-6 h-6 sm:w-8 sm:h-8 bg-orange-500/20 rounded-lg flex items-center justify-center">
+                      <span className="text-orange-400 text-xs sm:text-sm">💬</span>
                     </div>
-                    <span className="text-sm text-bca-gray-400">Doubt Classes</span>
+                    <span className="text-xs sm:text-sm text-bca-gray-400">Doubt Classes</span>
                   </div>
-                  <p className="text-white font-medium">20 Doubt Sessions</p>
+                  <p className="text-white font-medium text-sm sm:text-base">20 Doubt Sessions</p>
                 </div>
 
-                <div className="bg-bca-gray-800 rounded-lg p-4 border border-bca-gray-700">
-                  <div className="flex items-center gap-3 mb-2">
-                    <div className="w-8 h-8 bg-red-500/20 rounded-lg flex items-center justify-center">
-                      <span className="text-red-400 text-sm">📅</span>
+                <div className="bg-bca-gray-800 rounded-lg p-3 sm:p-4 border border-bca-gray-700">
+                  <div className="flex items-center gap-2 sm:gap-3 mb-2">
+                    <div className="w-6 h-6 sm:w-8 sm:h-8 bg-red-500/20 rounded-lg flex items-center justify-center">
+                      <span className="text-red-400 text-xs sm:text-sm">📅</span>
                     </div>
-                    <span className="text-sm text-bca-gray-400">Course Validity</span>
+                    <span className="text-xs sm:text-sm text-bca-gray-400">Course Validity</span>
                   </div>
-                  <p className="text-white font-medium">2 Years</p>
+                  <p className="text-white font-medium text-sm sm:text-base">2 Years</p>
                 </div>
 
-                <div className="bg-bca-gray-800 rounded-lg p-4 border border-bca-gray-700">
-                  <div className="flex items-center gap-3 mb-2">
-                    <div className="w-8 h-8 bg-cyan-500/20 rounded-lg flex items-center justify-center">
-                      <span className="text-cyan-400 text-sm">&lt;/&gt;</span>
+                <div className="bg-bca-gray-800 rounded-lg p-3 sm:p-4 border border-bca-gray-700">
+                  <div className="flex items-center gap-2 sm:gap-3 mb-2">
+                    <div className="w-6 h-6 sm:w-8 sm:h-8 bg-cyan-500/20 rounded-lg flex items-center justify-center">
+                      <span className="text-cyan-400 text-xs sm:text-sm">&lt;/&gt;</span>
                     </div>
-                    <span className="text-sm text-bca-gray-400">Programming Language Used</span>
+                    <span className="text-xs sm:text-sm text-bca-gray-400">Programming Language Used</span>
                   </div>
-                  <p className="text-white font-medium">C++</p>
+                  <p className="text-white font-medium text-sm sm:text-base">C++</p>
                 </div>
 
-                <div className="bg-bca-gray-800 rounded-lg p-4 border border-bca-gray-700">
-                  <div className="flex items-center gap-3 mb-2">
-                    <div className="w-8 h-8 bg-yellow-500/20 rounded-lg flex items-center justify-center">
-                      <CalendarIcon className="w-4 h-4 text-yellow-400" />
+                <div className="bg-bca-gray-800 rounded-lg p-3 sm:p-4 border border-bca-gray-700">
+                  <div className="flex items-center gap-2 sm:gap-3 mb-2">
+                    <div className="w-6 h-6 sm:w-8 sm:h-8 bg-yellow-500/20 rounded-lg flex items-center justify-center">
+                      <CalendarIcon className="w-3 h-3 sm:w-4 sm:h-4 text-yellow-400" />
                     </div>
-                    <span className="text-sm text-bca-gray-400">Class starts on</span>
+                    <span className="text-xs sm:text-sm text-bca-gray-400">Class starts on</span>
                   </div>
-                  <p className="text-white font-medium">{course.startDate ? new Date(course.startDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' }) : '25th April, 2024'}</p>
+                  <p className="text-white font-medium text-sm sm:text-base">{course.startDate ? new Date(course.startDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' }) : '25th April, 2024'}</p>
                 </div>
 
-                <div className="bg-bca-gray-800 rounded-lg p-4 border border-bca-gray-700">
-                  <div className="flex items-center gap-3 mb-2">
-                    <div className="w-8 h-8 bg-indigo-500/20 rounded-lg flex items-center justify-center">
-                      <ClockIcon className="w-4 h-4 text-indigo-400" />
+                <div className="bg-bca-gray-800 rounded-lg p-3 sm:p-4 border border-bca-gray-700">
+                  <div className="flex items-center gap-2 sm:gap-3 mb-2">
+                    <div className="w-6 h-6 sm:w-8 sm:h-8 bg-indigo-500/20 rounded-lg flex items-center justify-center">
+                      <ClockIcon className="w-3 h-3 sm:w-4 sm:h-4 text-indigo-400" />
                     </div>
-                    <span className="text-sm text-bca-gray-400">Class Schedule LIVE</span>
+                    <span className="text-xs sm:text-sm text-bca-gray-400">Class Schedule LIVE</span>
                   </div>
-                  <p className="text-white font-medium">[Monday, Wednesday, Saturday, Sunday]</p>
+                  <p className="text-white font-medium text-sm sm:text-base">[Monday, Wednesday, Saturday, Sunday]</p>
                 </div>
 
-                <div className="bg-bca-gray-800 rounded-lg p-4 border border-bca-gray-700">
-                  <div className="flex items-center gap-3 mb-2">
-                    <div className="w-8 h-8 bg-pink-500/20 rounded-lg flex items-center justify-center">
-                      <ClockIcon className="w-4 h-4 text-pink-400" />
+                <div className="bg-bca-gray-800 rounded-lg p-3 sm:p-4 border border-bca-gray-700">
+                  <div className="flex items-center gap-2 sm:gap-3 mb-2">
+                    <div className="w-6 h-6 sm:w-8 sm:h-8 bg-pink-500/20 rounded-lg flex items-center justify-center">
+                      <ClockIcon className="w-3 h-3 sm:w-4 sm:h-4 text-pink-400" />
                     </div>
-                    <span className="text-sm text-bca-gray-400">Class Timings</span>
+                    <span className="text-xs sm:text-sm text-bca-gray-400">Class Timings</span>
                   </div>
-                  <p className="text-white font-medium">8:30pm - 11pm</p>
+                  <p className="text-white font-medium text-sm sm:text-base">8:30pm - 11pm</p>
                 </div>
               </div>
             </motion.div>
@@ -302,119 +305,141 @@ export default function CourseDetail() {
               transition={{ delay: 0.3 }}
               className="mb-8"
             >
-              <h2 className="text-2xl font-bold text-white mb-4">This Course Includes</h2>
-              <p className="text-bca-gray-300 mb-6">
+              <h2 className="text-xl sm:text-2xl font-bold text-white mb-3 sm:mb-4">This Course Includes</h2>
+              <p className="text-bca-gray-300 mb-4 sm:mb-6 text-sm sm:text-base">
                 Explore the comprehensive learning experience awaiting you on this course detail page. 
                 From fundamental concepts to advanced techniques, discover what you will learn and how it will propel your skills to new heights.
               </p>
               
-              <div className="grid md:grid-cols-2 gap-3">
-                {courseIncludes.length > 0 ? courseIncludes.map((include, index) => (
-                  <div key={index} className="flex items-center gap-3">
-                    <CheckCircleIcon className="w-5 h-5 text-green-400 flex-shrink-0" />
-                    <span className="text-bca-gray-300">{include}</span>
-                  </div>
-                )) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {courseIncludes.length > 0 ? (
                   <>
-                    <div className="flex items-center gap-3">
-                      <CheckCircleIcon className="w-5 h-5 text-green-400 flex-shrink-0" />
-                      <span className="text-bca-gray-300">FlowChart & PseudoCode</span>
+                    {(showAllIncludes ? courseIncludes : courseIncludes.slice(0, 6)).map((include, index) => (
+                      <div key={index} className="flex items-start gap-2 sm:gap-3">
+                        <CheckCircleIcon className="w-4 h-4 sm:w-5 sm:h-5 text-green-400 flex-shrink-0 mt-0.5" />
+                        <span className="text-xs sm:text-sm text-bca-gray-300 break-words leading-relaxed">{include}</span>
+                      </div>
+                    ))}
+                    {courseIncludes.length > 6 && (
+                      <div className="col-span-1 sm:col-span-2 flex justify-center mt-3">
+                        <button
+                          onClick={() => setShowAllIncludes(!showAllIncludes)}
+                          className="text-bca-gold hover:text-bca-gold/80 text-sm font-medium transition-colors"
+                        >
+                          {showAllIncludes ? 'Show Less' : `See More (${courseIncludes.length - 6} more)`}
+                        </button>
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <>
+                    <div className="flex items-start gap-2 sm:gap-3">
+                      <CheckCircleIcon className="w-4 h-4 sm:w-5 sm:h-5 text-green-400 flex-shrink-0 mt-0.5" />
+                      <span className="text-xs sm:text-sm text-bca-gray-300 break-words leading-relaxed">FlowChart & PseudoCode</span>
                     </div>
-                    <div className="flex items-center gap-3">
-                      <CheckCircleIcon className="w-5 h-5 text-green-400 flex-shrink-0" />
-                      <span className="text-bca-gray-300">Variables & DataTypes in C++</span>
+                    <div className="flex items-start gap-2 sm:gap-3">
+                      <CheckCircleIcon className="w-4 h-4 sm:w-5 sm:h-5 text-green-400 flex-shrink-0 mt-0.5" />
+                      <span className="text-xs sm:text-sm text-bca-gray-300 break-words leading-relaxed">Variables & DataTypes in C++</span>
                     </div>
-                    <div className="flex items-center gap-3">
-                      <CheckCircleIcon className="w-5 h-5 text-green-400 flex-shrink-0" />
-                      <span className="text-bca-gray-300">Operators, Conditionals & Loops</span>
+                    <div className="flex items-start gap-2 sm:gap-3">
+                      <CheckCircleIcon className="w-4 h-4 sm:w-5 sm:h-5 text-green-400 flex-shrink-0 mt-0.5" />
+                      <span className="text-xs sm:text-sm text-bca-gray-300 break-words leading-relaxed">Operators, Conditionals & Loops</span>
                     </div>
-                    <div className="flex items-center gap-3">
-                      <CheckCircleIcon className="w-5 h-5 text-green-400 flex-shrink-0" />
-                      <span className="text-bca-gray-300">Pattern printing</span>
+                    <div className="flex items-start gap-2 sm:gap-3">
+                      <CheckCircleIcon className="w-4 h-4 sm:w-5 sm:h-5 text-green-400 flex-shrink-0 mt-0.5" />
+                      <span className="text-xs sm:text-sm text-bca-gray-300 break-words leading-relaxed">Pattern printing</span>
                     </div>
-                    <div className="flex items-center gap-3">
-                      <CheckCircleIcon className="w-5 h-5 text-green-400 flex-shrink-0" />
-                      <span className="text-bca-gray-300">Function & in-depth Knowledge of flow</span>
+                    <div className="flex items-start gap-2 sm:gap-3">
+                      <CheckCircleIcon className="w-4 h-4 sm:w-5 sm:h-5 text-green-400 flex-shrink-0 mt-0.5" />
+                      <span className="text-xs sm:text-sm text-bca-gray-300 break-words leading-relaxed">Function & in-depth Knowledge of flow</span>
                     </div>
-                    <div className="flex items-center gap-3">
-                      <CheckCircleIcon className="w-5 h-5 text-green-400 flex-shrink-0" />
-                      <span className="text-bca-gray-300">Arrays - 1D & 2D</span>
+                    <div className="flex items-start gap-2 sm:gap-3">
+                      <CheckCircleIcon className="w-4 h-4 sm:w-5 sm:h-5 text-green-400 flex-shrink-0 mt-0.5" />
+                      <span className="text-xs sm:text-sm text-bca-gray-300 break-words leading-relaxed">Arrays - 1D & 2D</span>
                     </div>
-                    <div className="flex items-center gap-3">
-                      <CheckCircleIcon className="w-5 h-5 text-green-400 flex-shrink-0" />
-                      <span className="text-bca-gray-300">Dynamic Arrays</span>
+                    <div className="flex items-start gap-2 sm:gap-3">
+                      <CheckCircleIcon className="w-4 h-4 sm:w-5 sm:h-5 text-green-400 flex-shrink-0 mt-0.5" />
+                      <span className="text-xs sm:text-sm text-bca-gray-300 break-words leading-relaxed">Dynamic Arrays</span>
                     </div>
-                    <div className="flex items-center gap-3">
-                      <CheckCircleIcon className="w-5 h-5 text-green-400 flex-shrink-0" />
-                      <span className="text-bca-gray-300">Searching Algorithms</span>
+                    <div className="flex items-start gap-2 sm:gap-3">
+                      <CheckCircleIcon className="w-4 h-4 sm:w-5 sm:h-5 text-green-400 flex-shrink-0 mt-0.5" />
+                      <span className="text-xs sm:text-sm text-bca-gray-300 break-words leading-relaxed">Searching Algorithms</span>
                     </div>
-                    <div className="flex items-center gap-3">
-                      <CheckCircleIcon className="w-5 h-5 text-green-400 flex-shrink-0" />
-                      <span className="text-bca-gray-300">Sorting Algorithms</span>
+                    <div className="flex items-start gap-2 sm:gap-3">
+                      <CheckCircleIcon className="w-4 h-4 sm:w-5 sm:h-5 text-green-400 flex-shrink-0 mt-0.5" />
+                      <span className="text-xs sm:text-sm text-bca-gray-300 break-words leading-relaxed">Sorting Algorithms</span>
                     </div>
-                    <div className="flex items-center gap-3">
-                      <CheckCircleIcon className="w-5 h-5 text-green-400 flex-shrink-0" />
-                      <span className="text-bca-gray-300">Char Arrays & Strings</span>
+                    <div className="flex items-start gap-2 sm:gap-3">
+                      <CheckCircleIcon className="w-4 h-4 sm:w-5 sm:h-5 text-green-400 flex-shrink-0 mt-0.5" />
+                      <span className="text-xs sm:text-sm text-bca-gray-300 break-words leading-relaxed">Char Arrays & Strings</span>
                     </div>
-                    <div className="flex items-center gap-3">
-                      <CheckCircleIcon className="w-5 h-5 text-green-400 flex-shrink-0" />
-                      <span className="text-bca-gray-300">Basic Maths & Pointers</span>
+                    <div className="flex items-start gap-2 sm:gap-3">
+                      <CheckCircleIcon className="w-4 h-4 sm:w-5 sm:h-5 text-green-400 flex-shrink-0 mt-0.5" />
+                      <span className="text-xs sm:text-sm text-bca-gray-300 break-words leading-relaxed">Basic Maths & Pointers</span>
                     </div>
-                    <div className="flex items-center gap-3">
-                      <CheckCircleIcon className="w-5 h-5 text-green-400 flex-shrink-0" />
-                      <span className="text-bca-gray-300">Recursion & Backtracking</span>
+                    <div className="flex items-start gap-2 sm:gap-3">
+                      <CheckCircleIcon className="w-4 h-4 sm:w-5 sm:h-5 text-green-400 flex-shrink-0 mt-0.5" />
+                      <span className="text-xs sm:text-sm text-bca-gray-300 break-words leading-relaxed">Recursion & Backtracking</span>
                     </div>
-                    <div className="flex items-center gap-3">
-                      <CheckCircleIcon className="w-5 h-5 text-green-400 flex-shrink-0" />
-                      <span className="text-bca-gray-300">Divide & Conquer Technique</span>
+                    <div className="flex items-start gap-2 sm:gap-3">
+                      <CheckCircleIcon className="w-4 h-4 sm:w-5 sm:h-5 text-green-400 flex-shrink-0 mt-0.5" />
+                      <span className="text-xs sm:text-sm text-bca-gray-300 break-words leading-relaxed">Divide & Conquer Technique</span>
                     </div>
-                    <div className="flex items-center gap-3">
-                      <CheckCircleIcon className="w-5 h-5 text-green-400 flex-shrink-0" />
-                      <span className="text-bca-gray-300">Time & Space Complexity of Recursive Algorithms</span>
+                    <div className="flex items-start gap-2 sm:gap-3">
+                      <CheckCircleIcon className="w-4 h-4 sm:w-5 sm:h-5 text-green-400 flex-shrink-0 mt-0.5" />
+                      <span className="text-xs sm:text-sm text-bca-gray-300 break-words leading-relaxed">Time & Space Complexity of Recursive Algorithms</span>
                     </div>
-                    <div className="flex items-center gap-3">
-                      <CheckCircleIcon className="w-5 h-5 text-green-400 flex-shrink-0" />
-                      <span className="text-bca-gray-300">Object Oriented Programming Concepts</span>
+                    <div className="flex items-start gap-2 sm:gap-3">
+                      <CheckCircleIcon className="w-4 h-4 sm:w-5 sm:h-5 text-green-400 flex-shrink-0 mt-0.5" />
+                      <span className="text-xs sm:text-sm text-bca-gray-300 break-words leading-relaxed">Object Oriented Programming Concepts</span>
                     </div>
-                    <div className="flex items-center gap-3">
-                      <CheckCircleIcon className="w-5 h-5 text-green-400 flex-shrink-0" />
-                      <span className="text-bca-gray-300">Linked List</span>
+                    <div className="flex items-start gap-2 sm:gap-3">
+                      <CheckCircleIcon className="w-4 h-4 sm:w-5 sm:h-5 text-green-400 flex-shrink-0 mt-0.5" />
+                      <span className="text-xs sm:text-sm text-bca-gray-300 break-words leading-relaxed">Linked List</span>
                     </div>
-                    <div className="flex items-center gap-3">
-                      <CheckCircleIcon className="w-5 h-5 text-green-400 flex-shrink-0" />
-                      <span className="text-bca-gray-300">Stack & Queues</span>
+                    <div className="flex items-start gap-2 sm:gap-3">
+                      <CheckCircleIcon className="w-4 h-4 sm:w-5 sm:h-5 text-green-400 flex-shrink-0 mt-0.5" />
+                      <span className="text-xs sm:text-sm text-bca-gray-300 break-words leading-relaxed">Stack & Queues</span>
                     </div>
-                    <div className="flex items-center gap-3">
-                      <CheckCircleIcon className="w-5 h-5 text-green-400 flex-shrink-0" />
-                      <span className="text-bca-gray-300">Trees</span>
+                    <div className="flex items-start gap-2 sm:gap-3">
+                      <CheckCircleIcon className="w-4 h-4 sm:w-5 sm:h-5 text-green-400 flex-shrink-0 mt-0.5" />
+                      <span className="text-xs sm:text-sm text-bca-gray-300 break-words leading-relaxed">Trees</span>
                     </div>
-                    <div className="flex items-center gap-3">
-                      <CheckCircleIcon className="w-5 h-5 text-green-400 flex-shrink-0" />
-                      <span className="text-bca-gray-300">Heaps</span>
+                    <div className="flex items-start gap-2 sm:gap-3">
+                      <CheckCircleIcon className="w-4 h-4 sm:w-5 sm:h-5 text-green-400 flex-shrink-0 mt-0.5" />
+                      <span className="text-xs sm:text-sm text-bca-gray-300 break-words leading-relaxed">Heaps</span>
                     </div>
-                    <div className="flex items-center gap-3">
-                      <CheckCircleIcon className="w-5 h-5 text-green-400 flex-shrink-0" />
-                      <span className="text-bca-gray-300">Hashing & Tries</span>
+                    <div className="flex items-start gap-2 sm:gap-3">
+                      <CheckCircleIcon className="w-4 h-4 sm:w-5 sm:h-5 text-green-400 flex-shrink-0 mt-0.5" />
+                      <span className="text-xs sm:text-sm text-bca-gray-300 break-words leading-relaxed">Hashing & Tries</span>
                     </div>
-                    <div className="flex items-center gap-3">
-                      <CheckCircleIcon className="w-5 h-5 text-green-400 flex-shrink-0" />
-                      <span className="text-bca-gray-300">Graphs</span>
+                    <div className="flex items-start gap-2 sm:gap-3">
+                      <CheckCircleIcon className="w-4 h-4 sm:w-5 sm:h-5 text-green-400 flex-shrink-0 mt-0.5" />
+                      <span className="text-xs sm:text-sm text-bca-gray-300 break-words leading-relaxed">Graphs</span>
                     </div>
-                    <div className="flex items-center gap-3">
-                      <CheckCircleIcon className="w-5 h-5 text-green-400 flex-shrink-0" />
-                      <span className="text-bca-gray-300">Greedy Algorithms</span>
+                    <div className="flex items-start gap-2 sm:gap-3">
+                      <CheckCircleIcon className="w-4 h-4 sm:w-5 sm:h-5 text-green-400 flex-shrink-0 mt-0.5" />
+                      <span className="text-xs sm:text-sm text-bca-gray-300 break-words leading-relaxed">Greedy Algorithms</span>
                     </div>
-                    <div className="flex items-center gap-3">
-                      <CheckCircleIcon className="w-5 h-5 text-green-400 flex-shrink-0" />
-                      <span className="text-bca-gray-300">Sliding Window Problems</span>
+                    <div className="flex items-start gap-2 sm:gap-3">
+                      <CheckCircleIcon className="w-4 h-4 sm:w-5 sm:h-5 text-green-400 flex-shrink-0 mt-0.5" />
+                      <span className="text-xs sm:text-sm text-bca-gray-300 break-words leading-relaxed">Sliding Window Problems</span>
                     </div>
-                    <div className="flex items-center gap-3">
-                      <CheckCircleIcon className="w-5 h-5 text-green-400 flex-shrink-0" />
-                      <span className="text-bca-gray-300">Dynamic Programming</span>
+                    <div className="flex items-start gap-2 sm:gap-3">
+                      <CheckCircleIcon className="w-4 h-4 sm:w-5 sm:h-5 text-green-400 flex-shrink-0 mt-0.5" />
+                      <span className="text-xs sm:text-sm text-bca-gray-300 break-words leading-relaxed">Dynamic Programming</span>
                     </div>
-                    <div className="flex items-center gap-3">
-                      <CheckCircleIcon className="w-5 h-5 text-green-400 flex-shrink-0" />
-                      <span className="text-bca-gray-300">Bit Manipulation</span>
+                    <div className="flex items-start gap-2 sm:gap-3">
+                      <CheckCircleIcon className="w-4 h-4 sm:w-5 sm:h-5 text-green-400 flex-shrink-0 mt-0.5" />
+                      <span className="text-xs sm:text-sm text-bca-gray-300 break-words leading-relaxed">Bit Manipulation</span>
+                    </div>
+                    <div className="col-span-1 sm:col-span-2 flex justify-center mt-3">
+                      <button
+                        onClick={() => setShowAllDefaultIncludes(!showAllDefaultIncludes)}
+                        className="text-bca-gold hover:text-bca-gold/80 text-sm font-medium transition-colors"
+                      >
+                        {showAllDefaultIncludes ? 'Show Less' : 'See More...'}
+                      </button>
                     </div>
                   </>
                 )}
@@ -595,16 +620,16 @@ export default function CourseDetail() {
           </div>
 
           {/* Sidebar - Course Summary */}
-          <div className="lg:col-span-1">
+          <div className="lg:col-span-1 order-2 lg:order-2">
             <motion.div
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.2 }}
-              className="sticky top-20"
+              className="lg:sticky lg:top-20"
             >
               <div className="bg-bca-gray-800 rounded-xl border border-bca-gray-700 overflow-hidden">
                 {/* Course Banner */}
-                <div className="relative h-48 bg-gradient-to-br from-blue-600 to-purple-600 flex items-center justify-center">
+                <div className="relative h-32 sm:h-40 lg:h-48 bg-gradient-to-br from-blue-600 to-purple-600 flex items-center justify-center">
                   {course.imageUrl && (
                     <img 
                       src={course.imageUrl} 
@@ -615,20 +640,20 @@ export default function CourseDetail() {
                 </div>
 
                 {/* Pricing */}
-                <div className="p-6">
+                <div className="p-4 sm:p-6">
                   <div className="mb-6">
                     {hasPurchasedCourse() ? (
                       <div className="text-center">
                         <div className="flex items-center justify-center gap-2 mb-3">
                           <CheckCircleIcon className="w-6 h-6 text-green-400" />
-                          <span className="text-xl font-bold text-green-400">Course Purchased</span>
+                          <span className="text-lg sm:text-xl font-bold text-green-400">Course Purchased</span>
                         </div>
-                        <div className="text-sm text-bca-gray-300">
+                        <div className="text-xs sm:text-sm text-bca-gray-300">
                           You have access to this course
                         </div>
                         {course.isMonthlyPayment && (
                           <div className="mt-3 p-3 bg-green-500/10 rounded-lg border border-green-500/30">
-                            <p className="text-green-400 text-sm">
+                            <p className="text-green-400 text-xs sm:text-sm">
                               ✅ Monthly payment course - Access your monthly content
                             </p>
                           </div>
@@ -638,26 +663,26 @@ export default function CourseDetail() {
                       <>
                         {course.isMonthlyPayment ? (
                           <div>
-                            <div className="flex items-center gap-3 mb-2">
-                              <span className="text-3xl font-bold text-blue-500">₹{(parseFloat(course.monthlyFeeRupees) || 0).toFixed(2)}</span>
-                              <span className="text-lg text-bca-gray-400">per month</span>
+                            <div className="flex items-center gap-2 sm:gap-3 mb-2">
+                              <span className="text-2xl sm:text-3xl font-bold text-blue-500">₹{(parseFloat(course.monthlyFeeRupees) || 0).toFixed(2)}</span>
+                              <span className="text-sm sm:text-lg text-bca-gray-400">per month</span>
                             </div>
-                            <div className="text-sm text-bca-gray-300 mb-2">
+                            <div className="text-xs sm:text-sm text-bca-gray-300 mb-2">
                               Duration: {course.durationMonths} months
                             </div>
-                            <div className="text-sm text-bca-gray-400">
+                            <div className="text-xs sm:text-sm text-bca-gray-400">
                               Total: ₹{((parseFloat(course.monthlyFeeRupees) || 0) * (course.durationMonths || 0)).toFixed(2)}
                             </div>
-                            <div className="mt-3 p-3 bg-blue-500/10 rounded-lg border border-blue-500/30">
-                              <p className="text-blue-400 text-sm">
+                            <div className="mt-3 p-2 sm:p-3 bg-blue-500/10 rounded-lg border border-blue-500/30">
+                              <p className="text-blue-400 text-xs sm:text-sm">
                                 💡 Pay monthly - No registration fees! Start with first month payment only.
                               </p>
                             </div>
                           </div>
                         ) : (
-                          <div className="flex items-center gap-3">
-                            <span className="text-3xl font-bold text-blue-500">₹{(parseFloat(course.priceRupees) || 0).toFixed(2)}</span>
-                            <span className="text-lg text-bca-gray-400 line-through">₹{Math.round((parseFloat(course.priceRupees) || 0) * 1.8).toFixed(2)}</span>
+                          <div className="flex items-center gap-2 sm:gap-3">
+                            <span className="text-2xl sm:text-3xl font-bold text-blue-500">₹{(parseFloat(course.priceRupees) || 0).toFixed(2)}</span>
+                            <span className="text-sm sm:text-lg text-bca-gray-400 line-through">₹{Math.round((parseFloat(course.priceRupees) || 0) * 1.8).toFixed(2)}</span>
                           </div>
                         )}
                       </>
@@ -665,47 +690,61 @@ export default function CourseDetail() {
                   </div>
 
                   {/* Course Includes */}
-                  <div className="mb-6">
-                    <h3 className="text-lg font-semibold text-white mb-4">This Course Includes:</h3>
-                    <div className="space-y-3">
-                      {courseIncludes.length > 0 ? courseIncludes.slice(0, 8).map((include, index) => (
-                        <div key={index} className="flex items-start gap-3">
-                          <CheckCircleIcon className="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" />
-                          <span className="text-sm text-bca-gray-300">{include}</span>
-                        </div>
-                      )) : (
+                  <div className="mb-4 sm:mb-6">
+                    <h3 className="text-base sm:text-lg font-semibold text-white mb-3 sm:mb-4">This Course Includes:</h3>
+                    <div className="space-y-2 sm:space-y-3">
+                      {courseIncludes.length > 0 ? (
                         <>
-                          <div className="flex items-start gap-3">
-                            <CheckCircleIcon className="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" />
-                            <span className="text-sm text-bca-gray-300">No Pre-requisite Required</span>
+                          {(showAllSidebarIncludes ? courseIncludes : courseIncludes.slice(0, 6)).map((include, index) => (
+                            <div key={index} className="flex items-start gap-2 sm:gap-3">
+                              <CheckCircleIcon className="w-4 h-4 sm:w-5 sm:h-5 text-green-400 flex-shrink-0 mt-0.5" />
+                              <span className="text-xs sm:text-sm text-bca-gray-300 break-words leading-relaxed">{include}</span>
+                            </div>
+                          ))}
+                          {courseIncludes.length > 6 && (
+                            <div className="flex justify-center mt-2">
+                              <button
+                                onClick={() => setShowAllSidebarIncludes(!showAllSidebarIncludes)}
+                                className="text-bca-gold hover:text-bca-gold/80 text-xs sm:text-sm font-medium transition-colors"
+                              >
+                                {showAllSidebarIncludes ? 'Show Less' : `See More (${courseIncludes.length - 6} more)`}
+                              </button>
+                            </div>
+                          )}
+                        </>
+                      ) : (
+                        <>
+                          <div className="flex items-start gap-2 sm:gap-3">
+                            <CheckCircleIcon className="w-4 h-4 sm:w-5 sm:h-5 text-green-400 flex-shrink-0 mt-0.5" />
+                            <span className="text-xs sm:text-sm text-bca-gray-300 break-words leading-relaxed">No Pre-requisite Required</span>
                           </div>
-                          <div className="flex items-start gap-3">
-                            <CheckCircleIcon className="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" />
-                            <span className="text-sm text-bca-gray-300">170+ hours Video Content</span>
+                          <div className="flex items-start gap-2 sm:gap-3">
+                            <CheckCircleIcon className="w-4 h-4 sm:w-5 sm:h-5 text-green-400 flex-shrink-0 mt-0.5" />
+                            <span className="text-xs sm:text-sm text-bca-gray-300 break-words leading-relaxed">170+ hours Video Content</span>
                           </div>
-                          <div className="flex items-start gap-3">
-                            <CheckCircleIcon className="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" />
-                            <span className="text-sm text-bca-gray-300">450+ Curated Coding Questions (asked by Top Companies)</span>
+                          <div className="flex items-start gap-2 sm:gap-3">
+                            <CheckCircleIcon className="w-4 h-4 sm:w-5 sm:h-5 text-green-400 flex-shrink-0 mt-0.5" />
+                            <span className="text-xs sm:text-sm text-bca-gray-300 break-words leading-relaxed">450+ Curated Coding Questions (asked by Top Companies)</span>
                           </div>
-                          <div className="flex items-start gap-3">
-                            <CheckCircleIcon className="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" />
-                            <span className="text-sm text-bca-gray-300">MEGA Problem-Solving Classes [First in Industry]</span>
+                          <div className="flex items-start gap-2 sm:gap-3">
+                            <CheckCircleIcon className="w-4 h-4 sm:w-5 sm:h-5 text-green-400 flex-shrink-0 mt-0.5" />
+                            <span className="text-xs sm:text-sm text-bca-gray-300 break-words leading-relaxed">MEGA Problem-Solving Classes [First in Industry]</span>
                           </div>
-                          <div className="flex items-start gap-3">
-                            <CheckCircleIcon className="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" />
-                            <span className="text-sm text-bca-gray-300">Live Resume & Interview Preparation</span>
+                          <div className="flex items-start gap-2 sm:gap-3">
+                            <CheckCircleIcon className="w-4 h-4 sm:w-5 sm:h-5 text-green-400 flex-shrink-0 mt-0.5" />
+                            <span className="text-xs sm:text-sm text-bca-gray-300 break-words leading-relaxed">Live Resume & Interview Preparation</span>
                           </div>
-                          <div className="flex items-start gap-3">
-                            <CheckCircleIcon className="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" />
-                            <span className="text-sm text-bca-gray-300">DSA - Extreme Beginner to Advanced</span>
+                          <div className="flex items-start gap-2 sm:gap-3">
+                            <CheckCircleIcon className="w-4 h-4 sm:w-5 sm:h-5 text-green-400 flex-shrink-0 mt-0.5" />
+                            <span className="text-xs sm:text-sm text-bca-gray-300 break-words leading-relaxed">DSA - Extreme Beginner to Advanced</span>
                           </div>
-                          <div className="flex items-start gap-3">
-                            <CheckCircleIcon className="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" />
-                            <span className="text-sm text-bca-gray-300">with Doubt Assistance [dedicated Doubt Forum]</span>
+                          <div className="flex items-start gap-2 sm:gap-3">
+                            <CheckCircleIcon className="w-4 h-4 sm:w-5 sm:h-5 text-green-400 flex-shrink-0 mt-0.5" />
+                            <span className="text-xs sm:text-sm text-bca-gray-300 break-words leading-relaxed">with Doubt Assistance [dedicated Doubt Forum]</span>
                           </div>
-                          <div className="flex items-start gap-3">
-                            <CheckCircleIcon className="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" />
-                            <span className="text-sm text-bca-gray-300">with Course Completion Certificate</span>
+                          <div className="flex items-start gap-2 sm:gap-3">
+                            <CheckCircleIcon className="w-4 h-4 sm:w-5 sm:h-5 text-green-400 flex-shrink-0 mt-0.5" />
+                            <span className="text-xs sm:text-sm text-bca-gray-300 break-words leading-relaxed">with Course Completion Certificate</span>
                           </div>
                         </>
                       )}
@@ -716,14 +755,14 @@ export default function CourseDetail() {
                   {hasPurchasedCourse() ? (
                     <button 
                       onClick={goToCourse} 
-                      className="w-full py-4 bg-gradient-to-r from-green-500 to-emerald-500 text-white font-bold text-lg rounded-lg hover:from-green-400 hover:to-emerald-400 transition-all duration-300 shadow-lg hover:shadow-xl"
+                      className="w-full py-3 sm:py-4 bg-gradient-to-r from-green-500 to-emerald-500 text-white font-bold text-base sm:text-lg rounded-lg hover:from-green-400 hover:to-emerald-400 transition-all duration-300 shadow-lg hover:shadow-xl"
                     >
                       Go to Course
                     </button>
                   ) : (
                     <button 
                       onClick={startPayment} 
-                      className="w-full py-4 bg-bca-gold text-black font-bold text-lg rounded-lg hover:bg-bca-gold/80 transition-colors"
+                      className="w-full py-3 sm:py-4 bg-bca-gold text-black font-bold text-base sm:text-lg rounded-lg hover:bg-bca-gold/80 transition-colors"
                     >
                       {course.isMonthlyPayment ? 'Pay First Month' : 'Buy Now'}
                     </button>

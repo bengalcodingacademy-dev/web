@@ -8,7 +8,7 @@ import { RocketIcon, BrainIcon, UsersIcon, StarIcon, TrendingUpIcon, TargetIcon,
 
 const PlayIcon = ({ className }) => (
   <svg className={className} fill="currentColor" viewBox="0 0 24 24">
-    <path d="M8 5v14l11-7z"/>
+    <path d="M8 5v14l11-7z" />
   </svg>
 );
 
@@ -43,7 +43,7 @@ const StatsSection = () => {
             Unlock success for a lifetime.
           </h1>
         </motion.div>
-        
+
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
@@ -214,7 +214,7 @@ const FAQSection = () => {
           <h2 className="text-3xl font-bold text-white mb-4">Frequently Asked Questions</h2>
           <p className="text-bca-gray-300">Get answers to common questions about our courses and platform</p>
         </motion.div>
-        
+
         <div className="space-y-4">
           {faqs.map((faq, index) => (
             <motion.div
@@ -299,104 +299,15 @@ const FeaturedCoursesSection = ({ purchases, navigate }) => {
           {allCourses.map((course, index) => {
             const paymentStatus = getCoursePaymentStatus(course, purchases);
             const isPurchased = paymentStatus.hasAccess;
-            
+
             return (
               <motion.div
                 key={course.id}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2 + index * 0.1 }}
-                className="bg-gradient-to-br from-bca-gray-800/80 to-bca-gray-900/80 rounded-xl border border-bca-gray-700/50 hover:border-yellow-500/50 transition-all duration-300 group relative overflow-hidden backdrop-blur-sm"
               >
-                <div className="absolute inset-0 bg-gradient-to-br from-yellow-500/5 to-orange-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                
-                {/* Course Image */}
-                {course.imageUrl && (
-                  <div className="relative h-48 overflow-hidden">
-                    <img 
-                      src={course.imageUrl} 
-                      alt={course.title} 
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
-                    
-                    {/* Featured Badge */}
-                    <div className="absolute top-4 left-4">
-                      <span className="px-3 py-1 bg-gradient-to-r from-yellow-500 to-orange-500 text-black text-xs font-bold rounded-full">
-                        Featured
-                      </span>
-                    </div>
-
-                    {/* Purchase Status Badge */}
-                    {isPurchased && (
-                      <div className="absolute top-4 right-4">
-                        <span className="px-3 py-1 bg-gradient-to-r from-green-500 to-emerald-500 text-white text-xs font-bold rounded-full flex items-center gap-1">
-                          <CheckCircleIcon className="w-3 h-3" />
-                          Purchased
-                        </span>
-                      </div>
-                    )}
-                  </div>
-                )}
-                
-                <div className="relative z-10 p-6">
-                  <div className="mb-4">
-                    <h3 className="text-xl font-bold text-white group-hover:text-yellow-300 transition-colors duration-300 mb-2">
-                      {course.title}
-                    </h3>
-                    {course.shortDesc && (
-                      <p className="text-bca-gray-300 text-sm line-clamp-2">{course.shortDesc}</p>
-                    )}
-                    
-                    {/* Course Pricing */}
-                    <div className="mt-4 flex items-center gap-2">
-                      {course.isMonthlyPayment ? (
-                        <>
-                          <span className="text-yellow-400 font-bold">
-                            ₹{parseFloat(course.monthlyFeeRupees || 0).toFixed(2)}/month
-                          </span>
-                          <span className="text-bca-gray-400 text-xs bg-white/10 px-2 py-1 rounded-full">
-                            {course.durationMonths || 0} months
-                          </span>
-                        </>
-                      ) : (
-                        <>
-                          <span className="text-yellow-400 font-bold">
-                            ₹{parseFloat(course.priceRupees || 0).toFixed(2)}
-                          </span>
-                          <span className="text-bca-gray-400 line-through text-sm">
-                            ₹{Math.round(parseFloat(course.priceRupees || 0) * 1.8).toFixed(2)}
-                          </span>
-                        </>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Action Button */}
-                  <div className="mt-6">
-                    {isPurchased ? (
-                      <button 
-                        onClick={() => navigate(`/course/${course.id}/access`)}
-                        className="w-full px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-xl font-semibold transition-all duration-300 shadow-lg hover:from-green-400 hover:to-emerald-400 transform hover:scale-105 active:scale-95 flex items-center justify-center gap-2"
-                        style={{ boxShadow: '0 0 25px rgba(34, 197, 94, 0.4)' }}
-                      >
-                        <PlayIcon className="w-4 h-4" />
-                        Go to Course
-                      </button>
-                    ) : (
-                      <button 
-                        onClick={() => navigate(`/course/${course.slug}`)}
-                        className="w-full px-6 py-3 bg-gradient-to-r from-yellow-500 to-orange-500 text-black rounded-xl font-semibold transition-all duration-300 shadow-lg hover:from-yellow-400 hover:to-orange-400 transform hover:scale-105 active:scale-95 flex items-center justify-center gap-2"
-                        style={{ boxShadow: '0 0 25px rgba(255, 193, 7, 0.4)' }}
-                      >
-                        <span>Explore Course</span>
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                        </svg>
-                      </button>
-                    )}
-                  </div>
-                </div>
+                <CourseCard c={course} isPurchased={isPurchased} />
               </motion.div>
             );
           })}
@@ -412,7 +323,7 @@ const getCoursePaymentStatus = (course, purchases) => {
     // Regular course - check if user has purchased it
     const coursePurchases = purchases.filter(p => p.courseId === course.id);
     const approvedPurchase = coursePurchases.find(p => p.status === 'PAID');
-    
+
     return {
       type: 'regular',
       hasAccess: !!approvedPurchase,
@@ -431,7 +342,7 @@ const getCoursePaymentStatus = (course, purchases) => {
   const paidMonths = paidPurchases.length;
   const totalMonths = course.durationMonths || 0;
   const hasAccess = paidMonths > 0;
-  
+
   // Find next payment due (next month that hasn't been paid)
   const nextMonthNumber = paidMonths + 1;
   const nextPayment = nextMonthNumber <= totalMonths ? {
@@ -521,28 +432,36 @@ export default function UserDashboard() {
   return (
     <div className="min-h-screen bg-bca-black">
       {/* Welcome Section */}
-      <section className="py-12 bg-gradient-to-br from-bca-gray-900 to-bca-black relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/10 via-purple-500/10 to-yellow-500/10"></div>
+      <section className="py-16 bg-gradient-to-br from-bca-gray-900 to-bca-black relative overflow-hidden">
+        {/* Soft background gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/5 via-purple-500/5 to-yellow-500/5"></div>
+
         <div className="max-w-6xl mx-auto px-4 relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
             className="text-center"
           >
-            <div className="flex items-center justify-center gap-4 mb-6">
-              <div className="p-4 rounded-full bg-gradient-to-br from-cyan-500/20 to-purple-500/20 border border-cyan-500/30 group-hover:border-cyan-400/50 transition-all duration-300 shadow-lg" style={{ boxShadow: '0 0 30px rgba(0,161,255,0.3)' }}>
-                <RocketIcon className="w-12 h-12 text-cyan-400" />
+            {/* Icon + Heading */}
+            <div className="flex flex-col items-center justify-center gap-6 mb-8">
+              <div className="p-3 rounded-2xl bg-gradient-to-br from-cyan-500/10 to-purple-500/10 border border-cyan-500/20 shadow-md">
+                <RocketIcon className="w-10 h-10 text-cyan-400" />
               </div>
-              <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-white via-cyan-400 to-purple-400 bg-clip-text text-transparent" style={{ textShadow: '0 0 20px rgba(0,161,255,0.3)' }}>
-                Hi {userSummary?.name}, let's start learning & rock the world!
+              <h1 className="text-3xl md:text-4xl lg:text-5xl font-extrabold tracking-tight bg-gradient-to-r from-white via-cyan-300 to-purple-300 bg-clip-text text-transparent">
+                Hi {userSummary?.name}, your journey to excellence starts here <span className="text-cyan-300 text-2xl md:text-3xl lg:text-4xl">🚀</span>
               </h1>
             </div>
-            <p className="text-bca-gray-300 text-lg md:text-xl">
-              Welcome to your learning journey. Ready to unlock your potential?
+
+            {/* Subtitle */}
+            <p className="text-bca-gray-300 text-base md:text-lg max-w-2xl mx-auto leading-relaxed">
+              Welcome to your structured learning path. Gain the right skills, build real projects,
+              and prepare yourself to shine in the global tech industry.
             </p>
           </motion.div>
         </div>
       </section>
+
 
       {/* Purchased Courses */}
       <section className="py-16">
@@ -571,19 +490,19 @@ export default function UserDashboard() {
                       className="bg-gradient-to-br from-bca-gray-800/80 to-bca-gray-900/80 rounded-xl border border-bca-gray-700/50 hover:border-cyan-500/50 transition-all duration-300 group relative overflow-hidden backdrop-blur-sm flex flex-col h-full"
                     >
                       <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                      
+
                       {/* Course Poster */}
                       {course.imageUrl && (
                         <div className="relative h-48 overflow-hidden">
-                          <img 
-                            src={course.imageUrl} 
-                            alt={course.title} 
+                          <img
+                            src={course.imageUrl}
+                            alt={course.title}
                             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                           />
                           <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
                         </div>
                       )}
-                      
+
                       <div className="relative z-10 p-6 flex flex-col h-full">
                         <div className="flex-grow">
                           <div className="flex items-start gap-3 mb-4">
@@ -606,13 +525,12 @@ export default function UserDashboard() {
 
 
                         <div className="flex justify-end">
-                          <button 
+                          <button
                             onClick={() => paymentStatus.hasAccess && navigate(`/course/${course.id}/access`)}
-                            className={`px-6 py-3 rounded-xl font-semibold transition-all duration-300 shadow-lg ${
-                              paymentStatus.hasAccess 
-                                ? 'bg-gradient-to-r from-bca-gold to-yellow-400 text-black hover:from-yellow-400 hover:to-bca-gold transform hover:scale-105 active:scale-95' 
+                            className={`px-6 py-3 rounded-xl font-semibold transition-all duration-300 shadow-lg ${paymentStatus.hasAccess
+                                ? 'bg-gradient-to-r from-bca-gold to-yellow-400 text-black hover:from-yellow-400 hover:to-bca-gold transform hover:scale-105 active:scale-95'
                                 : 'bg-bca-gray-600 text-bca-gray-300 cursor-not-allowed'
-                            }`}
+                              }`}
                             style={paymentStatus.hasAccess ? { boxShadow: '0 0 25px rgba(255, 193, 7, 0.4)' } : {}}
                             disabled={!paymentStatus.hasAccess}
                           >
@@ -670,7 +588,7 @@ export default function UserDashboard() {
               </div>
               <h2 className="text-3xl font-bold text-white bg-gradient-to-r from-white via-bca-gold to-yellow-400 bg-clip-text text-transparent" style={{ textShadow: '0 0 20px rgba(253,176,0,0.3)' }}>Personal Mentorship</h2>
             </div>
-            
+
             <div className="max-w-3xl mx-auto mb-8">
               <p className="text-bca-gray-300 mb-4 text-lg">Get personalized guidance from our industry experts</p>
               <div className="grid md:grid-cols-3 gap-6 text-left">
@@ -685,7 +603,7 @@ export default function UserDashboard() {
                   </div>
                   <p className="text-bca-gray-400 text-sm">Get expert advice on career paths, job opportunities, and industry insights</p>
                 </div>
-                
+
                 <div className="bg-bca-gray-800/50 rounded-lg p-4 border border-bca-gray-700/50">
                   <div className="flex items-center gap-3 mb-2">
                     <div className="w-8 h-8 bg-bca-gold/20 rounded-full flex items-center justify-center">
@@ -697,7 +615,7 @@ export default function UserDashboard() {
                   </div>
                   <p className="text-bca-gray-400 text-sm">Resolve coding challenges and get help with complex technical concepts</p>
                 </div>
-                
+
                 <div className="bg-bca-gray-800/50 rounded-lg p-4 border border-bca-gray-700/50">
                   <div className="flex items-center gap-3 mb-2">
                     <div className="w-8 h-8 bg-bca-gold/20 rounded-full flex items-center justify-center">
@@ -711,7 +629,7 @@ export default function UserDashboard() {
                 </div>
               </div>
             </div>
-            
+
             <button
               onClick={() => setShowMeetingModal(true)}
               className="px-8 py-4 bg-gradient-to-r from-bca-gold to-yellow-400 text-black rounded-lg font-bold text-lg hover:from-yellow-400 hover:to-bca-gold transition-all duration-300 shadow-lg inline-flex items-center gap-3 transform hover:scale-105 active:scale-95" style={{ boxShadow: '0 0 30px rgba(255, 193, 7, 0.5)' }}
@@ -741,11 +659,10 @@ export default function UserDashboard() {
                           Requested on {new Date(request.createdAt).toLocaleDateString()}
                         </p>
                       </div>
-                      <span className={`px-3 py-1 rounded-full text-sm font-medium ${
-                        request.status === 'APPROVED' ? 'bg-green-500/20 text-green-400' :
-                        request.status === 'DECLINED' ? 'bg-red-500/20 text-red-400' :
-                        'bg-yellow-500/20 text-yellow-400'
-                      }`}>
+                      <span className={`px-3 py-1 rounded-full text-sm font-medium ${request.status === 'APPROVED' ? 'bg-green-500/20 text-green-400' :
+                          request.status === 'DECLINED' ? 'bg-red-500/20 text-red-400' :
+                            'bg-yellow-500/20 text-yellow-400'
+                        }`}>
                         {request.status}
                       </span>
                     </div>
