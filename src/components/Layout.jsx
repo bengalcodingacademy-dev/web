@@ -209,7 +209,6 @@ export default function Layout({ children }) {
         )}
       </header>
       <main>{children}</main>
-      <footer className="border-t border-white/10 py-8 text-center text-xs text-white/60">© {new Date().getFullYear()} Bengal Coding Academy</footer>
 
       {/* Logout Confirmation Modal */}
       {showLogoutConfirm && (
