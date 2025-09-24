@@ -68,6 +68,23 @@ export default function App() {
 
   return (
     <AuthProvider navigate={navigate}>
+      {/* Neon Background Effects */}
+      <div className="neon-orb neon-orb-1"></div>
+      <div className="neon-orb neon-orb-2"></div>
+      <div className="neon-orb neon-orb-3"></div>
+      <div className="neon-grid"></div>
+      
+      {/* Moving Neon Lines */}
+      <div className="neon-line neon-line-1"></div>
+      <div className="neon-line neon-line-2"></div>
+      <div className="neon-line neon-line-3"></div>
+      
+      {/* Floating Particles */}
+      <div className="neon-particle neon-particle-1"></div>
+      <div className="neon-particle neon-particle-2"></div>
+      <div className="neon-particle neon-particle-3"></div>
+      <div className="neon-particle neon-particle-4"></div>
+      
       {showLoadingAnimation ? (
         <LoadingAnimation
           key={animationKey}

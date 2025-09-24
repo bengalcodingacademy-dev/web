@@ -639,14 +639,14 @@ export default function CourseDetail() {
                         {course.isMonthlyPayment ? (
                           <div>
                             <div className="flex items-center gap-3 mb-2">
-                              <span className="text-3xl font-bold text-blue-500">₹{course.monthlyFeeCents}</span>
+                              <span className="text-3xl font-bold text-blue-500">₹{(parseFloat(course.monthlyFeeRupees) || 0).toFixed(2)}</span>
                               <span className="text-lg text-bca-gray-400">per month</span>
                             </div>
                             <div className="text-sm text-bca-gray-300 mb-2">
                               Duration: {course.durationMonths} months
                             </div>
                             <div className="text-sm text-bca-gray-400">
-                              Total: ₹{((course.monthlyFeeCents || 0) * (course.durationMonths || 0)).toLocaleString()}
+                              Total: ₹{((parseFloat(course.monthlyFeeRupees) || 0) * (course.durationMonths || 0)).toFixed(2)}
                             </div>
                             <div className="mt-3 p-3 bg-blue-500/10 rounded-lg border border-blue-500/30">
                               <p className="text-blue-400 text-sm">
@@ -656,8 +656,8 @@ export default function CourseDetail() {
                           </div>
                         ) : (
                           <div className="flex items-center gap-3">
-                            <span className="text-3xl font-bold text-blue-500">₹{(course.priceCents/100).toFixed(2)}</span>
-                            <span className="text-lg text-bca-gray-400 line-through">₹7000</span>
+                            <span className="text-3xl font-bold text-blue-500">₹{(parseFloat(course.priceRupees) || 0).toFixed(2)}</span>
+                            <span className="text-lg text-bca-gray-400 line-through">₹{Math.round((parseFloat(course.priceRupees) || 0) * 1.8).toFixed(2)}</span>
                           </div>
                         )}
                       </>

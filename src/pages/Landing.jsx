@@ -6,6 +6,8 @@ import Shimmer from "../components/Shimmer";
 import TypewriterText from "../components/TypewriterText";
 import YouTubeSlideshow from "../components/YouTubeSlideshow";
 import TestimonialSlideshow from "../components/TestimonialSlideshow";
+import ProgrammingJourney from "../components/ProgrammingJourney";
+import ExpertFaculty from "../components/ExpertFaculty";
 
 const faqs = [
   {
@@ -209,7 +211,7 @@ export default function Landing() {
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
           {loading ? (
-            <Shimmer type="card" count={3} />
+            <Shimmer type="course-card" count={3} />
           ) : (
             courses.slice(0, 3).map((c) => <CourseCard key={c.id} c={c} />)
           )}
@@ -302,6 +304,10 @@ export default function Landing() {
       <YouTubeSlideshow />
 
       <TestimonialSlideshow />
+
+      <ProgrammingJourney />
+
+      <ExpertFaculty />
 
       <section className="max-w-6xl mx-auto px-4 py-8 md:py-14">
         <div className="text-center mb-8 md:mb-12">

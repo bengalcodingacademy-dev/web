@@ -12,6 +12,12 @@ const PlayIcon = ({ className }) => (
   </svg>
 );
 
+const CheckCircleIcon = ({ className }) => (
+  <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+  </svg>
+);
+
 const StatsSection = () => {
   const stats = [
     { number: "2.5K+", label: "STUDENTS AND ALUMNI", icon: UsersIcon, color: "#00a1ff" },
@@ -237,6 +243,169 @@ const FAQSection = () => {
   );
 };
 
+const FeaturedCoursesSection = ({ purchases, navigate }) => {
+  const [allCourses, setAllCourses] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const loadAllCourses = async () => {
+      try {
+        setLoading(true);
+        const response = await api.get('/courses');
+        setAllCourses(response.data);
+      } catch (error) {
+        console.error('Error loading all courses:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadAllCourses();
+  }, []);
+
+  if (loading) {
+    return (
+      <section className="py-16 bg-gradient-to-br from-bca-gray-900 to-bca-black">
+        <div className="max-w-6xl mx-auto px-4">
+          <Shimmer type="text" height="40px" width="300px" className="mb-8" />
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <Shimmer type="card" count={3} />
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  return (
+    <section className="py-16 bg-gradient-to-br from-bca-gray-900 to-bca-black relative overflow-hidden">
+      <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/10 via-purple-500/10 to-yellow-500/10"></div>
+      <div className="max-w-6xl mx-auto px-4 relative z-10">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-center mb-12"
+        >
+          <div className="flex items-center justify-center gap-4 mb-6">
+            <div className="p-4 rounded-full bg-gradient-to-br from-yellow-500/20 to-orange-500/20 border border-yellow-500/30 group-hover:border-yellow-400/50 transition-all duration-300 shadow-lg" style={{ boxShadow: '0 0 30px rgba(255, 193, 7, 0.3)' }}>
+              <StarIcon className="w-12 h-12 text-yellow-400" />
+            </div>
+            <h2 className="text-3xl font-bold text-white bg-gradient-to-r from-white via-yellow-400 to-orange-400 bg-clip-text text-transparent" style={{ textShadow: '0 0 20px rgba(255, 193, 7, 0.3)' }}>
+              Explore Our Featured Courses
+            </h2>
+          </div>
+          <p className="text-bca-gray-300 text-lg">Discover our most popular courses and start your learning journey</p>
+        </motion.div>
+
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {allCourses.map((course, index) => {
+            const paymentStatus = getCoursePaymentStatus(course, purchases);
+            const isPurchased = paymentStatus.hasAccess;
+            
+            return (
+              <motion.div
+                key={course.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 + index * 0.1 }}
+                className="bg-gradient-to-br from-bca-gray-800/80 to-bca-gray-900/80 rounded-xl border border-bca-gray-700/50 hover:border-yellow-500/50 transition-all duration-300 group relative overflow-hidden backdrop-blur-sm"
+              >
+                <div className="absolute inset-0 bg-gradient-to-br from-yellow-500/5 to-orange-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                
+                {/* Course Image */}
+                {course.imageUrl && (
+                  <div className="relative h-48 overflow-hidden">
+                    <img 
+                      src={course.imageUrl} 
+                      alt={course.title} 
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+                    
+                    {/* Featured Badge */}
+                    <div className="absolute top-4 left-4">
+                      <span className="px-3 py-1 bg-gradient-to-r from-yellow-500 to-orange-500 text-black text-xs font-bold rounded-full">
+                        Featured
+                      </span>
+                    </div>
+
+                    {/* Purchase Status Badge */}
+                    {isPurchased && (
+                      <div className="absolute top-4 right-4">
+                        <span className="px-3 py-1 bg-gradient-to-r from-green-500 to-emerald-500 text-white text-xs font-bold rounded-full flex items-center gap-1">
+                          <CheckCircleIcon className="w-3 h-3" />
+                          Purchased
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                )}
+                
+                <div className="relative z-10 p-6">
+                  <div className="mb-4">
+                    <h3 className="text-xl font-bold text-white group-hover:text-yellow-300 transition-colors duration-300 mb-2">
+                      {course.title}
+                    </h3>
+                    {course.shortDesc && (
+                      <p className="text-bca-gray-300 text-sm line-clamp-2">{course.shortDesc}</p>
+                    )}
+                    
+                    {/* Course Pricing */}
+                    <div className="mt-4 flex items-center gap-2">
+                      {course.isMonthlyPayment ? (
+                        <>
+                          <span className="text-yellow-400 font-bold">
+                            ₹{parseFloat(course.monthlyFeeRupees || 0).toFixed(2)}/month
+                          </span>
+                          <span className="text-bca-gray-400 text-xs bg-white/10 px-2 py-1 rounded-full">
+                            {course.durationMonths || 0} months
+                          </span>
+                        </>
+                      ) : (
+                        <>
+                          <span className="text-yellow-400 font-bold">
+                            ₹{parseFloat(course.priceRupees || 0).toFixed(2)}
+                          </span>
+                          <span className="text-bca-gray-400 line-through text-sm">
+                            ₹{Math.round(parseFloat(course.priceRupees || 0) * 1.8).toFixed(2)}
+                          </span>
+                        </>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Action Button */}
+                  <div className="mt-6">
+                    {isPurchased ? (
+                      <button 
+                        onClick={() => navigate(`/course/${course.id}/access`)}
+                        className="w-full px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-xl font-semibold transition-all duration-300 shadow-lg hover:from-green-400 hover:to-emerald-400 transform hover:scale-105 active:scale-95 flex items-center justify-center gap-2"
+                        style={{ boxShadow: '0 0 25px rgba(34, 197, 94, 0.4)' }}
+                      >
+                        <PlayIcon className="w-4 h-4" />
+                        Go to Course
+                      </button>
+                    ) : (
+                      <button 
+                        onClick={() => navigate(`/course/${course.slug}`)}
+                        className="w-full px-6 py-3 bg-gradient-to-r from-yellow-500 to-orange-500 text-black rounded-xl font-semibold transition-all duration-300 shadow-lg hover:from-yellow-400 hover:to-orange-400 transform hover:scale-105 active:scale-95 flex items-center justify-center gap-2"
+                        style={{ boxShadow: '0 0 25px rgba(255, 193, 7, 0.4)' }}
+                      >
+                        <span>Explore Course</span>
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                        </svg>
+                      </button>
+                    )}
+                  </div>
+                </div>
+              </motion.div>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+  );
+};
+
 // Helper function to get course payment status and access
 const getCoursePaymentStatus = (course, purchases) => {
   if (!course.isMonthlyPayment) {
@@ -267,7 +436,7 @@ const getCoursePaymentStatus = (course, purchases) => {
   const nextMonthNumber = paidMonths + 1;
   const nextPayment = nextMonthNumber <= totalMonths ? {
     monthNumber: nextMonthNumber,
-    amountCents: course.monthlyFeeCents,
+    amountRupees: course.monthlyFeeRupees,
     status: 'PENDING'
   } : null;
 
@@ -287,7 +456,7 @@ const getCoursePaymentStatus = (course, purchases) => {
     nextPayment,
     paidMonths,
     totalMonths,
-    monthlyFee: course.monthlyFeeCents
+    monthlyFee: course.monthlyFeeRupees
   };
 };
 
@@ -477,79 +646,9 @@ export default function UserDashboard() {
         </div>
       </section>
 
-      {/* Browse All Courses Section */}
-      <section className="py-16 bg-gradient-to-br from-bca-gray-900 to-bca-black">
-        <div className="max-w-6xl mx-auto px-4">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-center mb-12"
-          >
-            <div className="flex items-center justify-center gap-4 mb-6">
-              <div className="p-4 rounded-full bg-gradient-to-br from-bca-gold/20 to-yellow-400/20 border border-bca-gold/30 group-hover:border-bca-gold/50 transition-all duration-300 shadow-lg" style={{ boxShadow: '0 0 30px rgba(253,176,0,0.3)' }}>
-                <svg className="w-12 h-12 text-bca-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                </svg>
-              </div>
-              <h2 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-white via-bca-gold to-yellow-400 bg-clip-text text-transparent" style={{ textShadow: '0 0 20px rgba(253,176,0,0.3)' }}>
-                Browse All Courses
-              </h2>
-            </div>
-            <p className="text-bca-gray-300 text-lg md:text-xl">
-              Discover our comprehensive course catalog and start your learning journey
-            </p>
-          </motion.div>
+      {/* Featured Courses Section - Show only if user has no courses or wants to explore more */}
+      <FeaturedCoursesSection purchases={purchases} navigate={navigate} />
 
-          {coursesLoading ? (
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              <Shimmer type="card" count={6} />
-            </div>
-          ) : (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
-              className="grid md:grid-cols-2 lg:grid-cols-3 gap-6"
-            >
-              {courses.map((course, index) => {
-                // Check if user has purchased this course
-                const isPurchased = purchases.some(purchase => 
-                  purchase.course.id === course.id && purchase.status === 'PAID'
-                );
-                
-                return (
-                  <motion.div
-                    key={course.id}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.3 + index * 0.1 }}
-                  >
-                    <CourseCard c={course} isPurchased={isPurchased} />
-                  </motion.div>
-                );
-              })}
-            </motion.div>
-          )}
-
-          {!coursesLoading && courses.length === 0 && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="text-center py-12"
-            >
-              <div className="flex justify-center mb-6">
-                <div className="p-6 rounded-full bg-gradient-to-br from-bca-gold/20 to-yellow-400/20 border border-bca-gold/30 group-hover:border-bca-gold/50 transition-all duration-300" style={{ boxShadow: '0 0 30px rgba(253,176,0,0.3)' }}>
-                  <svg className="w-16 h-16 text-bca-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                  </svg>
-                </div>
-              </div>
-              <h3 className="text-xl font-semibold text-white mb-2 bg-gradient-to-r from-white to-bca-gold bg-clip-text text-transparent">No Courses Available</h3>
-              <p className="text-bca-gray-300">New courses are being added regularly. Check back soon!</p>
-            </motion.div>
-          )}
-        </div>
-      </section>
 
       {/* Statistics Section */}
       <StatsSection />

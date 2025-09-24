@@ -8,7 +8,7 @@ const TypewriterText = ({
   className = "",
   shouldStart = false,
   loop = false,
-  onComplete = () => {},
+  onComplete = () => { },
 }) => {
   const [displayText, setDisplayText] = useState("");
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -66,10 +66,16 @@ const TypewriterText = ({
 
   return (
     <div
-      className={`min-h-[2rem] ${className}`}
+      className={`
+    min-h-[4rem]   
+    sm:min-h-[6rem]   
+    md:min-h-[8rem]   
+    lg:min-h-[12rem] 
+    ${className}
+  `}
       style={{
-        whiteSpace: "normal", // allow wrapping
-        wordBreak: "break-word", // break long words if needed
+        whiteSpace: "normal",
+        wordBreak: "break-word",
       }}
     >
       {displayText}
