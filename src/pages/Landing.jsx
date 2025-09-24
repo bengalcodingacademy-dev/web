@@ -114,7 +114,7 @@ export default function Landing() {
           <div className="text-center md:text-left">
             <div className="mb-4 md:mb-6">
               <img
-                src="/bca_illustration.gif"
+                src="https://sauvikbcabucket.s3.ap-south-1.amazonaws.com/assets/bca_illustration.gif"
                 alt="BCA Illustration"
                 className="h-16 w-16 md:h-24 md:w-24 rounded shadow-[0_0_50px_10px_#00a1ff] mx-auto md:mx-0 object-cover"
                 style={{
@@ -125,7 +125,10 @@ export default function Landing() {
             <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-extrabold tracking-tight text-white">
               <div className="max-w-full">
                 <TypewriterText
-                  text="Become a job-ready developer in 6 months"
+                  texts={[
+                    "Become a Job-Ready Developer in just 6 months",
+                    "৬ মাসে জব রেডি ডেভেলপার হয়ে উঠুন",
+                  ]}
                   speed={80}
                   deleteSpeed={40}
                   pauseTime={2000}
@@ -172,7 +175,7 @@ export default function Landing() {
           </div>
           <div className="flex justify-center order-first md:order-last">
             <img
-              src="/illustrator.png"
+              src="https://sauvikbcabucket.s3.ap-south-1.amazonaws.com/assets/illustrator.png"
               alt="learn"
               className="max-w-xs sm:max-w-sm w-full drop-shadow-[0_0_40px_#00a1ff]"
             />

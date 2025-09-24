@@ -41,7 +41,7 @@ export default function Layout({ children }) {
         }
       };
       loadUnreadCount();
-      
+
       // Refresh unread count every 30 seconds
       const interval = setInterval(loadUnreadCount, 30000);
       return () => clearInterval(interval);
@@ -55,11 +55,12 @@ export default function Layout({ children }) {
           {/* Logo and Brand */}
           <div className="flex items-center gap-4">
             <Link to="/" className="flex items-center gap-2 md:gap-3 font-bold text-sm md:text-xl tracking-wide">
-              <img src="/bca-logo.jpg" alt="BCA" className="h-6 w-6 md:h-8 md:w-8 rounded" />
+              <img src="https://sauvikbcabucket.s3.ap-south-1.amazonaws.com/assets/bca-logo.jpg" alt="BCA" className="h-6 w-6 md:h-8 md:w-8 rounded" />
               <span>Bengal Coding Academy</span>
             </Link>
-            
+
             {/* Replay Animation Button */}
+            {/* Replay Animation Button - Desktop */}
             <button
               onClick={replayAnimation}
               className="hidden md:flex items-center gap-1 px-2 py-1 rounded-lg bg-bca-cyan/10 border border-bca-cyan/30 text-bca-cyan hover:bg-bca-cyan/20 hover:border-bca-cyan/50 transition-all duration-300 text-xs"
@@ -69,6 +70,17 @@ export default function Layout({ children }) {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
               </svg>
               <span>Replay</span>
+            </button>
+
+            {/* Replay Animation Button - Mobile */}
+            <button
+              onClick={replayAnimation}
+              className="flex md:hidden items-center justify-center p-2 rounded-lg bg-bca-cyan/10 border border-bca-cyan/30 text-bca-cyan hover:bg-bca-cyan/20 hover:border-bca-cyan/50 transition-all duration-300"
+              title="Replay BCA Animation"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+              </svg>
             </button>
           </div>
 
@@ -125,37 +137,37 @@ export default function Layout({ children }) {
             <nav className="px-4 py-6 space-y-4">
               {!user ? (
                 <>
-                  <Link 
-                    to="/" 
+                  <Link
+                    to="/"
                     className="block text-white hover:text-bca-gold transition-colors py-2"
                     onClick={() => setShowMobileMenu(false)}
                   >
                     Home
                   </Link>
-                  <Link 
-                    to="/#courses" 
+                  <Link
+                    to="/#courses"
                     className="block text-white hover:text-bca-gold transition-colors py-2"
                     onClick={() => setShowMobileMenu(false)}
                   >
                     Available Batches
                   </Link>
-                  <Link 
-                    to="/#webinars" 
+                  <Link
+                    to="/#webinars"
                     className="block text-white hover:text-bca-cyan transition-colors py-2"
                     onClick={() => setShowMobileMenu(false)}
                   >
                     Webinars
                   </Link>
                   <div className="pt-4 border-t border-white/10 space-y-3">
-                    <Link 
-                      to="/login" 
+                    <Link
+                      to="/login"
                       className="block w-full text-center px-4 py-2 rounded-xl bg-bca-gold text-black hover:brightness-110"
                       onClick={() => setShowMobileMenu(false)}
                     >
                       Login
                     </Link>
-                    <Link 
-                      to="/register" 
+                    <Link
+                      to="/register"
                       className="block w-full text-center px-4 py-2 rounded-xl border border-white/20"
                       onClick={() => setShowMobileMenu(false)}
                     >
@@ -165,8 +177,8 @@ export default function Layout({ children }) {
                 </>
               ) : (
                 <>
-                  <Link 
-                    to="/announcements" 
+                  <Link
+                    to="/announcements"
                     className="block text-white hover:text-bca-cyan transition-colors py-2 relative"
                     onClick={() => setShowMobileMenu(false)}
                   >
@@ -177,22 +189,22 @@ export default function Layout({ children }) {
                       </span>
                     )}
                   </Link>
-                  <Link 
-                    to="/profile" 
+                  <Link
+                    to="/profile"
                     className="block text-white hover:text-bca-gold transition-colors py-2"
                     onClick={() => setShowMobileMenu(false)}
                   >
                     Profile
                   </Link>
-                  <Link 
-                    to="/purchases" 
+                  <Link
+                    to="/purchases"
                     className="block text-white hover:text-bca-gold transition-colors py-2"
                     onClick={() => setShowMobileMenu(false)}
                   >
                     Purchases
                   </Link>
                   <div className="pt-4 border-t border-white/10">
-                    <button 
+                    <button
                       onClick={() => {
                         setShowMobileMenu(false);
                         handleLogout();
@@ -233,7 +245,7 @@ export default function Layout({ children }) {
           </div>
         </div>
       )}
-      
+
       {/* Footer */}
       <Footer />
     </div>

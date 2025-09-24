@@ -68,3 +68,15 @@ api.interceptors.response.use(
     return Promise.reject(err);
   }
 );
+
+// Global error handler for unhandled promises
+window.addEventListener('unhandledrejection', event => {
+  console.error('Unhandled promise rejection:', event.reason);
+  // You can integrate with error reporting services here
+});
+
+// Global error handler for JavaScript errors
+window.addEventListener('error', event => {
+  console.error('Global error:', event.error);
+  // You can integrate with error reporting services here
+});

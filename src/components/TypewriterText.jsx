@@ -1,25 +1,26 @@
 import React, { useState, useEffect } from "react";
 
 const TypewriterText = ({
-  text,
+  texts = [], // array of strings
   speed = 100,
   deleteSpeed = 50,
   pauseTime = 2000,
   className = "",
   shouldStart = false,
   loop = false,
-  onComplete = () => { },
+  onComplete = () => {},
 }) => {
   const [displayText, setDisplayText] = useState("");
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const [currentIndex, setCurrentIndex] = useState(0); // character index
+  const [textIndex, setTextIndex] = useState(0); // which text in texts[]
   const [isDeleting, setIsDeleting] = useState(false);
   const [isComplete, setIsComplete] = useState(false);
   const [hasStarted, setHasStarted] = useState(false);
 
   useEffect(() => {
-    if (!shouldStart || !hasStarted) return;
+    if (!shouldStart || !hasStarted || texts.length === 0) return;
 
-    const currentFullText = text;
+    const currentFullText = texts[textIndex];
 
     const timeout = setTimeout(() => {
       if (!isDeleting) {
@@ -27,7 +28,10 @@ const TypewriterText = ({
           setDisplayText(currentFullText.slice(0, currentIndex + 1));
           setCurrentIndex((prev) => prev + 1);
         } else {
-          if (loop) {
+          if (textIndex < texts.length - 1) {
+            // if more texts are left
+            setTimeout(() => setIsDeleting(true), pauseTime);
+          } else if (loop) {
             setTimeout(() => setIsDeleting(true), pauseTime);
           } else {
             setIsComplete(true);
@@ -40,6 +44,7 @@ const TypewriterText = ({
           setCurrentIndex((prev) => prev - 1);
         } else {
           setIsDeleting(false);
+          setTextIndex((prev) => (prev + 1) % texts.length);
         }
       }
     }, isDeleting ? deleteSpeed : speed);
@@ -48,7 +53,8 @@ const TypewriterText = ({
   }, [
     currentIndex,
     isDeleting,
-    text,
+    textIndex,
+    texts,
     speed,
     deleteSpeed,
     pauseTime,
@@ -67,12 +73,12 @@ const TypewriterText = ({
   return (
     <div
       className={`
-    min-h-[4rem]   
-    sm:min-h-[6rem]   
-    md:min-h-[8rem]   
-    lg:min-h-[12rem] 
-    ${className}
-  `}
+        min-h-[4rem]   
+        sm:min-h-[6rem]   
+        md:min-h-[8rem]   
+        lg:min-h-[12rem] 
+        ${className}
+      `}
       style={{
         whiteSpace: "normal",
         wordBreak: "break-word",

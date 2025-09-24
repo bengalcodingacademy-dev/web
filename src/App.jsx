@@ -1,8 +1,10 @@
 import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { AuthProvider, useAuth } from "./lib/authContext";
+import { ErrorProvider, ErrorNotifications } from "./contexts/ErrorContext";
 import Layout from "./components/Layout";
 import LoadingAnimation from "./components/LoadingAnimation";
+import ErrorBoundary from "./components/ErrorBoundary";
 import Shimmer from "./components/Shimmer";
 import Landing from "./pages/Landing";
 import UserDashboard from "./pages/UserDashboard";
@@ -67,7 +69,9 @@ export default function App() {
   };
 
   return (
-    <AuthProvider navigate={navigate}>
+    <ErrorProvider>
+      <ErrorBoundary>
+        <AuthProvider navigate={navigate}>
       {/* Neon Background Effects */}
       <div className="neon-orb neon-orb-1"></div>
       <div className="neon-orb neon-orb-2"></div>
@@ -179,6 +183,9 @@ export default function App() {
           </Routes>
         </Layout>
       )}
-    </AuthProvider>
+        </AuthProvider>
+        <ErrorNotifications />
+      </ErrorBoundary>
+    </ErrorProvider>
   );
 }
