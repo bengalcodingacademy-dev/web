@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { api } from '../lib/api';
 import PasswordInput from '../components/PasswordInput';
-import PhoneEmailWidget from '../components/PhoneEmailWidget';
 // Custom Date Picker Component
 function DatePicker({ value, onChange, placeholder, disabled = false }) {
   const [day, setDay] = useState("");
@@ -130,10 +129,8 @@ export default function Register() {
   const [error, setError] = useState('');
   const [step, setStep] = useState('form');
   const [emailCode, setEmailCode] = useState('');
-  const [phoneCode, setPhoneCode] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isEmailVerified, setIsEmailVerified] = useState(false);
-  const [isPhoneVerified, setIsPhoneVerified] = useState(false);
 
   const submit = async (e) => {
     e.preventDefault();
@@ -197,23 +194,6 @@ export default function Register() {
     }
   };
 
-  const verifyPhone = async (e) => {
-    e.preventDefault(); 
-    setError('');
-    try {
-      await api.post('/auth/verify-phone', { phone, code: phoneCode });
-      setIsPhoneVerified(true);
-      setPhoneCode('');
-    } catch {
-      setError('That phone code didn\'t work. Please check your phone and try again.');
-    }
-  };
-
-  const handlePhoneVerified = (data) => {
-    console.log('Phone verified:', data);
-    setIsPhoneVerified(true);
-    setError('');
-  };
 
   if (step === 'loading') {
 
@@ -289,58 +269,9 @@ export default function Register() {
           )}
         </div>
 
-        {/* Phone Verification */}
-        <div className="mb-6 p-4 rounded-xl bg-black/30 border border-white/10">
-          <div className="flex items-center gap-3 mb-3">
-            <div className={`w-8 h-8 rounded-full flex items-center justify-center ${isPhoneVerified ? 'bg-green-500' : 'bg-bca-gold/20'}`}>
-              {isPhoneVerified ? (
-                <span className="text-green-400 text-lg">✓</span>
-              ) : (
-                <span className="text-bca-gold text-lg">2</span>
-              )}
-            </div>
-            <div>
-              <h3 className="text-white font-medium">Phone Verification</h3>
-              <p className="text-white/60 text-sm">We'll send an OTP to {phone}</p>
-            </div>
-          </div>
-          
-          {!isPhoneVerified && (
-            <div className="space-y-3">
-              <PhoneEmailWidget 
-                email={email}
-                onPhoneVerified={handlePhoneVerified}
-              />
-              
-              {/* Fallback manual OTP option */}
-              <div className="text-center">
-                <div className="relative">
-                  <div className="absolute inset-0 flex items-center">
-                    <div className="w-full border-t border-white/20"></div>
-                  </div>
-                  <div className="relative flex justify-center text-sm">
-                    <span className="px-2 bg-gray-900 text-white/60">Or verify manually</span>
-                  </div>
-                </div>
-              </div>
-              
-              <form onSubmit={verifyPhone} className="flex flex-col gap-3">
-                <input 
-                  className="px-3 py-2 rounded-xl bg-black/50 border border-white/10 text-white placeholder-white/50" 
-                  placeholder="6-digit phone OTP (use 123456 in development)" 
-                  value={phoneCode} 
-                  onChange={e=>setPhoneCode(e.target.value)} 
-                />
-                <button className="px-4 py-2 rounded-xl bg-bca-gold text-black hover:bg-bca-gold/90 transition-colors">
-                  Verify Phone Manually
-                </button>
-              </form>
-            </div>
-          )}
-        </div>
 
         {/* Complete Registration Button */}
-        {isEmailVerified && isPhoneVerified && (
+        {isEmailVerified && (
           <div className="text-center">
             <button 
               onClick={() => navigate('/login')}
