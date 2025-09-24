@@ -18,6 +18,261 @@ body,
   height: 100%;
 }
 body {
-  @apply bg-bca-black text-bca-white;
+  @apply bg-bca-black text-bca-white relative overflow-x-hidden;
 }
+
+/* Neon Background Effects */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: 
+    radial-gradient(circle at 20% 80%, rgba(255, 178, 9, 0.2) 0%, transparent 60%),
+    radial-gradient(circle at 80% 20%, rgba(0, 195, 255, 0.2) 0%, transparent 60%),
+    radial-gradient(circle at 40% 40%, rgba(255, 178, 9, 0.15) 0%, transparent 60%);
+  pointer-events: none;
+  z-index: -2;
+}
+
+body::after {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: 
+    linear-gradient(45deg, transparent 20%, rgba(255, 178, 9, 0.08) 50%, transparent 80%),
+    linear-gradient(-45deg, transparent 20%, rgba(0, 195, 255, 0.08) 50%, transparent 80%);
+  animation: neonShift 20s ease-in-out infinite;
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* Floating Neon Orbs */
+.neon-orb {
+  position: fixed;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: -1;
+  animation: float 15s ease-in-out infinite;
+}
+
+.neon-orb-1 {
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, rgba(255, 178, 9, 0.15) 0%, rgba(255, 178, 9, 0.05) 40%, transparent 70%);
+  top: 5%;
+  left: -15%;
+  animation-delay: 0s;
+  filter: blur(1px);
+}
+
+.neon-orb-2 {
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(circle, rgba(0, 195, 255, 0.15) 0%, rgba(0, 195, 255, 0.05) 40%, transparent 70%);
+  top: 50%;
+  right: -10%;
+  animation-delay: 5s;
+  filter: blur(1px);
+}
+
+.neon-orb-3 {
+  width: 250px;
+  height: 250px;
+  background: radial-gradient(circle, rgba(255, 178, 9, 0.12) 0%, rgba(255, 178, 9, 0.04) 40%, transparent 70%);
+  bottom: 15%;
+  left: 15%;
+  animation-delay: 10s;
+  filter: blur(1px);
+}
+
+/* Animated Grid Lines */
+.neon-grid {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: 
+    linear-gradient(rgba(255, 178, 9, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 195, 255, 0.08) 1px, transparent 1px);
+  background-size: 60px 60px;
+  animation: gridMove 30s linear infinite;
+  pointer-events: none;
+  z-index: -1;
+  opacity: 0.6;
+}
+
+/* Keyframe Animations */
+@keyframes neonShift {
+  0%, 100% {
+    transform: translateX(0) translateY(0);
+    opacity: 0.3;
+  }
+  25% {
+    transform: translateX(20px) translateY(-10px);
+    opacity: 0.5;
+  }
+  50% {
+    transform: translateX(-10px) translateY(20px);
+    opacity: 0.4;
+  }
+  75% {
+    transform: translateX(-20px) translateY(-15px);
+    opacity: 0.6;
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px) translateX(0px) scale(1);
+  }
+  25% {
+    transform: translateY(-20px) translateX(10px) scale(1.1);
+  }
+  50% {
+    transform: translateY(10px) translateX(-15px) scale(0.9);
+  }
+  75% {
+    transform: translateY(-10px) translateX(20px) scale(1.05);
+  }
+}
+
+@keyframes gridMove {
+  0% {
+    transform: translate(0, 0);
+  }
+  100% {
+    transform: translate(50px, 50px);
+  }
+}
+
+/* Subtle Glow Effects */
+.neon-glow {
+  box-shadow: 
+    0 0 20px rgba(255, 178, 9, 0.3),
+    0 0 40px rgba(255, 178, 9, 0.2),
+    0 0 60px rgba(255, 178, 9, 0.1);
+}
+
+.cyan-glow {
+  box-shadow: 
+    0 0 20px rgba(0, 195, 255, 0.3),
+    0 0 40px rgba(0, 195, 255, 0.2),
+    0 0 60px rgba(0, 195, 255, 0.1);
+}
+
+/* Additional Neon Effects */
+.neon-line {
+  position: fixed;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(255, 178, 9, 0.6), transparent);
+  animation: lineMove 8s linear infinite;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.neon-line-1 {
+  top: 20%;
+  width: 200px;
+  left: -200px;
+  animation-delay: 0s;
+}
+
+.neon-line-2 {
+  top: 60%;
+  width: 150px;
+  right: -150px;
+  animation-delay: 3s;
+  background: linear-gradient(90deg, transparent, rgba(0, 195, 255, 0.6), transparent);
+}
+
+.neon-line-3 {
+  top: 80%;
+  width: 180px;
+  left: -180px;
+  animation-delay: 6s;
+}
+
+@keyframes lineMove {
+  0% {
+    transform: translateX(0);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(calc(100vw + 200px));
+    opacity: 0;
+  }
+}
+
+/* Floating Particles */
+.neon-particle {
+  position: fixed;
+  width: 4px;
+  height: 4px;
+  background: rgba(255, 178, 9, 0.8);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: -1;
+  animation: particleFloat 12s linear infinite;
+}
+
+.neon-particle-1 {
+  top: 10%;
+  left: 10%;
+  animation-delay: 0s;
+}
+
+.neon-particle-2 {
+  top: 30%;
+  right: 20%;
+  animation-delay: 2s;
+  background: rgba(0, 195, 255, 0.8);
+}
+
+.neon-particle-3 {
+  bottom: 30%;
+  left: 30%;
+  animation-delay: 4s;
+}
+
+.neon-particle-4 {
+  bottom: 10%;
+  right: 10%;
+  animation-delay: 6s;
+  background: rgba(0, 195, 255, 0.8);
+}
+
+@keyframes particleFloat {
+  0%, 100% {
+    transform: translateY(0) scale(1);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  50% {
+    transform: translateY(-100px) scale(1.5);
+    opacity: 0.8;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-200px) scale(0.5);
+    opacity: 0;
+  }
+}
+
 /* use shadow via: shadow-[var(--shadow-soft)] */

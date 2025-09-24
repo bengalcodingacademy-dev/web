@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { api } from '../lib/api';
+import { useAuth } from '../lib/authContext';
 
 const RazorpayPayment = ({ 
   isOpen, 
@@ -12,6 +13,7 @@ const RazorpayPayment = ({
   monthNumber = 1,
   totalMonths = 1
 }) => {
+  const { user } = useAuth();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -21,7 +23,6 @@ const RazorpayPayment = ({
       setLoading(false);
       setError('');
     } else {
-      // Reset state when modal is closed
       setLoading(false);
       setError('');
     }
@@ -56,7 +57,7 @@ const RazorpayPayment = ({
         totalMonths
       });
 
-      const { order, purchase } = orderResponse.data;
+      const { order } = orderResponse.data;
 
       // Configure Razorpay options
       const options = {
@@ -74,11 +75,9 @@ const RazorpayPayment = ({
           emi: false,
           paylater: false
         },
-        // Force UPI to appear as a separate option
-        upi_intent: true,
+        upi_intent: true, // force UPI option
         handler: async function (response) {
           try {
-            // Verify payment
             const verifyResponse = await api.post('/purchases/verify-payment', {
               razorpayOrderId: response.razorpay_order_id,
               razorpayPaymentId: response.razorpay_payment_id,
@@ -97,11 +96,6 @@ const RazorpayPayment = ({
             onError(error.response?.data?.error || 'Payment verification failed');
           }
         },
-        prefill: {
-          name: course.title,
-          email: '', // You can get this from user context if available
-          contact: '' // You can get this from user context if available
-        },
         notes: {
           courseId: course.id,
           courseTitle: course.title,
@@ -110,19 +104,22 @@ const RazorpayPayment = ({
           totalMonths: totalMonths.toString()
         },
         theme: {
-          color: '#F59E0B', // BCA Gold color
+          color: '#F59E0B', // BCA Gold
           backdrop_color: 'rgba(0, 0, 0, 0.8)'
         },
-        // UPI specific configuration
         upi: {
           flow: 'collect'
         },
-        // Additional payment method preferences
         payment_capture: 1,
         readonly: {
-          email: false,
-          contact: false,
-          name: false
+          email: true,
+          contact: true,
+          name: true
+        },
+        prefill: {
+          name: user?.name || "Guest User",
+          email: user?.email || "guest@example.com",
+          contact: user?.phone || "9999999999"
         },
         modal: {
           ondismiss: () => {
@@ -133,7 +130,6 @@ const RazorpayPayment = ({
         }
       };
 
-      // Open Razorpay checkout
       const razorpay = new window.Razorpay(options);
       razorpay.open();
 
@@ -167,7 +163,9 @@ const RazorpayPayment = ({
           <div className="flex justify-between items-center mb-2">
             <span className="text-bca-gray-300">Amount:</span>
             <span className="text-xl font-bold text-bca-gold">
-              ₹{isMonthlyPayment ? (course.monthlyFeeCents / 100).toFixed(2) : (course.priceCents / 100).toFixed(2)}
+              ₹{isMonthlyPayment 
+                ? (parseFloat(course.monthlyFeeRupees) || 0).toFixed(2) 
+                : (parseFloat(course.priceRupees) || 0).toFixed(2)}
             </span>
           </div>
           {isMonthlyPayment && (

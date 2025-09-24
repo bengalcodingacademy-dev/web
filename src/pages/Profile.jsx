@@ -73,7 +73,7 @@ export default function Profile() {
       </div>
       <div className="rounded-xl border border-white/10 p-4">
         <div className="text-white/60 text-sm">Total Paid</div>
-        <div className="text-bca-gold text-xl">₹{(summary.totalPaidCents/100).toFixed(2)}</div>
+        <div className="text-bca-gold text-xl">₹{(parseFloat(summary.totalPaidRupees) || 0).toFixed(2)}</div>
       </div>
       <div className="rounded-xl border border-white/10 p-4">
         <div className="text-white/60 text-sm mb-2">Courses Purchased</div>

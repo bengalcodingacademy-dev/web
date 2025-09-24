@@ -2,8 +2,8 @@ import { Link } from 'react-router-dom';
 
 export function CourseCard({ c }) {
   const isMonthly = c.isMonthlyPayment;
-  const price = c.priceCents || 0;
-  const monthlyFee = c.monthlyFeeCents || 0;
+  const price = parseFloat(c.priceRupees) || 0;
+  const monthlyFee = parseFloat(c.monthlyFeeRupees) || 0;
   const duration = c.durationMonths || 0;
   
   // For monthly payment, calculate total price for discount calculation
@@ -46,15 +46,15 @@ export function CourseCard({ c }) {
             <div className="flex items-center gap-3">
               {isMonthly ? (
                 <>
-                  <span className="text-bca-gold font-bold text-lg">₹{monthlyFee}/month</span>
+                  <span className="text-bca-gold font-bold text-lg">₹{monthlyFee.toFixed(2)}/month</span>
                   <span className="text-white/70 text-xs bg-white/10 px-2 py-1 rounded-full">
                     {duration} month course
                   </span>
                 </>
               ) : (
                 <>
-                  <span className="text-bca-gold font-bold text-lg">₹{(price/100).toFixed(0)}</span>
-                  <span className="text-white/40 line-through text-sm">₹{(original/100).toFixed(0)}</span>
+                  <span className="text-bca-gold font-bold text-lg">₹{price.toFixed(2)}</span>
+                  <span className="text-white/40 line-through text-sm">₹{original.toFixed(2)}</span>
                   <span className="text-xs px-2 py-1 rounded-full bg-bca-cyan/20 text-bca-cyan border border-bca-cyan/30">
                     {discount}% off
                   </span>
