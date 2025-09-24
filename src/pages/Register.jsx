@@ -3,12 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import { api } from '../lib/api';
 import PasswordInput from '../components/PasswordInput';
 import PhoneEmailWidget from '../components/PhoneEmailWidget';
-
 // Custom Date Picker Component
 function DatePicker({ value, onChange, placeholder, disabled = false }) {
-  const [day, setDay] = useState('');
-  const [month, setMonth] = useState('');
-  const [year, setYear] = useState('');
+  const [day, setDay] = useState("");
+  const [month, setMonth] = useState("");
+  const [year, setYear] = useState("");
 
   // Initialize from value if provided
   React.useEffect(() => {
@@ -30,38 +29,39 @@ function DatePicker({ value, onChange, placeholder, disabled = false }) {
         onChange(date.toISOString());
       }
     } else {
-      onChange('');
+      onChange("");
     }
   }, [day, month, year, onChange]);
 
   // Generate options
   const days = Array.from({ length: 31 }, (_, i) => i + 1);
   const months = [
-    { value: 1, label: 'January' },
-    { value: 2, label: 'February' },
-    { value: 3, label: 'March' },
-    { value: 4, label: 'April' },
-    { value: 5, label: 'May' },
-    { value: 6, label: 'June' },
-    { value: 7, label: 'July' },
-    { value: 8, label: 'August' },
-    { value: 9, label: 'September' },
-    { value: 10, label: 'October' },
-    { value: 11, label: 'November' },
-    { value: 12, label: 'December' }
+    { value: 1, label: "January" },
+    { value: 2, label: "February" },
+    { value: 3, label: "March" },
+    { value: 4, label: "April" },
+    { value: 5, label: "May" },
+    { value: 6, label: "June" },
+    { value: 7, label: "July" },
+    { value: 8, label: "August" },
+    { value: 9, label: "September" },
+    { value: 10, label: "October" },
+    { value: 11, label: "November" },
+    { value: 12, label: "December" },
   ];
   const currentYear = new Date().getFullYear();
   const years = Array.from({ length: 100 }, (_, i) => currentYear - i);
-
 
   return (
     <div className="space-y-3">
       {/* Header with clear indication */}
       <div className="flex items-center gap-2">
         <div className="w-2 h-2 bg-bca-gold rounded-full"></div>
-        <span className="text-white/80 text-sm font-medium">Select your birth date</span>
+        <span className="text-white/80 text-sm font-medium">
+          Select your birth date
+        </span>
       </div>
-      
+
       {/* Date selection dropdowns */}
       <div className="flex gap-2">
         <div className="flex-1">
@@ -73,12 +73,14 @@ function DatePicker({ value, onChange, placeholder, disabled = false }) {
             className="w-full px-3 py-3 rounded-xl bg-black/50 border border-white/10 text-white text-sm md:text-base focus:outline-none focus:ring-2 focus:ring-bca-gold/50 focus:border-bca-gold/50 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <option value="">Select day</option>
-            {days.map(d => (
-              <option key={d} value={d} className="bg-gray-800">{d}</option>
+            {days.map((d) => (
+              <option key={d} value={d} className="bg-gray-800">
+                {d}
+              </option>
             ))}
           </select>
         </div>
-        
+
         <div className="flex-1">
           <label className="block text-xs text-white/60 mb-1">Month</label>
           <select
@@ -88,12 +90,14 @@ function DatePicker({ value, onChange, placeholder, disabled = false }) {
             className="w-full px-3 py-3 rounded-xl bg-black/50 border border-white/10 text-white text-sm md:text-base focus:outline-none focus:ring-2 focus:ring-bca-gold/50 focus:border-bca-gold/50 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <option value="">Select month</option>
-            {months.map(m => (
-              <option key={m.value} value={m.value} className="bg-gray-800">{m.label}</option>
+            {months.map((m) => (
+              <option key={m.value} value={m.value} className="bg-gray-800">
+                {m.label}
+              </option>
             ))}
           </select>
         </div>
-        
+
         <div className="flex-1">
           <label className="block text-xs text-white/60 mb-1">Year</label>
           <select
@@ -103,19 +107,21 @@ function DatePicker({ value, onChange, placeholder, disabled = false }) {
             className="w-full px-3 py-3 rounded-xl bg-black/50 border border-white/10 text-white text-sm md:text-base focus:outline-none focus:ring-2 focus:ring-bca-gold/50 focus:border-bca-gold/50 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <option value="">Select year</option>
-            {years.map(y => (
-              <option key={y} value={y} className="bg-gray-800">{y}</option>
+            {years.map((y) => (
+              <option key={y} value={y} className="bg-gray-800">
+                {y}
+              </option>
             ))}
           </select>
         </div>
       </div>
-      
     </div>
   );
 }
 
 export default function Register() {
   const navigate = useNavigate();
+
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
@@ -130,11 +136,11 @@ export default function Register() {
   const [isPhoneVerified, setIsPhoneVerified] = useState(false);
 
   const submit = async (e) => {
-    e.preventDefault(); 
-    setError('');
-    
+    e.preventDefault();
+    setError("");
+
     if (isLoading) return; // Prevent multiple submissions
-    
+
     if (name.trim().length < 2) return setError('Please enter your full name.');
     if (!email.includes('@')) return setError('Please enter a valid email address.');
     if (!phone || phone.length < 10) return setError('Please enter a valid phone number.');
@@ -143,21 +149,26 @@ export default function Register() {
     
     // Validate date format
     const dateObj = new Date(dateOfBirth);
-    if (isNaN(dateObj.getTime())) return setError('Please select a valid date of birth.');
-    
+    if (isNaN(dateObj.getTime()))
+      return setError("Please select a valid date of birth.");
+
     // Check if user is at least 13 years old
     const today = new Date();
     let age = today.getFullYear() - dateObj.getFullYear();
     const monthDiff = today.getMonth() - dateObj.getMonth();
-    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < dateObj.getDate())) {
+    if (
+      monthDiff < 0 ||
+      (monthDiff === 0 && today.getDate() < dateObj.getDate())
+    ) {
       age--;
     }
-    if (age < 13) return setError('You must be at least 13 years old to register.');
-    
+    if (age < 13)
+      return setError("You must be at least 13 years old to register.");
+
     setIsLoading(true);
-    setStep('loading');
-    
+
     try {
+
       await api.post('/auth/register', { name, email, phone, password, dateOfBirth: dateObj.toISOString() });
       // Add a small delay to show the loading state
       setTimeout(() => {
@@ -167,8 +178,9 @@ export default function Register() {
     } catch (e) { 
       console.error('Registration error:', e);
       const errorMessage = e.response?.data?.error || e.message || 'We couldn\'t create your account. Please try again.';
+
       setError(errorMessage);
-      setStep('form');
+    } finally {
       setIsLoading(false);
     }
   };
@@ -204,6 +216,7 @@ export default function Register() {
   };
 
   if (step === 'loading') {
+
     return (
       <div className="max-w-md mx-auto px-4 py-10">
         <div className="text-center">
@@ -212,10 +225,14 @@ export default function Register() {
               <div className="absolute inset-0 rounded-full border-4 border-bca-gold/20"></div>
               <div className="absolute inset-0 rounded-full border-4 border-bca-gold border-t-transparent animate-spin"></div>
             </div>
-            <h1 className="text-2xl font-semibold mb-2">Creating your account...</h1>
-            <p className="text-white/70 text-sm">Please wait while we set up your account</p>
+            <h1 className="text-2xl font-semibold mb-2">
+              Creating your account...
+            </h1>
+            <p className="text-white/70 text-sm">
+              Please wait while we set up your account
+            </p>
           </div>
-          
+
           {/* Shimmer effect */}
           <div className="space-y-3">
             <div className="h-4 bg-gradient-to-r from-white/10 via-white/20 to-white/10 rounded animate-pulse"></div>
@@ -227,7 +244,7 @@ export default function Register() {
     );
   }
 
-  if (step === 'verify') {
+  if (step === "verify") {
     return (
       <div className="max-w-md mx-auto px-4 py-10">
         <div className="text-center mb-8">
@@ -340,8 +357,12 @@ export default function Register() {
   return (
     <div className="max-w-md mx-auto px-4 py-10">
       <div className="text-center mb-8">
-        <h1 className="text-2xl md:text-3xl font-bold text-white mb-2">Create Account</h1>
-        <p className="text-white/60 text-sm md:text-base">Join Bengal Coding Academy</p>
+        <h1 className="text-2xl md:text-3xl font-bold text-white mb-2">
+          Create Account
+        </h1>
+        <p className="text-white/60 text-sm md:text-base">
+          Join Bengal Coding Academy
+        </p>
       </div>
       {error && (
         <div className="mb-4 p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-sm md:text-base">
@@ -353,24 +374,24 @@ export default function Register() {
           <label className="block text-sm font-medium text-white">
             Full Name
           </label>
-          <input 
+          <input
             disabled={isLoading}
-            className="w-full px-4 py-3 rounded-xl bg-black/50 border border-white/10 text-white placeholder-white/50 text-sm md:text-base focus:outline-none focus:ring-2 focus:ring-bca-gold/50 focus:border-bca-gold/50 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed" 
-            placeholder="Enter your full name" 
-            value={name} 
-            onChange={e=>setName(e.target.value)} 
+            className="w-full px-4 py-3 rounded-xl bg-black/50 border border-white/10 text-white placeholder-white/50 text-sm md:text-base focus:outline-none focus:ring-2 focus:ring-bca-gold/50 focus:border-bca-gold/50 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+            placeholder="Enter your full name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
           />
         </div>
         <div className="space-y-2">
           <label className="block text-sm font-medium text-white">
             Email Address
           </label>
-          <input 
+          <input
             disabled={isLoading}
-            className="w-full px-4 py-3 rounded-xl bg-black/50 border border-white/10 text-white placeholder-white/50 text-sm md:text-base focus:outline-none focus:ring-2 focus:ring-bca-gold/50 focus:border-bca-gold/50 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed" 
-            placeholder="Enter your email address" 
-            value={email} 
-            onChange={e=>setEmail(e.target.value)} 
+            className="w-full px-4 py-3 rounded-xl bg-black/50 border border-white/10 text-white placeholder-white/50 text-sm md:text-base focus:outline-none focus:ring-2 focus:ring-bca-gold/50 focus:border-bca-gold/50 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+            placeholder="Enter your email address"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
           />
         </div>
         <div className="space-y-2">
@@ -390,8 +411,8 @@ export default function Register() {
           <label className="block text-sm font-medium text-white">
             Date of Birth
           </label>
-          <DatePicker 
-            value={dateOfBirth} 
+          <DatePicker
+            value={dateOfBirth}
             onChange={setDateOfBirth}
             placeholder="Date of Birth"
             disabled={isLoading}
@@ -401,21 +422,21 @@ export default function Register() {
           <label className="block text-sm font-medium text-white">
             Password
           </label>
-          <PasswordInput 
-            value={password} 
-            onChange={e=>setPassword(e.target.value)} 
-            placeholder="Create a strong password" 
+          <PasswordInput
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="Create a strong password"
             disabled={isLoading}
             className="w-full px-4 py-3 rounded-xl bg-black/50 border border-white/10 text-white placeholder-white/50 text-sm md:text-base focus:outline-none focus:ring-2 focus:ring-bca-gold/50 focus:border-bca-gold/50 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
           />
         </div>
-        <button 
+        <button
           type="submit"
           disabled={isLoading}
           className={`w-full px-4 py-3 rounded-xl font-semibold text-sm md:text-base focus:outline-none focus:ring-2 focus:ring-bca-gold/50 transition-all duration-200 shadow-lg ${
-            isLoading 
-              ? 'bg-bca-gold/50 text-black/50 cursor-not-allowed' 
-              : 'bg-bca-gold text-black hover:bg-bca-gold/90'
+            isLoading
+              ? "bg-bca-gold/50 text-black/50 cursor-not-allowed"
+              : "bg-bca-gold text-black hover:bg-bca-gold/90"
           }`}
         >
           {isLoading ? (
@@ -424,7 +445,7 @@ export default function Register() {
               Creating Account...
             </div>
           ) : (
-            'Create Account'
+            "Create Account"
           )}
         </button>
       </form>
