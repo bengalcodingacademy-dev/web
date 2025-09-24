@@ -1,6 +1,6 @@
 @import "tailwindcss";
 
-:root {
+@theme {
   --color-bca-black: #0a0a0a;
   --color-bca-white: #ffffff;
   --color-bca-red: #ff1a1a;
@@ -27,7 +27,7 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
-
+}
 
 /* Neon Background Effects */
 body::before {
