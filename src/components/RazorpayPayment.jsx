@@ -25,6 +25,11 @@ const RazorpayPayment = ({
     } else {
       setLoading(false);
       setError('');
+      // Clean up any remaining fetch interception
+      if (window._originalFetch) {
+        window.fetch = window._originalFetch;
+        delete window._originalFetch;
+      }
     }
   }, [isOpen]);
 
@@ -65,6 +70,23 @@ const RazorpayPayment = ({
     try {
       setLoading(true);
       setError('');
+
+      // Intercept and block Razorpay tracking requests
+      if (!window._originalFetch) {
+        window._originalFetch = window.fetch;
+      }
+      const originalFetch = window._originalFetch;
+      window.fetch = function(...args) {
+        const url = args[0];
+        if (typeof url === 'string' && 
+            (url.includes('lumberjack.razorpay.com') || 
+             url.includes('track?key_id') || 
+             url.includes('preferences?key_id'))) {
+          console.log('Blocking Razorpay tracking request:', url);
+          return Promise.resolve(new Response('{}', { status: 200 }));
+        }
+        return originalFetch.apply(this, args);
+      };
 
       // Check if Razorpay key is configured
       console.log('Razorpay Key ID:', import.meta.env.VITE_RAZORPAY_KEY_ID ? 'Present' : 'Missing');
@@ -166,6 +188,10 @@ const RazorpayPayment = ({
         analytics: {
           enabled: false // Disable Razorpay analytics to prevent tracking failures
         },
+        retry: {
+          enabled: false // Disable retry mechanism
+        },
+        timeout: 30000, // 30 second timeout
         upi: {
           flow: 'collect'
         },
@@ -184,6 +210,10 @@ const RazorpayPayment = ({
           ondismiss: () => {
             setLoading(false);
             setError('');
+            // Clean up fetch interception and event listeners
+            if (razorpay && razorpay._cleanup) {
+              razorpay._cleanup();
+            }
             onClose();
           }
         }
@@ -234,13 +264,42 @@ const RazorpayPayment = ({
       }
 
       // Add global error handler for any unhandled Razorpay errors
-      window.addEventListener('error', function(event) {
+      const handleGlobalError = (event) => {
+        console.log('Global error caught:', event);
+        
+        // Ignore Razorpay tracking/analytics errors
+        if (event.error && event.error.message) {
+          const errorMessage = event.error.message.toLowerCase();
+          if (errorMessage.includes('razorpay') && 
+              (errorMessage.includes('track') || 
+               errorMessage.includes('analytics') || 
+               errorMessage.includes('preferences'))) {
+            console.log('Ignoring Razorpay tracking error:', event.error);
+            return; // Don't show error for tracking failures
+          }
+        }
+        
+        // Handle other Razorpay errors
         if (event.error && event.error.message && event.error.message.includes('razorpay')) {
           console.error('Global Razorpay error caught:', event.error);
           setError('Payment system error. Please try again.');
           setLoading(false);
         }
-      });
+      };
+
+      window.addEventListener('error', handleGlobalError);
+      
+      // Clean up event listener when component unmounts
+      const cleanup = () => {
+        window.removeEventListener('error', handleGlobalError);
+      };
+      
+      // Store cleanup function for later use
+      razorpay._cleanup = () => {
+        cleanup();
+        // Restore original fetch
+        window.fetch = originalFetch;
+      };
 
     } catch (error) {
       console.error('Payment error:', error);
