@@ -19,7 +19,21 @@ export default function Login() {
       const r = await api.post('/auth/login', { email, password });
       login(r.data);
       navigate(params.get('next') || '/dashboard');
-    } catch (e) { setError('We couldn’t log you in. Please check your email and password.'); }
+    } catch (e) { 
+      console.error('Login error:', e);
+      let errorMessage = 'We couldn\'t log you in. Please check your email and password.';
+      
+      if (e.response?.data?.error?.message) {
+        errorMessage = String(e.response.data.error.message);
+      } else if (e.response?.data?.message) {
+        errorMessage = String(e.response.data.message);
+      } else if (e.response?.data?.error) {
+        errorMessage = String(e.response.data.error);
+      } else if (e.message) {
+        errorMessage = String(e.message);
+      }
+      setError(errorMessage);
+    }
   };
   return (
     <div className="max-w-md mx-auto px-4 py-8 md:py-10">

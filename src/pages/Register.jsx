@@ -174,8 +174,22 @@ export default function Register() {
       }, 1500);
     } catch (e) { 
       console.error('Registration error:', e);
-      const errorMessage = e.response?.data?.error || e.message || 'We couldn\'t create your account. Please try again.';
+      console.error('Error response data:', e.response?.data);
+      console.error('Error message:', e.message);
+      
+      let errorMessage = 'We couldn\'t create your account. Please try again.';
+      
+      if (e.response?.data?.error?.message) {
+        errorMessage = String(e.response.data.error.message);
+      } else if (e.response?.data?.message) {
+        errorMessage = String(e.response.data.message);
+      } else if (e.response?.data?.error) {
+        errorMessage = String(e.response.data.error);
+      } else if (e.message) {
+        errorMessage = String(e.message);
+      }
 
+      console.log('Final error message:', errorMessage);
       setError(errorMessage);
     } finally {
       setIsLoading(false);
@@ -189,8 +203,21 @@ export default function Register() {
       await api.post('/auth/verify-email', { email, code: emailCode });
       setIsEmailVerified(true);
       setEmailCode('');
-    } catch {
-      setError('That email code didn\'t work. Please check your email and try again.');
+    } catch (e) {
+      console.error('Email verification error:', e);
+      let errorMessage = 'That email code didn\'t work. Please check your email and try again.';
+      
+      if (e.response?.data?.error?.message) {
+        errorMessage = String(e.response.data.error.message);
+      } else if (e.response?.data?.message) {
+        errorMessage = String(e.response.data.message);
+      } else if (e.response?.data?.error) {
+        errorMessage = String(e.response.data.error);
+      } else if (e.message) {
+        errorMessage = String(e.message);
+      }
+      
+      setError(errorMessage);
     }
   };
 
