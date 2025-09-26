@@ -163,6 +163,9 @@ const RazorpayPayment = ({
           color: '#F59E0B', // BCA Gold
           backdrop_color: 'rgba(0, 0, 0, 0.8)'
         },
+        analytics: {
+          enabled: false // Disable Razorpay analytics to prevent tracking failures
+        },
         upi: {
           flow: 'collect'
         },
@@ -215,6 +218,13 @@ const RazorpayPayment = ({
         setLoading(false);
       });
 
+      // Add error handler for Razorpay modal errors
+      razorpay.on('modal.error', function (response) {
+        console.error('Razorpay modal error:', response.error);
+        setError(`Payment modal error: ${response.error.description || 'Unknown error'}`);
+        setLoading(false);
+      });
+
       try {
         razorpay.open();
         console.log('Razorpay payment window opened');
@@ -222,6 +232,15 @@ const RazorpayPayment = ({
         console.error('Failed to open Razorpay payment window:', openError);
         throw new Error(`Failed to open payment window: ${openError.message}`);
       }
+
+      // Add global error handler for any unhandled Razorpay errors
+      window.addEventListener('error', function(event) {
+        if (event.error && event.error.message && event.error.message.includes('razorpay')) {
+          console.error('Global Razorpay error caught:', event.error);
+          setError('Payment system error. Please try again.');
+          setLoading(false);
+        }
+      });
 
     } catch (error) {
       console.error('Payment error:', error);
