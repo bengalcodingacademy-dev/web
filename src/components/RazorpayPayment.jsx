@@ -43,19 +43,37 @@ const RazorpayPayment = ({
       setLoading(true);
       setError('');
 
+      // Check if Razorpay key is configured
+      if (!import.meta.env.VITE_RAZORPAY_KEY_ID) {
+        throw new Error('Razorpay configuration missing. Please contact support.');
+      }
+
       // Load Razorpay script
       const scriptLoaded = await loadRazorpayScript();
       if (!scriptLoaded) {
-        throw new Error('Failed to load Razorpay script');
+        throw new Error('Failed to load Razorpay script. Please check your internet connection.');
       }
 
       // Create order
+      console.log('Creating order with data:', {
+        courseId: course.id,
+        isMonthlyPayment,
+        monthNumber,
+        totalMonths
+      });
+
       const orderResponse = await api.post('/purchases/create-order', {
         courseId: course.id,
         isMonthlyPayment,
         monthNumber,
         totalMonths
       });
+
+      console.log('Order response:', orderResponse.data);
+
+      if (!orderResponse.data || !orderResponse.data.order) {
+        throw new Error('Invalid order response from server');
+      }
 
       const { order } = orderResponse.data;
 
@@ -78,22 +96,30 @@ const RazorpayPayment = ({
         upi_intent: true, // force UPI option
         handler: async function (response) {
           try {
+            console.log('Payment response received:', response);
+            
+            if (!response.razorpay_order_id || !response.razorpay_payment_id || !response.razorpay_signature) {
+              throw new Error('Invalid payment response from Razorpay');
+            }
+
             const verifyResponse = await api.post('/purchases/verify-payment', {
               razorpayOrderId: response.razorpay_order_id,
               razorpayPaymentId: response.razorpay_payment_id,
               razorpaySignature: response.razorpay_signature
             });
 
+            console.log('Verification response:', verifyResponse.data);
+
             if (verifyResponse.data.success) {
               setLoading(false);
               onSuccess(verifyResponse.data.purchase);
             } else {
-              throw new Error('Payment verification failed');
+              throw new Error(verifyResponse.data.error || 'Payment verification failed');
             }
           } catch (error) {
             console.error('Payment verification error:', error);
             setLoading(false);
-            onError(error.response?.data?.error || 'Payment verification failed');
+            onError(error.response?.data?.error || error.message || 'Payment verification failed');
           }
         },
         notes: {
@@ -130,7 +156,20 @@ const RazorpayPayment = ({
         }
       };
 
+      // Check if Razorpay is available
+      if (!window.Razorpay) {
+        throw new Error('Razorpay is not available. Please refresh the page and try again.');
+      }
+
       const razorpay = new window.Razorpay(options);
+      
+      // Add error handler for Razorpay
+      razorpay.on('payment.failed', function (response) {
+        console.error('Payment failed:', response.error);
+        setError(`Payment failed: ${response.error.description || 'Unknown error'}`);
+        setLoading(false);
+      });
+
       razorpay.open();
 
     } catch (error) {
