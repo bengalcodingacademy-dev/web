@@ -101,11 +101,11 @@ const RazorpayPayment = ({
 
       console.log('Order response:', orderResponse.data);
 
-      if (!orderResponse.data || !orderResponse.data.order) {
+      if (!orderResponse.data || !orderResponse.data.id) {
         throw new Error('Invalid order response from server');
       }
 
-      const { order } = orderResponse.data;
+      const order = orderResponse.data;
 
       // Configure Razorpay options
       const options = {
