@@ -30,10 +30,33 @@ const RazorpayPayment = ({
 
   const loadRazorpayScript = () => {
     return new Promise((resolve) => {
+      // Check if script is already loaded
+      if (window.Razorpay) {
+        console.log('Razorpay script already loaded');
+        resolve(true);
+        return;
+      }
+
+      // Check if script is already in DOM
+      const existingScript = document.querySelector('script[src="https://checkout.razorpay.com/v1/checkout.js"]');
+      if (existingScript) {
+        console.log('Razorpay script already in DOM, waiting for load');
+        existingScript.onload = () => resolve(true);
+        existingScript.onerror = () => resolve(false);
+        return;
+      }
+
+      console.log('Loading Razorpay script...');
       const script = document.createElement('script');
       script.src = 'https://checkout.razorpay.com/v1/checkout.js';
-      script.onload = () => resolve(true);
-      script.onerror = () => resolve(false);
+      script.onload = () => {
+        console.log('Razorpay script loaded successfully');
+        resolve(true);
+      };
+      script.onerror = (error) => {
+        console.error('Failed to load Razorpay script:', error);
+        resolve(false);
+      };
       document.body.appendChild(script);
     });
   };
@@ -44,12 +67,19 @@ const RazorpayPayment = ({
       setError('');
 
       // Check if Razorpay key is configured
+      console.log('Razorpay Key ID:', import.meta.env.VITE_RAZORPAY_KEY_ID ? 'Present' : 'Missing');
       if (!import.meta.env.VITE_RAZORPAY_KEY_ID) {
         throw new Error('Razorpay configuration missing. Please contact support.');
       }
 
-      // Load Razorpay script
-      const scriptLoaded = await loadRazorpayScript();
+      // Load Razorpay script with timeout
+      const scriptLoaded = await Promise.race([
+        loadRazorpayScript(),
+        new Promise((_, reject) => 
+          setTimeout(() => reject(new Error('Script loading timeout')), 10000)
+        )
+      ]);
+      
       if (!scriptLoaded) {
         throw new Error('Failed to load Razorpay script. Please check your internet connection.');
       }
@@ -158,10 +188,25 @@ const RazorpayPayment = ({
 
       // Check if Razorpay is available
       if (!window.Razorpay) {
+        console.error('Razorpay not available on window object');
         throw new Error('Razorpay is not available. Please refresh the page and try again.');
       }
 
-      const razorpay = new window.Razorpay(options);
+      console.log('Initializing Razorpay with options:', {
+        key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+        amount: order.amount,
+        currency: order.currency,
+        order_id: order.id
+      });
+
+      let razorpay;
+      try {
+        razorpay = new window.Razorpay(options);
+        console.log('Razorpay instance created successfully');
+      } catch (initError) {
+        console.error('Failed to create Razorpay instance:', initError);
+        throw new Error(`Failed to initialize payment: ${initError.message}`);
+      }
       
       // Add error handler for Razorpay
       razorpay.on('payment.failed', function (response) {
@@ -170,7 +215,13 @@ const RazorpayPayment = ({
         setLoading(false);
       });
 
-      razorpay.open();
+      try {
+        razorpay.open();
+        console.log('Razorpay payment window opened');
+      } catch (openError) {
+        console.error('Failed to open Razorpay payment window:', openError);
+        throw new Error(`Failed to open payment window: ${openError.message}`);
+      }
 
     } catch (error) {
       console.error('Payment error:', error);
