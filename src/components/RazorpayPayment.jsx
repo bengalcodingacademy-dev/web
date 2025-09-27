@@ -125,11 +125,24 @@ const RazorpayPayment = ({
 
       console.log('Order response:', orderResponse.data);
 
-      if (!orderResponse.data || !orderResponse.data.id) {
+      // Validate response structure - handle both nested and spread formats
+      if (!orderResponse.data) {
         throw new Error('Invalid order response from server');
       }
 
-      const order = orderResponse.data;
+      // Check if order is nested or spread
+      let order;
+      if (orderResponse.data.order && orderResponse.data.order.id) {
+        // Nested format: { order: {...}, purchase: {...} }
+        console.log('Using nested order format');
+        order = orderResponse.data.order;
+      } else if (orderResponse.data.id) {
+        // Spread format: { id: "...", amount: ..., purchase: {...} }
+        console.log('Using spread order format');
+        order = orderResponse.data;
+      } else {
+        throw new Error('Invalid order response from server');
+      }
 
       // Configure Razorpay options
       const options = {
