@@ -71,39 +71,13 @@ const RazorpayPayment = ({
       setLoading(true);
       setError('');
 
-      // Intercept and block Razorpay tracking requests
-      if (!window._originalFetch) {
-        window._originalFetch = window.fetch;
-      }
-      const originalFetch = window._originalFetch;
-      window.fetch = function(...args) {
-        const url = args[0];
-        if (typeof url === 'string' && 
-            (url.includes('lumberjack.razorpay.com') || 
-             url.includes('track?key_id') || 
-             url.includes('preferences?key_id'))) {
-          console.log('Blocking Razorpay tracking request:', url);
-          return Promise.resolve(new Response('{}', { status: 200 }));
-        }
-        return originalFetch.apply(this, args);
-      };
-
-      // Check if Razorpay key is configured
-      console.log('Razorpay Key ID:', import.meta.env.VITE_RAZORPAY_KEY_ID ? 'Present' : 'Missing');
-      console.log('Environment:', import.meta.env.MODE);
-      console.log('All env vars:', import.meta.env);
+      // Check Razorpay key
       if (!import.meta.env.VITE_RAZORPAY_KEY_ID) {
         throw new Error('Razorpay configuration missing. Please contact support.');
       }
 
-      // Load Razorpay script with timeout
-      const scriptLoaded = await Promise.race([
-        loadRazorpayScript(),
-        new Promise((_, reject) => 
-          setTimeout(() => reject(new Error('Script loading timeout')), 10000)
-        )
-      ]);
-      
+      // Load Razorpay script
+      const scriptLoaded = await loadRazorpayScript();
       if (!scriptLoaded) {
         throw new Error('Failed to load Razorpay script. Please check your internet connection.');
       }
@@ -125,22 +99,21 @@ const RazorpayPayment = ({
 
       console.log('Order response:', orderResponse.data);
 
-      // Validate response structure - handle both nested and spread formats
-      if (!orderResponse.data) {
-        throw new Error('Invalid order response from server');
-      }
+      // ✅ Handle different response formats
+      let order = null;
+      let purchase = null;
 
-      // Check if order is nested or spread
-      let order;
-      if (orderResponse.data.order && orderResponse.data.order.id) {
-        // Nested format: { order: {...}, purchase: {...} }
-        console.log('Using nested order format');
+      if (orderResponse.data.order?.id) {
+        // Format: { order: {...}, purchase: {...} }
+        console.log('Using nested order + purchase format');
         order = orderResponse.data.order;
+        purchase = orderResponse.data.purchase;
       } else if (orderResponse.data.id) {
-        // Spread format: { id: "...", amount: ..., purchase: {...} }
-        console.log('Using spread order format');
+        // Format: { id: "...", amount: ..., ... } (direct Razorpay order)
+        console.log('Using flat order format');
         order = orderResponse.data;
       } else {
+        console.error('Unexpected order response:', orderResponse.data);
         throw new Error('Invalid order response from server');
       }
 
@@ -152,23 +125,20 @@ const RazorpayPayment = ({
         name: 'Bengal Coding Academy',
         description: `${course.title}${isMonthlyPayment ? ` - Month ${monthNumber}` : ''}`,
         order_id: order.id,
-        method: {
-          netbanking: true,
-          wallet: true,
-          upi: true,
-          card: true,
-          emi: false,
-          paylater: false
+        notes: {
+          courseId: course.id,
+          courseTitle: course.title,
+          isMonthlyPayment: isMonthlyPayment.toString(),
+          monthNumber: monthNumber.toString(),
+          totalMonths: totalMonths.toString(),
         },
-        upi_intent: true, // force UPI option
+        prefill: {
+          name: user?.name || "Guest User",
+          email: user?.email || "guest@example.com",
+          contact: user?.phone || "9999999999"
+        },
         handler: async function (response) {
           try {
-            console.log('Payment response received:', response);
-            
-            if (!response.razorpay_order_id || !response.razorpay_payment_id || !response.razorpay_signature) {
-              throw new Error('Invalid payment response from Razorpay');
-            }
-
             const verifyResponse = await api.post('/purchases/verify-payment', {
               razorpayOrderId: response.razorpay_order_id,
               razorpayPaymentId: response.razorpay_payment_id,
@@ -179,7 +149,8 @@ const RazorpayPayment = ({
 
             if (verifyResponse.data.success) {
               setLoading(false);
-              onSuccess(verifyResponse.data.purchase);
+              // ✅ Pass purchase object if available
+              onSuccess(purchase || verifyResponse.data.purchase);
             } else {
               throw new Error(verifyResponse.data.error || 'Payment verification failed');
             }
@@ -189,136 +160,24 @@ const RazorpayPayment = ({
             onError(error.response?.data?.error || error.message || 'Payment verification failed');
           }
         },
-        notes: {
-          courseId: course.id,
-          courseTitle: course.title,
-          isMonthlyPayment: isMonthlyPayment.toString(),
-          monthNumber: monthNumber.toString(),
-          totalMonths: totalMonths.toString()
-        },
         theme: {
-          color: '#F59E0B', // BCA Gold
-          backdrop_color: 'rgba(0, 0, 0, 0.8)'
-        },
-        analytics: {
-          enabled: false // Disable Razorpay analytics to prevent tracking failures
-        },
-        retry: {
-          enabled: false // Disable retry mechanism
-        },
-        timeout: 30000, // 30 second timeout
-        upi: {
-          flow: 'collect'
-        },
-        payment_capture: 1,
-        readonly: {
-          email: true,
-          contact: true,
-          name: true
-        },
-        prefill: {
-          name: user?.name || "Guest User",
-          email: user?.email || "guest@example.com",
-          contact: user?.phone || "9999999999"
+          color: '#F59E0B'
         },
         modal: {
           ondismiss: () => {
             setLoading(false);
             setError('');
-            // Clean up fetch interception and event listeners
-            if (razorpay && razorpay._cleanup) {
-              razorpay._cleanup();
-            }
             onClose();
           }
         }
       };
 
-      // Check if Razorpay is available
-      if (!window.Razorpay) {
-        console.error('Razorpay not available on window object');
-        throw new Error('Razorpay is not available. Please refresh the page and try again.');
-      }
-
-      console.log('Initializing Razorpay with options:', {
-        key: import.meta.env.VITE_RAZORPAY_KEY_ID,
-        amount: order.amount,
-        currency: order.currency,
-        order_id: order.id
-      });
-
-      let razorpay;
-      try {
-        razorpay = new window.Razorpay(options);
-        console.log('Razorpay instance created successfully');
-      } catch (initError) {
-        console.error('Failed to create Razorpay instance:', initError);
-        throw new Error(`Failed to initialize payment: ${initError.message}`);
-      }
-      
-      // Add error handler for Razorpay
-      razorpay.on('payment.failed', function (response) {
-        console.error('Payment failed:', response.error);
-        setError(`Payment failed: ${response.error.description || 'Unknown error'}`);
-        setLoading(false);
-      });
-
-      // Add error handler for Razorpay modal errors
-      razorpay.on('modal.error', function (response) {
-        console.error('Razorpay modal error:', response.error);
-        setError(`Payment modal error: ${response.error.description || 'Unknown error'}`);
-        setLoading(false);
-      });
-
-      try {
-        razorpay.open();
-        console.log('Razorpay payment window opened');
-      } catch (openError) {
-        console.error('Failed to open Razorpay payment window:', openError);
-        throw new Error(`Failed to open payment window: ${openError.message}`);
-      }
-
-      // Add global error handler for any unhandled Razorpay errors
-      const handleGlobalError = (event) => {
-        console.log('Global error caught:', event);
-        
-        // Ignore Razorpay tracking/analytics errors
-        if (event.error && event.error.message) {
-          const errorMessage = event.error.message.toLowerCase();
-          if (errorMessage.includes('razorpay') && 
-              (errorMessage.includes('track') || 
-               errorMessage.includes('analytics') || 
-               errorMessage.includes('preferences'))) {
-            console.log('Ignoring Razorpay tracking error:', event.error);
-            return; // Don't show error for tracking failures
-          }
-        }
-        
-        // Handle other Razorpay errors
-        if (event.error && event.error.message && event.error.message.includes('razorpay')) {
-          console.error('Global Razorpay error caught:', event.error);
-          setError('Payment system error. Please try again.');
-          setLoading(false);
-        }
-      };
-
-      window.addEventListener('error', handleGlobalError);
-      
-      // Clean up event listener when component unmounts
-      const cleanup = () => {
-        window.removeEventListener('error', handleGlobalError);
-      };
-      
-      // Store cleanup function for later use
-      razorpay._cleanup = () => {
-        cleanup();
-        // Restore original fetch
-        window.fetch = originalFetch;
-      };
+      const razorpay = new window.Razorpay(options);
+      razorpay.open();
 
     } catch (error) {
       console.error('Payment error:', error);
-      setError(error.response?.data?.error || 'Failed to initiate payment');
+      setError(error.response?.data?.error || error.message || 'Failed to initiate payment');
       setLoading(false);
     }
   };
