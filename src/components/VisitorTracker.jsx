@@ -8,16 +8,23 @@ export default function VisitorTracker() {
         // Only track once per session
         const hasTracked = sessionStorage.getItem('visitorTracked');
         if (hasTracked) {
+          console.log('Visitor already tracked in this session');
           return;
         }
 
-        await api.post('/visitors/track');
+        console.log('Attempting to track visitor...');
+        const response = await api.post('/visitors/track');
         sessionStorage.setItem('visitorTracked', 'true');
         
-        console.log('Visitor tracked successfully');
+        console.log('Visitor tracked successfully:', response.data);
       } catch (error) {
-        // Silently fail - don't show errors to users
+        // Log error for debugging
         console.error('Failed to track visitor:', error);
+        console.error('Error details:', {
+          message: error.message,
+          status: error.response?.status,
+          data: error.response?.data
+        });
       }
     };
 
