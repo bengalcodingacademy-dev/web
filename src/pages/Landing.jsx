@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { api } from "../lib/api";
 import { CourseCard } from "./components/CourseCard";
 import Shimmer from "../components/Shimmer";
@@ -8,6 +8,7 @@ import YouTubeSlideshow from "../components/YouTubeSlideshow";
 import TestimonialSlideshow from "../components/TestimonialSlideshow";
 import ProgrammingJourney from "../components/ProgrammingJourney";
 import ExpertFaculty from "../components/ExpertFaculty";
+import DurgaPujoWish from "../components/DurgaPujoWish";
 
 const faqs = [
   {
@@ -61,6 +62,7 @@ export default function Landing() {
   const [loadingAnimationComplete, setLoadingAnimationComplete] =
     useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const loadData = async () => {
@@ -108,6 +110,9 @@ export default function Landing() {
   }, []);
   return (
     <div>
+      {/* Durga Pujo Festive Wish Section */}
+      <DurgaPujoWish />
+      
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-black via-[#17002a] to-black" />
         <div className="relative max-w-6xl mx-auto px-4 py-10 md:py-20 grid md:grid-cols-2 items-center gap-6 md:gap-8">
@@ -215,17 +220,49 @@ export default function Landing() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
           {loading ? (
             <Shimmer type="course-card" count={3} />
-          ) : (
+          ) : courses.length > 0 ? (
             courses.slice(0, 3).map((c) => <CourseCard key={c.id} c={c} />)
+          ) : (
+            <div className="col-span-full">
+              <div className="max-w-md mx-auto">
+                <div className="bg-gradient-to-br from-bca-gray-800 to-bca-gray-900 rounded-2xl p-8 border border-bca-gray-700 text-center">
+                  <div className="mb-6">
+                    <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-bca-gold/20 to-bca-cyan/20 rounded-full flex items-center justify-center">
+                      <svg className="w-8 h-8 text-bca-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                      </svg>
+                    </div>
+                    <h3 className="text-xl font-semibold text-white mb-3">
+                      এই মুহূর্তে আমাদের কোনো কোর্স অ্যাভেইলেবল নেই
+                    </h3>
+                    <p className="text-bca-gray-300 text-sm mb-6">
+                      আপকামিং কোর্স এর নোটিফিকেশন পেতে রেজিস্টার করুন
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => navigate('/register')}
+                    className="w-full bg-gradient-to-r from-bca-gold to-bca-cyan text-black font-semibold py-3 px-6 rounded-lg hover:from-bca-gold/90 hover:to-bca-cyan/90 transition-all duration-300 transform hover:scale-105"
+                  >
+                    রেজিস্টার করুন
+                  </button>
+                </div>
+              </div>
+            </div>
           )}
         </div>
       </section>
 
       {/* Upcoming Webinars Section */}
       <section id="webinars" className="max-w-6xl mx-auto px-4 py-8 md:py-14">
-        <h2 className="text-xl md:text-2xl font-semibold mb-4 md:mb-6">
-          Upcoming Webinars
-        </h2>
+        <div className="text-center mb-8 md:mb-12">
+          <h2 className="text-2xl md:text-3xl font-bold text-white mb-2">
+            Upcoming Webinars
+          </h2>
+          <div className="w-24 h-1 bg-gradient-to-r from-bca-gold to-bca-cyan mx-auto rounded-full"></div>
+          <p className="text-white/70 text-sm md:text-base mt-4 max-w-2xl mx-auto">
+            Join our free webinars and learn from industry experts
+          </p>
+        </div>
         {webinars.length > 0 ? (
           <>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
@@ -293,12 +330,27 @@ export default function Landing() {
             )}
           </>
         ) : (
-          <div className="text-center py-12">
-            <div className="text-bca-gray-400 text-lg mb-4">
-              No upcoming webinars at the moment
-            </div>
-            <div className="text-bca-gray-500 text-sm">
-              Check back soon for exciting webinars!
+          <div className="max-w-md mx-auto">
+            <div className="bg-gradient-to-br from-bca-gray-800 to-bca-gray-900 rounded-2xl p-8 border border-bca-gray-700 text-center">
+              <div className="mb-6">
+                <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-bca-cyan/20 to-bca-gold/20 rounded-full flex items-center justify-center">
+                  <svg className="w-8 h-8 text-bca-cyan" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                  </svg>
+                </div>
+                <h3 className="text-xl font-semibold text-white mb-3">
+                  এই মুহূর্তে আমাদের কোনো প্ল্যান্ড ওয়েবিনার নেই
+                </h3>
+                <p className="text-bca-gray-300 text-sm mb-6">
+                  আপকামিং ওয়েবিনার এর নোটিফিকেশন পেতে রেজিস্টার করুন
+                </p>
+              </div>
+              <button
+                onClick={() => navigate('/register')}
+                className="w-full bg-gradient-to-r from-bca-cyan to-bca-gold text-black font-semibold py-3 px-6 rounded-lg hover:from-bca-cyan/90 hover:to-bca-gold/90 transition-all duration-300 transform hover:scale-105"
+              >
+                রেজিস্টার করুন
+              </button>
             </div>
           </div>
         )}
