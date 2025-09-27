@@ -45,7 +45,7 @@ const ExpertFaculty = () => {
               <div className="block lg:hidden relative w-full h-96 sm:h-[28rem] overflow-hidden">
                 <img
                   src="https://sauvikbcabucket.s3.ap-south-1.amazonaws.com/assets/me.jpeg"
-                  alt={facultyMember.name}
+                  alt="Sauvik Chatterjee"
                   className="w-full h-full object-cover object-top rounded-t-2xl shadow-2xl"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent rounded-t-2xl"></div>
