@@ -90,6 +90,8 @@ const RazorpayPayment = ({
 
       // Check if Razorpay key is configured
       console.log('Razorpay Key ID:', import.meta.env.VITE_RAZORPAY_KEY_ID ? 'Present' : 'Missing');
+      console.log('Environment:', import.meta.env.MODE);
+      console.log('All env vars:', import.meta.env);
       if (!import.meta.env.VITE_RAZORPAY_KEY_ID) {
         throw new Error('Razorpay configuration missing. Please contact support.');
       }
