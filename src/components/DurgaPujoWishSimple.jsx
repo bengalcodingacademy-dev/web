@@ -12,20 +12,65 @@ export default function DurgaPujoWishSimple() {
   return (
     <section 
       id="durga-pujo-wish" 
-      className="relative w-full min-h-[400px] md:min-h-[500px] flex items-center justify-center overflow-hidden bg-black"
+      className="relative w-full min-h-[350px] sm:min-h-[400px] md:min-h-[500px] lg:min-h-[600px] flex items-center justify-center overflow-hidden"
+      style={{
+        backgroundImage: "url('https://sauvikbcabucket.s3.ap-south-1.amazonaws.com/assets/maa+durga.png')",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+        backgroundAttachment: "scroll" // Changed from fixed for better mobile performance
+      }}
     >
-      {/* Optimized Neon Particles - Reduced Count */}
+      {/* Dark overlay for better text readability */}
+      <div className="absolute inset-0 bg-black/60"></div>
+      {/* Optimized Neon Particles - Responsive Count */}
       <div className="absolute inset-0 pointer-events-none">
-        {[...Array(6)].map((_, i) => (
+        {[...Array(window.innerWidth < 768 ? 4 : 6)].map((_, i) => (
           <div
             key={i}
-            className="absolute w-2 h-2 md:w-3 md:h-3 rounded-full animate-float"
+            className="absolute rounded-full"
             style={{
-              left: `${(i * 16.67) + 10}%`, // Fixed positions instead of random
+              width: window.innerWidth < 768 ? '8px' : '12px',
+              height: window.innerWidth < 768 ? '8px' : '12px',
+              left: `${(i * (window.innerWidth < 768 ? 25 : 16.67)) + 10}%`,
               backgroundColor: ['#00bdff', '#fdb000', '#fd0000'][i % 3],
-              boxShadow: `0 0 15px ${['#00bdff', '#fdb000', '#fd0000'][i % 3]}, 0 0 30px ${['#00bdff', '#fdb000', '#fd0000'][i % 3]}`,
-              animationDelay: `${i * 1.5}s`,
-              animationDuration: `${8 + (i * 2)}s`
+              boxShadow: `0 0 ${window.innerWidth < 768 ? '8px' : '15px'} ${['#00bdff', '#fdb000', '#fd0000'][i % 3]}, 0 0 ${window.innerWidth < 768 ? '16px' : '30px'} ${['#00bdff', '#fdb000', '#fd0000'][i % 3]}`,
+              animation: `float ${window.innerWidth < 768 ? 6 + (i * 1.5) : 8 + (i * 2)}s linear infinite ${i * 1.5}s, floatY ${window.innerWidth < 768 ? 2 + (i % 2) : 3 + (i % 3)}s ease-in-out infinite ${(i * 0.3) % 2}s`,
+            }}
+          />
+        ))}
+      </div>
+
+      {/* Floating Sparkles - Responsive Count */}
+      <div className="absolute inset-0 pointer-events-none">
+        {[...Array(window.innerWidth < 768 ? 4 : 8)].map((_, i) => (
+          <div
+            key={`sparkle-${i}`}
+            className="sparkle"
+            style={{
+              left: `${(i * (window.innerWidth < 768 ? 25 : 12.5)) + 5}%`,
+              animationDelay: `${(i * 0.4) % 3}s`,
+              animationDuration: `${window.innerWidth < 768 ? 2 + (i % 2) : 3 + (i % 2)}s`,
+              fontSize: window.innerWidth < 768 ? '1rem' : '1.2rem',
+            }}
+          >
+            ✨
+          </div>
+        ))}
+      </div>
+
+      {/* Pulsing Rings - Responsive Count */}
+      <div className="absolute inset-0 pointer-events-none">
+        {[...Array(window.innerWidth < 768 ? 2 : 4)].map((_, i) => (
+          <div
+            key={`ring-${i}`}
+            className="pulsing-ring"
+            style={{
+              left: `${(i * (window.innerWidth < 768 ? 50 : 25)) + 12.5}%`,
+              top: `${25 + (i % 2) * 30}%`,
+              animationDelay: `${(i * 0.6) % 2}s`,
+              animationDuration: `${window.innerWidth < 768 ? 3 + (i % 2) : 4 + (i % 2)}s`,
+              '--ring-color': ['#00bdff', '#fdb000', '#fd0000'][i % 3],
             }}
           />
         ))}
@@ -74,9 +119,9 @@ export default function DurgaPujoWishSimple() {
           style={{ transitionDelay: '0.4s' }}
         >
           <h1 
-            className="text-3xl md:text-5xl lg:text-6xl font-bold mb-4 leading-tight animate-neon-gradient-text"
+            className="text-xl sm:text-2xl md:text-3xl lg:text-5xl xl:text-6xl font-bold mb-3 sm:mb-4 leading-tight animate-neon-gradient-text px-2"
             style={{
-              textShadow: '0 0 30px rgba(0,189,255,0.8), 0 0 60px rgba(253,176,0,0.6), 0 0 90px rgba(253,0,0,0.4)'
+              textShadow: '0 0 20px rgba(0,189,255,0.8), 0 0 40px rgba(253,176,0,0.6), 0 0 60px rgba(253,0,0,0.4)'
             }}
           >
             দুর্গা পুজো ভালো কাটুক
@@ -92,12 +137,12 @@ export default function DurgaPujoWishSimple() {
           style={{ transitionDelay: '0.6s' }}
         >
           <h2 
-            className="text-xl md:text-2xl lg:text-3xl font-semibold animate-neon-gradient-text-subtitle"
+            className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-semibold animate-neon-gradient-text-subtitle px-2"
             style={{
-              textShadow: '0 0 20px rgba(253,176,0,0.8), 0 0 40px rgba(0,189,255,0.6)'
+              textShadow: '0 0 15px rgba(253,176,0,0.8), 0 0 30px rgba(0,189,255,0.6)'
             }}
           >
-            শুভ ষষ্ঠী
+            শুভ মহাসপ্তমী
           </h2>
         </div>
 
@@ -127,7 +172,7 @@ export default function DurgaPujoWishSimple() {
       <style jsx>{`
         @keyframes float {
           0% {
-            transform: translateY(0px);
+            transform: translateY(-100px);
             opacity: 0;
           }
           10% {
@@ -137,8 +182,26 @@ export default function DurgaPujoWishSimple() {
             opacity: 0.8;
           }
           100% {
-            transform: translateY(-400px);
+            transform: translateY(calc(100vh + 100px));
             opacity: 0;
+          }
+        }
+
+        @keyframes floatY {
+          0% {
+            transform: translateY(0px);
+          }
+          25% {
+            transform: translateY(-15px);
+          }
+          50% {
+            transform: translateY(0px);
+          }
+          75% {
+            transform: translateY(10px);
+          }
+          100% {
+            transform: translateY(0px);
           }
         }
 
@@ -148,6 +211,62 @@ export default function DurgaPujoWishSimple() {
           }
           50% {
             background-position: 100% 50%;
+          }
+        }
+
+        /* Sparkle Animation */
+        .sparkle {
+          position: absolute;
+          top: -30px;
+          font-size: 1.2rem;
+          animation: sparkleFloat 3s linear infinite;
+          opacity: 0.7;
+          z-index: 2;
+        }
+
+        @keyframes sparkleFloat {
+          0% {
+            transform: translateY(0px) rotate(0deg);
+            opacity: 0;
+          }
+          10% {
+            opacity: 0.7;
+          }
+          90% {
+            opacity: 0.7;
+          }
+          100% {
+            transform: translateY(calc(100vh + 30px)) rotate(360deg);
+            opacity: 0;
+          }
+        }
+
+        /* Pulsing Ring Animation */
+        .pulsing-ring {
+          position: absolute;
+          width: 40px;
+          height: 40px;
+          border: 2px solid var(--ring-color);
+          border-radius: 50%;
+          animation: ringPulse 4s ease-in-out infinite;
+          z-index: 1;
+        }
+
+        @keyframes ringPulse {
+          0% {
+            transform: scale(0.3);
+            opacity: 0.6;
+            box-shadow: 0 0 0 0 var(--ring-color);
+          }
+          50% {
+            transform: scale(1);
+            opacity: 0.3;
+            box-shadow: 0 0 0 15px transparent;
+          }
+          100% {
+            transform: scale(0.3);
+            opacity: 0.6;
+            box-shadow: 0 0 0 0 var(--ring-color);
           }
         }
 
@@ -178,28 +297,32 @@ export default function DurgaPujoWishSimple() {
           animation: neonGradientShift 5s ease-in-out infinite;
         }
 
-        /* Responsive adjustments */
+        /* Mobile Optimizations */
         @media (max-width: 768px) {
-          .text-3xl {
-            font-size: 1.875rem;
-            line-height: 2.25rem;
+          .sparkle {
+            animation-duration: 2s !important; /* Faster sparkles on mobile */
           }
           
-          .text-xl {
-            font-size: 1.25rem;
-            line-height: 1.75rem;
+          .pulsing-ring {
+            animation-duration: 3s !important; /* Faster rings on mobile */
+          }
+          
+          .animate-neon-gradient-text,
+          .animate-neon-gradient-text-subtitle {
+            animation-duration: 3s !important; /* Faster text animations on mobile */
           }
         }
 
-        @media (max-width: 640px) {
-          .text-3xl {
-            font-size: 1.5rem;
-            line-height: 2rem;
+        /* Reduce motion for users who prefer it */
+        @media (prefers-reduced-motion: reduce) {
+          .sparkle,
+          .pulsing-ring {
+            animation: none !important;
           }
           
-          .text-xl {
-            font-size: 1.125rem;
-            line-height: 1.5rem;
+          .animate-neon-gradient-text,
+          .animate-neon-gradient-text-subtitle {
+            animation: none !important;
           }
         }
       `}</style>
