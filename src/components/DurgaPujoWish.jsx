@@ -182,7 +182,7 @@ export default function DurgaPujoWish() {
             animation: "textFloat 4s ease-in-out infinite",
           }}
         >
-          শুভ মহাষ্টমী
+          শুভ মহানবমী
         </motion.h2>
       </div>
 

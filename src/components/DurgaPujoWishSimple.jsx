@@ -157,7 +157,7 @@ export default function DurgaPujoWishSimple() {
                 "0 0 15px rgba(253,176,0,0.8), 0 0 30px rgba(0,189,255,0.6)",
             }}
           >
-            শুভ মহাষ্টমী
+            শুভ মহানবমী
           </h2>
         </div>
 
