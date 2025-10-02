@@ -159,7 +159,7 @@ export default function DurgaPujoWish() {
               "textGradientShift 3s ease-in-out infinite, textPulse 2s ease-in-out infinite",
           }}
         >
-          দুর্গা পুজো ভালো কাটুক
+          বিজয়া দশমীর শুভেচ্ছা
         </motion.h1>
 
         {/* Sub Wish */}
@@ -182,7 +182,7 @@ export default function DurgaPujoWish() {
             animation: "textFloat 4s ease-in-out infinite",
           }}
         >
-          শুভ মহানবমী
+          আসছে বছর আবার হবে!
         </motion.h2>
       </div>
 

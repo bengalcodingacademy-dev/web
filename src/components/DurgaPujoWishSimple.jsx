@@ -140,7 +140,7 @@ export default function DurgaPujoWishSimple() {
                 "0 0 20px rgba(0,189,255,0.8), 0 0 40px rgba(253,176,0,0.6), 0 0 60px rgba(253,0,0,0.4)",
             }}
           >
-            দুর্গা পুজো ভালো কাটুক
+            বিজয়া দশমীর শুভেচ্ছা
           </h1>
         </div>
 
@@ -157,7 +157,7 @@ export default function DurgaPujoWishSimple() {
                 "0 0 15px rgba(253,176,0,0.8), 0 0 30px rgba(0,189,255,0.6)",
             }}
           >
-            শুভ মহানবমী
+            আসছে বছর আবার হবে!
           </h2>
         </div>
 
