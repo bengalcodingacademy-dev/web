@@ -8,7 +8,7 @@ import YouTubeSlideshow from "../components/YouTubeSlideshow";
 import TestimonialSlideshow from "../components/TestimonialSlideshow";
 import ProgrammingJourney from "../components/ProgrammingJourney";
 import ExpertFaculty from "../components/ExpertFaculty";
-import DurgaPujoWish from "../components/DurgaPujoWish";
+import CoursePromo from "../components/CoursePromo";
 
 const faqs = [
   {
@@ -110,8 +110,8 @@ export default function Landing() {
   }, []);
   return (
     <div>
-      {/* Durga Pujo Festive Wish Section */}
-      <DurgaPujoWish />
+      {/* Course Promotion Section */}
+      <CoursePromo />
       
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-black via-[#17002a] to-black" />
@@ -119,7 +119,7 @@ export default function Landing() {
           <div className="text-center md:text-left">
             <div className="mb-4 md:mb-6">
               <img
-                src="https://sauvikbcabucket.s3.ap-south-1.amazonaws.com/assets/bca_illustration.gif"
+                src="https://d270a3f3iqnh9i.cloudfront.net/assets/bca_illustration.gif"
                 alt="BCA Illustration"
                 className="h-16 w-16 md:h-24 md:w-24 rounded shadow-[0_0_50px_10px_#00a1ff] mx-auto md:mx-0 object-cover"
                 style={{
@@ -180,7 +180,7 @@ export default function Landing() {
           </div>
           <div className="flex justify-center order-first md:order-last">
             <img
-              src="https://sauvikbcabucket.s3.ap-south-1.amazonaws.com/assets/illustrator.png"
+              src="https://d270a3f3iqnh9i.cloudfront.net/assets/illustrator.png"
               alt="learn"
               className="max-w-xs sm:max-w-sm w-full drop-shadow-[0_0_40px_#00a1ff]"
             />

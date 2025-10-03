@@ -44,7 +44,7 @@ const ExpertFaculty = () => {
               {/* Mobile: full width image with bottom crop */}
               <div className="block lg:hidden relative w-full h-96 sm:h-[28rem] overflow-hidden">
                 <img
-                  src="https://sauvikbcabucket.s3.ap-south-1.amazonaws.com/assets/me.jpeg"
+                  src="https://d270a3f3iqnh9i.cloudfront.net/assets/me.jpeg"
                   alt="Sauvik Chatterjee"
                   className="w-full h-full object-cover object-top rounded-t-2xl shadow-2xl"
                 />
@@ -57,7 +57,7 @@ const ExpertFaculty = () => {
               <div className="hidden lg:block relative w-full lg:w-72 xl:w-80 h-72 flex-shrink-0 p-4 lg:pl-8">
                 {/* Desktop: fixed size side image */}
                 <img
-                  src="https://sauvikbcabucket.s3.ap-south-1.amazonaws.com/assets/me.jpeg"
+                  src="https://d270a3f3iqnh9i.cloudfront.net/assets/me.jpeg"
                   alt={facultyMember.name}
                   className="w-full h-full object-cover object-top rounded-2xl shadow-2xl"
                 />
