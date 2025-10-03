@@ -48,6 +48,7 @@ export default function CourseDetail() {
   const [showAllIncludes, setShowAllIncludes] = useState(false);
   const [showAllSidebarIncludes, setShowAllSidebarIncludes] = useState(false);
   const [showAllDefaultIncludes, setShowAllDefaultIncludes] = useState(false);
+  const [showFullDescription, setShowFullDescription] = useState(false);
   const navigate = useNavigate();
   const { user } = useAuth();
 
@@ -191,12 +192,65 @@ export default function CourseDetail() {
               transition={{ delay: 0.1 }}
               className="mb-6 sm:mb-8"
             >
-              <h2 className="text-xl sm:text-2xl font-bold text-white mb-3 sm:mb-4">About Course</h2>
+              <h2 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-bca-cyan to-bca-gold bg-clip-text text-transparent mb-3 sm:mb-4 drop-shadow-[0_0_10px_rgba(0,189,255,0.3)]">About Course</h2>
               <div 
                 className="text-bca-gray-300 leading-relaxed prose prose-invert max-w-none text-sm sm:text-base"
-                dangerouslySetInnerHTML={{ __html: course.aboutCourse || course.longDesc }}
+                dangerouslySetInnerHTML={{ __html: course.aboutCourse || course.shortDesc }}
               />
             </motion.div>
+
+            {/* Course Description */}
+            {course.longDesc && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.15 }}
+                className="mb-6 sm:mb-8"
+              >
+                <h2 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-bca-gold to-bca-red bg-clip-text text-transparent mb-3 sm:mb-4 drop-shadow-[0_0_10px_rgba(253,176,0,0.3)]">Course Description</h2>
+                <div className="relative">
+                  <div 
+                    className={`text-bca-gray-300 leading-relaxed prose prose-invert max-w-none text-sm sm:text-base transition-all duration-300 ${
+                      !showFullDescription ? 'overflow-hidden' : ''
+                    }`}
+                    style={{
+                      display: !showFullDescription ? '-webkit-box' : 'block',
+                      WebkitLineClamp: !showFullDescription ? 5 : 'unset',
+                      WebkitBoxOrient: !showFullDescription ? 'vertical' : 'unset'
+                    }}
+                    dangerouslySetInnerHTML={{ 
+                      __html: showFullDescription 
+                        ? course.longDesc 
+                        : course.longDesc.length > 500 
+                          ? course.longDesc.substring(0, 500) + '...' 
+                          : course.longDesc
+                    }}
+                  />
+                  {course.longDesc.length > 500 && (
+                    <button
+                      onClick={() => setShowFullDescription(!showFullDescription)}
+                      className="mt-3 text-bca-cyan hover:text-bca-gold transition-colors duration-200 font-medium text-sm sm:text-base flex items-center gap-2"
+                    >
+                      {showFullDescription ? (
+                        <>
+                          <span>Read less</span>
+                          <svg className="w-4 h-4 transform rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                          </svg>
+                        </>
+                      ) : (
+                        <>
+                          <span>Read more...</span>
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                          </svg>
+                        </>
+                      )}
+                    </button>
+                  )}
+                </div>
+              </motion.div>
+            )}
 
             {/* Course Details Grid */}
             <motion.div
@@ -263,7 +317,7 @@ export default function CourseDetail() {
                     </div>
                     <span className="text-xs sm:text-sm text-bca-gray-400">Programming Language Used</span>
                   </div>
-                  <p className="text-white font-medium text-sm sm:text-base">C++</p>
+                  <p className="text-white font-medium text-sm sm:text-base">{course.programmingLanguage || 'C++'}</p>
                 </div>
 
                 <div className="bg-bca-gray-800 rounded-lg p-3 sm:p-4 border border-bca-gray-700">
@@ -283,7 +337,7 @@ export default function CourseDetail() {
                     </div>
                     <span className="text-xs sm:text-sm text-bca-gray-400">Class Schedule LIVE</span>
                   </div>
-                  <p className="text-white font-medium text-sm sm:text-base">[Monday, Wednesday, Saturday, Sunday]</p>
+                  <p className="text-white font-medium text-sm sm:text-base">{course.classSchedule || '[Monday, Wednesday, Saturday, Sunday]'}</p>
                 </div>
 
                 <div className="bg-bca-gray-800 rounded-lg p-3 sm:p-4 border border-bca-gray-700">
@@ -293,7 +347,7 @@ export default function CourseDetail() {
                     </div>
                     <span className="text-xs sm:text-sm text-bca-gray-400">Class Timings</span>
                   </div>
-                  <p className="text-white font-medium text-sm sm:text-base">8:30pm - 11pm</p>
+                  <p className="text-white font-medium text-sm sm:text-base">{course.classTimings || '8:30pm - 11pm'}</p>
                 </div>
               </div>
             </motion.div>
@@ -669,9 +723,6 @@ export default function CourseDetail() {
                             </div>
                             <div className="text-xs sm:text-sm text-bca-gray-300 mb-2">
                               Duration: {course.durationMonths} months
-                            </div>
-                            <div className="text-xs sm:text-sm text-bca-gray-400">
-                              Total: ₹{((parseFloat(course.monthlyFeeRupees) || 0) * (course.durationMonths || 0)).toFixed(2)}
                             </div>
                             <div className="mt-3 p-2 sm:p-3 bg-blue-500/10 rounded-lg border border-blue-500/30">
                               <p className="text-blue-400 text-xs sm:text-sm">

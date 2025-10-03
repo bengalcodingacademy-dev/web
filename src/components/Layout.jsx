@@ -55,7 +55,7 @@ export default function Layout({ children }) {
           {/* Logo and Brand */}
           <div className="flex items-center gap-4">
             <Link to="/" className="flex items-center gap-2 md:gap-3 font-bold text-sm md:text-xl tracking-wide">
-              <img src="https://sauvikbcabucket.s3.ap-south-1.amazonaws.com/assets/bca-logo.jpg" alt="BCA" className="h-6 w-6 md:h-8 md:w-8 rounded" />
+              <img src="https://d270a3f3iqnh9i.cloudfront.net/assets/bca-logo.jpg" alt="BCA" className="h-6 w-6 md:h-8 md:w-8 rounded" />
               <span>Bengal Coding Academy</span>
             </Link>
 

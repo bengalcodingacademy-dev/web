@@ -12,7 +12,7 @@ const Footer = () => {
           {/* Company Info */}
           <div className="space-y-4">
             <div className="flex items-center gap-3">
-              <img src="https://sauvikbcabucket.s3.ap-south-1.amazonaws.com/assets/bca-logo.jpg" alt="BCA" className="h-8 w-8 rounded" />
+              <img src="https://d270a3f3iqnh9i.cloudfront.net/assets/bca-logo.jpg" alt="BCA" className="h-8 w-8 rounded" />
               <span className="text-xl font-bold text-white">
                 Bengal Coding Academy
               </span>
