@@ -478,73 +478,16 @@ export default function UserDashboard() {
               <h2 className="text-3xl font-bold text-white bg-gradient-to-r from-white to-cyan-400 bg-clip-text text-transparent" style={{ textShadow: '0 0 10px rgba(0,161,255,0.3)' }}>Your Courses</h2>
             </div>
             {userSummary?.courses?.length > 0 ? (
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch">
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {userSummary.courses.map((course, index) => {
-                  const paymentStatus = getCoursePaymentStatus(course, purchases);
                   return (
                     <motion.div
                       key={course.id}
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.3 + index * 0.1 }}
-                      className="bg-gradient-to-br from-bca-gray-800/80 to-bca-gray-900/80 rounded-xl border border-bca-gray-700/50 hover:border-cyan-500/50 transition-all duration-300 group relative overflow-hidden backdrop-blur-sm flex flex-col h-full"
                     >
-                      <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-
-                      {/* Course Poster */}
-                      {course.imageUrl && (
-                        <div className="relative h-48 overflow-hidden">
-                          <img
-                            src={course.imageUrl}
-                            alt={course.title}
-                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                          />
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
-                        </div>
-                      )}
-
-                      <div className="relative z-10 p-6 flex flex-col h-full">
-                        <div className="flex-grow">
-                          <div className="flex items-start gap-3 mb-4">
-                            <div className="p-2 rounded-lg bg-gradient-to-br from-cyan-500/20 to-purple-500/20 border border-cyan-500/30 group-hover:border-cyan-400/50 transition-all duration-300" style={{ boxShadow: '0 0 15px rgba(0,161,255,0.2)' }}>
-                              <AwardIcon className="w-6 h-6 text-cyan-400" />
-                            </div>
-                            <div className="flex-1">
-                              <h3 className="text-xl font-bold text-white group-hover:text-cyan-300 transition-colors duration-300">{course.title}</h3>
-                              {course.shortDesc && (
-                                <p className="text-bca-gray-300 text-sm mt-2 line-clamp-2">{course.shortDesc}</p>
-                              )}
-                              {course.isMonthlyPayment && (
-                                <p className="text-sm text-bca-gray-400 mt-1">
-                                  Monthly Payment Course
-                                </p>
-                              )}
-                            </div>
-                          </div>
-                        </div>
-
-
-                        <div className="flex justify-end">
-                          <button
-                            onClick={() => paymentStatus.hasAccess && navigate(`/course/${course.id}/access`)}
-                            className={`px-6 py-3 rounded-xl font-semibold transition-all duration-300 shadow-lg ${paymentStatus.hasAccess
-                                ? 'bg-gradient-to-r from-bca-gold to-yellow-400 text-black hover:from-yellow-400 hover:to-bca-gold transform hover:scale-105 active:scale-95'
-                                : 'bg-bca-gray-600 text-bca-gray-300 cursor-not-allowed'
-                              }`}
-                            style={paymentStatus.hasAccess ? { boxShadow: '0 0 25px rgba(255, 193, 7, 0.4)' } : {}}
-                            disabled={!paymentStatus.hasAccess}
-                          >
-                            {paymentStatus.hasAccess ? (
-                              <span className="flex items-center gap-2">
-                                <PlayIcon className="w-4 h-4" />
-                                Start Learning
-                              </span>
-                            ) : (
-                              'Payment Required'
-                            )}
-                          </button>
-                        </div>
-                      </div>
+                      <CourseCard c={course} isPurchased={true} />
                     </motion.div>
                   );
                 })}
