@@ -127,6 +127,13 @@ export default function Layout({ children }) {
               <span className={`w-6 h-0.5 bg-white transition-all duration-300 ${showMobileMenu ? 'rotate-45 translate-y-1.5' : ''}`}></span>
               <span className={`w-6 h-0.5 bg-white transition-all duration-300 ${showMobileMenu ? 'opacity-0' : ''}`}></span>
               <span className={`w-6 h-0.5 bg-white transition-all duration-300 ${showMobileMenu ? '-rotate-45 -translate-y-1.5' : ''}`}></span>
+              
+              {/* Unread count badge on hamburger icon */}
+              {user && unreadCount > 0 && (
+                <span className="absolute -top-1 -right-1 bg-bca-gold text-black text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center animate-pulse">
+                  {unreadCount > 9 ? '9+' : unreadCount}
+                </span>
+              )}
             </button>
           </div>
         </div>
