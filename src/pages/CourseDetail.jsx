@@ -82,11 +82,13 @@ export default function CourseDetail() {
     </div>
   );
 
-  // Check if user has purchased this course
+  // Check if user has purchased this course (regular or monthly)
   const hasPurchasedCourse = () => {
     if (!user || !course) return false;
     return purchases.some(purchase => 
-      purchase.courseId === course.id && purchase.status === 'PAID'
+      purchase.courseId === course.id && 
+      purchase.status === 'PAID' &&
+      (purchase.type === 'regular' || purchase.type === 'monthly')
     );
   };
 

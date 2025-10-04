@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useAuth } from "../lib/authContext";
 import { api } from "../lib/api";
 import { CourseCard } from "./components/CourseCard";
 import Shimmer from "../components/Shimmer";
@@ -65,6 +66,7 @@ export default function Landing() {
   const [showRegisterPopup, setShowRegisterPopup] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   useEffect(() => {
     const loadData = async () => {
@@ -113,14 +115,14 @@ export default function Landing() {
 
   // Show register popup 1 second after loading animation completes
   useEffect(() => {
-    if (loadingAnimationComplete) {
+    if (loadingAnimationComplete && !user) {
       const popupTimer = setTimeout(() => {
         setShowRegisterPopup(true);
       }, 1000); // 1 second after loading animation completes
 
       return () => clearTimeout(popupTimer);
     }
-  }, [loadingAnimationComplete]);
+  }, [loadingAnimationComplete, user]);
   return (
     <div>
       {/* Course Promotion Section */}

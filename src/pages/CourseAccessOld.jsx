@@ -333,101 +333,68 @@ export default function CourseAccess() {
 
   return (
     <div className="min-h-screen bg-bca-black">
-      {/* Header Section */}
-      <section className="py-12 bg-gradient-to-br from-bca-gray-900 to-bca-black relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/10 via-purple-500/10 to-yellow-500/10"></div>
-        <div className="max-w-6xl mx-auto px-4 relative z-10">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-center"
-          >
-            <div className="flex items-center justify-center gap-4 mb-6">
-              <div className="p-4 rounded-full bg-gradient-to-br from-cyan-500/20 to-purple-500/20 border border-cyan-500/30 group-hover:border-cyan-400/50 transition-all duration-300 shadow-lg" style={{ boxShadow: '0 0 30px rgba(0,161,255,0.3)' }}>
-                <BookOpenIcon className="w-12 h-12 text-cyan-400" />
-              </div>
-              <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-white via-cyan-400 to-purple-400 bg-clip-text text-transparent" style={{ textShadow: '0 0 20px rgba(0,161,255,0.3)' }}>
-                {course.title}
-              </h1>
+      {/* Minimal Header */}
+      <div className="border-b border-bca-gray-800">
+        <div className="max-w-4xl mx-auto px-6 py-8">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-2xl font-bold text-white mb-2">{course.title}</h1>
+              <p className="text-bca-gray-400 text-sm">{course.shortDesc}</p>
             </div>
-            <p className="text-bca-gray-300 text-lg md:text-xl mb-4">
-              {course.shortDesc}
-            </p>
             {course.isMonthlyPayment && (
-              <div className="flex items-center justify-center gap-4 text-bca-gray-400">
-                <span>Progress: {accessibleMonths.length}/{totalMonths} months</span>
-                <div className="w-32 bg-bca-gray-600 rounded-full h-2">
-                  <div 
-                    className="bg-gradient-to-r from-cyan-500 to-purple-500 h-2 rounded-full transition-all duration-300"
-                    style={{ width: `${(accessibleMonths.length / totalMonths) * 100}%` }}
-                  ></div>
-                </div>
+              <div className="text-right">
+                <div className="text-sm text-bca-gray-400 mb-1">Progress</div>
+                <div className="text-lg font-semibold text-white">{accessibleMonths.length}/{totalMonths}</div>
               </div>
             )}
-          </motion.div>
+          </div>
         </div>
-      </section>
+      </div>
 
-      {/* Course Content Section */}
-      <section className="py-16">
-        <div className="max-w-6xl mx-auto px-4">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
+      {/* Course Content */}
+      <div className="max-w-4xl mx-auto px-6 py-8">
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-xl font-semibold text-white">Course Content</h2>
+          <button
+            onClick={loadCourseData}
+            disabled={loading}
+            className="px-3 py-1.5 text-sm bg-bca-gray-800 hover:bg-bca-gray-700 text-bca-gray-300 rounded-md transition-colors disabled:opacity-50"
           >
-            <div className="flex items-center justify-between mb-8">
-              <div className="flex items-center gap-3">
-                <div className="p-3 rounded-xl bg-gradient-to-br from-cyan-500/20 to-purple-500/20 border border-cyan-500/30 group-hover:border-cyan-400/50 transition-all duration-300" style={{ boxShadow: '0 0 20px rgba(0,161,255,0.2)' }}>
-                  <BookOpenIcon className="w-8 h-8 text-cyan-400" />
-                </div>
-                <h2 className="text-3xl font-bold text-white bg-gradient-to-r from-white to-cyan-400 bg-clip-text text-transparent" style={{ textShadow: '0 0 10px rgba(0,161,255,0.3)' }}>Course Content</h2>
-              </div>
-              <button
-                onClick={loadCourseData}
-                disabled={loading}
-                className="px-4 py-2 rounded-lg bg-gradient-to-r from-cyan-500/20 to-purple-500/20 border border-cyan-500/30 text-cyan-400 hover:from-cyan-500/30 hover:to-purple-500/30 transition-all duration-300 disabled:opacity-50"
-              >
-                {loading ? 'Refreshing...' : 'Refresh'}
-              </button>
-            </div>
+            {loading ? 'Refreshing...' : 'Refresh'}
+          </button>
+        </div>
 
-            {accessibleMonths.length === 0 ? (
-              <div className="text-center py-12">
-                <div className="flex justify-center mb-6">
-                  <div className="p-6 rounded-full bg-gradient-to-br from-red-500/20 to-orange-500/20 border border-red-500/30 group-hover:border-red-400/50 transition-all duration-300" style={{ boxShadow: '0 0 30px rgba(239,68,68,0.3)' }}>
-                    <LockIcon className="w-16 h-16 text-red-400" />
-                  </div>
-                </div>
-                <h3 className="text-xl font-semibold text-white mb-2 bg-gradient-to-r from-white to-red-400 bg-clip-text text-transparent">Access Restricted</h3>
-                <p className="text-bca-gray-300 mb-6">You need to purchase this course to access the content.</p>
-                <button 
-                  onClick={() => navigate(`/course/${course.slug}`)}
-                  className="px-6 py-3 bg-gradient-to-r from-bca-gold to-yellow-400 text-black rounded-lg font-semibold hover:from-yellow-400 hover:to-bca-gold transition-all duration-300 shadow-lg inline-flex items-center gap-2 transform hover:scale-105 active:scale-95" style={{ boxShadow: '0 0 25px rgba(255, 193, 7, 0.4)' }}
+        {accessibleMonths.length === 0 ? (
+          <div className="text-center py-16">
+            <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-red-500/10 flex items-center justify-center">
+              <LockIcon className="w-8 h-8 text-red-400" />
+            </div>
+            <h3 className="text-lg font-semibold text-white mb-2">Access Restricted</h3>
+            <p className="text-bca-gray-400 mb-6">You need to purchase this course to access the content.</p>
+            <button 
+              onClick={() => navigate(`/course/${course.slug}`)}
+              className="px-6 py-2 bg-bca-gold hover:bg-bca-gold/90 text-black rounded-md font-medium transition-colors"
+            >
+              Purchase Course
+            </button>
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {Array.from({ length: totalMonths }, (_, index) => {
+              const monthNumber = index + 1;
+              const monthContent = getMonthContent(monthNumber);
+              const isAccessible = accessibleMonths.includes(monthNumber);
+              const hasPendingPayment = pendingMonths.includes(monthNumber);
+              
+              return (
+                <div
+                  key={monthNumber}
+                  className={`p-4 rounded-lg border transition-colors ${
+                    isAccessible 
+                      ? 'bg-bca-gray-800 border-bca-gray-700 hover:border-bca-gray-600' 
+                      : 'bg-bca-gray-900 border-bca-gray-800 opacity-60'
+                  }`}
                 >
-                  Purchase Course
-                </button>
-              </div>
-            ) : (
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch">
-                {Array.from({ length: totalMonths }, (_, index) => {
-                  const monthNumber = index + 1;
-                  const monthContent = getMonthContent(monthNumber);
-                  const isAccessible = accessibleMonths.includes(monthNumber);
-                  const hasPendingPayment = pendingMonths.includes(monthNumber);
-                  
-                  return (
-                    <motion.div
-                      key={monthNumber}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.3 + index * 0.1 }}
-                      className={`rounded-xl p-6 border transition-all duration-300 group relative overflow-hidden backdrop-blur-sm flex flex-col h-full ${
-                        isAccessible 
-                          ? 'bg-gradient-to-br from-bca-gray-800/80 to-bca-gray-900/80 border-bca-gray-700/50 hover:border-cyan-500/50' 
-                          : 'bg-gradient-to-br from-bca-gray-800/40 to-bca-gray-900/40 border-bca-gray-700/30 opacity-60'
-                      }`}
-                    >
                       {isAccessible && (
                         <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                       )}
