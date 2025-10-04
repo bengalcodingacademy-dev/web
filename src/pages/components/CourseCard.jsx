@@ -70,46 +70,48 @@ export function CourseCard({ c, isPurchased = false }) {
             </div>
           </div>
           
-          {/* Pricing Section - More Spacious */}
-          <div className="mb-4">
-            {isMonthly ? (
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-bca-gold font-bold text-xl">₹{monthlyFee.toFixed(2)}/month</span>
-                  <div className="flex items-center gap-1">
-                    <div className="w-2 h-2 bg-bca-gold rounded-full animate-pulse"></div>
-                    <span className="text-bca-gold text-xs font-medium">Monthly</span>
+          {/* Pricing Section - Only show for non-purchased courses */}
+          {!isPurchased && (
+            <div className="mb-4">
+              {isMonthly ? (
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-bca-gold font-bold text-xl">₹{monthlyFee.toFixed(2)}/month</span>
+                    <div className="flex items-center gap-1">
+                      <div className="w-2 h-2 bg-bca-gold rounded-full animate-pulse"></div>
+                      <span className="text-bca-gold text-xs font-medium">Monthly</span>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-white/70 text-sm bg-white/10 px-3 py-1 rounded-full">
+                      {duration} month course
+                    </span>
                   </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-white/70 text-sm bg-white/10 px-3 py-1 rounded-full">
-                    {duration} month course
-                  </span>
-                </div>
-              </div>
-            ) : (
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <span className="text-bca-gold font-bold text-xl">₹{price.toFixed(2)}</span>
-                    <span className="text-white/40 line-through text-sm">₹{original.toFixed(2)}</span>
+              ) : (
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <span className="text-bca-gold font-bold text-xl">₹{price.toFixed(2)}</span>
+                      <span className="text-white/40 line-through text-sm">₹{original.toFixed(2)}</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <div className="w-2 h-2 bg-bca-gold rounded-full animate-pulse"></div>
+                      <span className="text-bca-gold text-xs font-medium">One-time</span>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-1">
-                    <div className="w-2 h-2 bg-bca-gold rounded-full animate-pulse"></div>
-                    <span className="text-bca-gold text-xs font-medium">One-time</span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs px-3 py-1 rounded-full bg-bca-cyan/20 text-bca-cyan border border-bca-cyan/30">
+                      {discount}% off
+                    </span>
+                    <span className="text-white/60 text-xs">
+                      Save ₹{(original - price).toFixed(2)}
+                    </span>
                   </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-xs px-3 py-1 rounded-full bg-bca-cyan/20 text-bca-cyan border border-bca-cyan/30">
-                    {discount}% off
-                  </span>
-                  <span className="text-white/60 text-xs">
-                    Save ₹{(original - price).toFixed(2)}
-                  </span>
-                </div>
-              </div>
-            )}
-          </div>
+              )}
+            </div>
+          )}
           
           {/* Action Section - Fixed at Bottom */}
           <div className="mt-auto">
