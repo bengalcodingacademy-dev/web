@@ -28,7 +28,7 @@ export default function CoursePromo() {
     if (!isHovered) {
       const interval = setInterval(() => {
         setCurrentImage((prev) => (prev + 1) % images.length);
-      }, 3000);
+      }, 4000);
 
       return () => clearInterval(interval);
     }
@@ -103,7 +103,7 @@ export default function CoursePromo() {
 
             {/* Description with Enhanced Styling */}
             <p className="text-white/90 text-lg md:text-xl max-w-4xl mx-auto leading-relaxed drop-shadow-[0_0_10px_rgba(255,255,255,0.2)]">
-              Master the complete web development stack with modern technologies and cloud deployment
+              এবার মডার্ন টেকনোলজি আর ক্লাউড ডিপ্লয়মেন্ট করে পুরো ওয়েব ডেভেলপমেন্ট শিখে নিজের প্রোডাক্ট লঞ্চ করো
             </p>
 
             {/* Floating Tech Icons Around Title */}

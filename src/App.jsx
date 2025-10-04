@@ -7,6 +7,7 @@ import LoadingAnimation from "./components/LoadingAnimation";
 import ErrorBoundary from "./components/ErrorBoundary";
 import Shimmer from "./components/Shimmer";
 import VisitorTracker from "./components/VisitorTracker";
+import WhatsAppButton from "./components/WhatsAppButton";
 import Landing from "./pages/Landing";
 import UserDashboard from "./pages/UserDashboard";
 import Batches from "./pages/Batches";
@@ -187,6 +188,7 @@ export default function App() {
         </AuthProvider>
         <ErrorNotifications />
         <VisitorTracker />
+        <WhatsAppButton />
       </ErrorBoundary>
     </ErrorProvider>
   );
