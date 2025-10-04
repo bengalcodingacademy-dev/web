@@ -9,6 +9,7 @@ import TestimonialSlideshow from "../components/TestimonialSlideshow";
 import ProgrammingJourney from "../components/ProgrammingJourney";
 import ExpertFaculty from "../components/ExpertFaculty";
 import CoursePromo from "../components/CoursePromo";
+import RegisterPopup from "../components/RegisterPopup";
 
 const faqs = [
   {
@@ -61,6 +62,7 @@ export default function Landing() {
   const [loading, setLoading] = useState(true);
   const [loadingAnimationComplete, setLoadingAnimationComplete] =
     useState(false);
+  const [showRegisterPopup, setShowRegisterPopup] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -108,6 +110,17 @@ export default function Landing() {
 
     return () => clearTimeout(timer);
   }, []);
+
+  // Show register popup 1 second after loading animation completes
+  useEffect(() => {
+    if (loadingAnimationComplete) {
+      const popupTimer = setTimeout(() => {
+        setShowRegisterPopup(true);
+      }, 1000); // 1 second after loading animation completes
+
+      return () => clearTimeout(popupTimer);
+    }
+  }, [loadingAnimationComplete]);
   return (
     <div>
       {/* Course Promotion Section */}
@@ -389,6 +402,16 @@ export default function Landing() {
           ))}
         </div>
       </section>
+
+      {/* Register Popup */}
+      <RegisterPopup 
+        isOpen={showRegisterPopup}
+        onClose={() => setShowRegisterPopup(false)}
+        onSuccess={() => {
+          setShowRegisterPopup(false);
+          // Optionally redirect to dashboard or show success message
+        }}
+      />
     </div>
   );
 }
