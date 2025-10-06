@@ -1,5 +1,5 @@
-import { useState, useEffect, useMemo, useRef } from 'react';
-import { useAuth } from '../lib/authContext';
+import { useState, useEffect, useMemo, useRef } from "react";
+import { useAuth } from "../lib/authContext";
 
 export default function FomoNotification() {
   const [showFomoNotification, setShowFomoNotification] = useState(false);
@@ -9,32 +9,86 @@ export default function FomoNotification() {
   const auth = useAuth();
   const user = auth?.user;
   const isInitialized = useRef(false);
-  
+
   // Memoize the user's purchase status to prevent unnecessary re-renders
   const hasPurchasedCourse = useMemo(() => {
     if (!auth || !user) return false;
-    return user?.purchases?.some(purchase => 
-      purchase.course?.slug === 'fswd' && purchase.status === 'PAID'
+    return user?.purchases?.some(
+      (purchase) =>
+        purchase.course?.slug === "fswd" && purchase.status === "PAID"
     );
   }, [auth, user?.purchases]);
 
   // Dummy names for FOMO notifications
   const dummyNames = [
-    'Rahul Sharma', 'Priya Patel', 'Amit Kumar', 'Sneha Singh', 'Rajesh Gupta',
-    'Anita Verma', 'Vikram Joshi', 'Pooja Agarwal', 'Suresh Reddy', 'Meera Iyer',
-    'Arjun Nair', 'Kavya Menon', 'Rohit Desai', 'Shruti Shah', 'Nikhil Rao',
-    'Deepika Jain', 'Karan Malhotra', 'Riya Chopra', 'Siddharth Mehta', 'Anjali Kapoor',
-    'Vishal Tiwari', 'Neha Bansal', 'Gaurav Saxena', 'Swati Agarwal', 'Manish Pandey',
-    'Ritika Sharma', 'Abhishek Singh', 'Pallavi Reddy', 'Sandeep Kumar', 'Kiran Patel'
+    "Akash Mondal",
+    "Ankan Layek",
+    "Arijeet Koner",
+    "Arju Mallick",
+    "Bibhash Guria",
+    "Chayan Dholey",
+    "Falguni Sen",
+    "Jit Mondal",
+    "Mostahab Gazi",
+    "Munmun Bhuin",
+    "Pabitra Dey",
+    "Pol Sarkar",
+    "Pratyush Chakraborty",
+    "Rahul Ghosh",
+    "Sagnik Agasti",
+    "Sahadev Das",
+    "Santam Adhikary",
+    "Sayan Chakraborty",
+    "Sayan Chakraborty",
+    "Sk. Mursalim",
+    "Soham Chatterjee",
+    "Sohona Mondal",
+    "Soumen Basu",
+    "Soumyajit Dutta",
+    "Soumyajit Nag",
+    "Sounak Kar",
+    "Sourish Harh",
+    "Srideep Das",
+    "Subhabrata Ghoshal",
+    "Suman Das",
+    "Sunanda Adhikary",
+    "Suprabhat Nandi",
+    "Supriyo Ghosh",
+    "Supriyo Hui",
+    "Surajit Duwari",
+    "Swaraj Bhattacharya",
+    "Subhodeep Routh",
+    "Rishav Kali",
+    "Sirshak Mandal",
+    "Sarbojit Podder",
+    "Sayan Naskar",
+    "Soumyajit Nath",
+    "Abhilash Bera",
+    "Devsundar Chattopadhyay",
+    "Uttam Ghosh",
+    "Pritam Koyari",
+    "Pradip Ghosh (Rishan)",
+    "Bikram Mondal",
+    "Tuhin Mondal",
+    "Surajit Mandal",
+    "Sagar Das",
+    "Sourav Jana",
+    "Akash Ghosh",
+    "Aniket Paul",
+    "Bivas Debnath",
+    "Debdeep Sen",
+    "Himadri Mandal",
+    "Ankan Manna",
+    "Titeersha Karmakar",
+    "Shrioma Pal",
   ];
-
   // FOMO notification logic
   useEffect(() => {
     // Prevent multiple initializations
     if (isInitialized.current) {
       return;
     }
-    
+
     // Check if user has purchased the course - if yes, don't show notifications
     if (hasPurchasedCourse) {
       isInitialized.current = true;
@@ -42,12 +96,13 @@ export default function FomoNotification() {
     }
 
     const displayFomoNotification = () => {
-      const randomName = dummyNames[Math.floor(Math.random() * dummyNames.length)];
+      const randomName =
+        dummyNames[Math.floor(Math.random() * dummyNames.length)];
       const randomHours = Math.floor(Math.random() * 24) + 1; // 1-24 hours ago
-      
+
       setFomoData({
         name: randomName,
-        hoursAgo: randomHours
+        hoursAgo: randomHours,
       });
       setShouldRender(true);
       setShowFomoNotification(true);
@@ -59,7 +114,7 @@ export default function FomoNotification() {
     // Show first notification after 2 seconds for testing, then every 15 seconds
     const initialTimeout = setTimeout(displayFomoNotification, 2000);
     const interval = setInterval(displayFomoNotification, 15000);
-    
+
     // Mark as initialized
     isInitialized.current = true;
 
@@ -73,7 +128,7 @@ export default function FomoNotification() {
   // Close notification function
   const closeNotification = () => {
     setIsAnimatingOut(true);
-    
+
     // Hide notification after animation completes
     setTimeout(() => {
       setShouldRender(false);
@@ -86,11 +141,15 @@ export default function FomoNotification() {
     <>
       {/* FOMO Notification */}
       {showFomoNotification && fomoData && (
-        <div className={`fixed bottom-6 left-6 z-[9999] ${isAnimatingOut ? 'animate-slideOutLeft' : 'animate-slideInLeft'}`}>
+        <div
+          className={`fixed bottom-6 left-6 z-[9999] ${
+            isAnimatingOut ? "animate-slideOutLeft" : "animate-slideInLeft"
+          }`}
+        >
           <div className="bg-black/80 backdrop-blur-md rounded-xl shadow-2xl border border-bca-cyan/30 p-4 max-w-sm relative overflow-hidden animate-neonGlow">
             {/* Progress Bar */}
             <div className="absolute top-0 left-0 right-0 h-1 bg-bca-cyan/20 rounded-t-xl overflow-hidden">
-              <div 
+              <div
                 className="h-full bg-gradient-to-r from-bca-cyan to-bca-gold rounded-t-xl animate-progressBar"
                 onAnimationEnd={() => {
                   setIsAnimatingOut(true);
@@ -102,30 +161,50 @@ export default function FomoNotification() {
                 }}
               ></div>
             </div>
-            
+
             {/* Neon Glow Effect */}
             <div className="absolute inset-0 bg-gradient-to-br from-bca-cyan/10 via-transparent to-bca-gold/10 rounded-xl"></div>
-            
+
             {/* Close Button */}
             <button
               onClick={closeNotification}
               className="absolute top-2 right-2 w-6 h-6 flex items-center justify-center text-bca-cyan/60 hover:text-bca-gold transition-all duration-200 hover:scale-110"
             >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              <svg
+                className="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
               </svg>
             </button>
-            
+
             <div className="flex items-center space-x-3 pr-6 relative z-10">
               {/* User Image with Neon Effect */}
               <div className="flex-shrink-0">
                 <div className="w-10 h-10 bg-gradient-to-br from-bca-cyan/20 to-bca-gold/20 rounded-full flex items-center justify-center border border-bca-cyan/30 shadow-lg shadow-bca-cyan/20">
-                  <svg className="w-6 h-6 text-bca-cyan" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                  <svg
+                    className="w-6 h-6 text-bca-cyan"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                    />
                   </svg>
                 </div>
               </div>
-              
+
               {/* Notification Content */}
               <div className="flex-1 min-w-0">
                 <p className="text-sm text-bca-cyan/80 font-medium">
@@ -135,11 +214,12 @@ export default function FomoNotification() {
                   FSWD with AWS & DevOps course
                 </p>
                 <p className="text-xs text-bca-gold/70 font-medium">
-                  {fomoData.hoursAgo} hour{fomoData.hoursAgo !== 1 ? 's' : ''} ago
+                  {fomoData.hoursAgo} hour{fomoData.hoursAgo !== 1 ? "s" : ""}{" "}
+                  ago
                 </p>
               </div>
             </div>
-            
+
             {/* Animated Border */}
             <div className="absolute inset-0 rounded-xl border border-bca-cyan/20 animate-pulse"></div>
           </div>
