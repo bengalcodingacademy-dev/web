@@ -334,7 +334,7 @@ export default function CourseAccess() {
   return (
     <div className="min-h-screen bg-bca-black">
       {/* Header Section */}
-      <section className="py-12 bg-gradient-to-br from-bca-gray-900 to-bca-black relative overflow-hidden">
+      <section className="py-12 bg-gradient-to-br from-bca-gray-900 to-bca-black relative overflow-visible">
         <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/10 via-purple-500/10 to-yellow-500/10"></div>
         <div className="max-w-6xl mx-auto px-4 relative z-10">
           <motion.div
@@ -342,13 +342,15 @@ export default function CourseAccess() {
             animate={{ opacity: 1, y: 0 }}
             className="text-center"
           >
-            <div className="flex items-center justify-center gap-4 mb-6">
+            <div className="flex flex-col items-center justify-center gap-4 mb-6">
               <div className="p-4 rounded-full bg-gradient-to-br from-cyan-500/20 to-purple-500/20 border border-cyan-500/30 group-hover:border-cyan-400/50 transition-all duration-300 shadow-lg" style={{ boxShadow: '0 0 30px rgba(0,161,255,0.3)' }}>
                 <BookOpenIcon className="w-12 h-12 text-cyan-400" />
               </div>
-              <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-white via-cyan-400 to-purple-400 bg-clip-text text-transparent" style={{ textShadow: '0 0 20px rgba(0,161,255,0.3)' }}>
-                {course.title}
-              </h1>
+              <div className="w-full overflow-visible min-w-0">
+                <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-white via-cyan-400 to-purple-400 bg-clip-text text-transparent text-center px-4 break-words" style={{ textShadow: '0 0 20px rgba(0,161,255,0.3)' }}>
+                  {course.title}
+                </h1>
+              </div>
             </div>
             <p className="text-bca-gray-300 text-lg md:text-xl mb-4">
               {course.shortDesc}
