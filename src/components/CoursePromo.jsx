@@ -327,7 +327,7 @@ export default function CoursePromo() {
                   </div>
                   <div>
                     <p className="font-bold text-white text-2xl mb-1 drop-shadow-[0_0_3px_rgba(255,255,255,0.2)]">Enrollment Start</p>
-                    <p className="text-bca-gray-300 text-xl font-medium">October 5, 2025</p>
+                    <p className="text-bca-gray-300 text-xl font-medium">October 13, 2025</p>
                   </div>
                 </div>
                 
