@@ -19,6 +19,8 @@ import Profile from "./pages/Profile";
 import Purchases from "./pages/Purchases";
 import CourseAccess from "./pages/CourseAccess";
 import MonthContent from "./pages/MonthContent";
+import Quiz from "./pages/Quiz";
+import QuizExam from "./pages/QuizExam";
 import Webinars from "./pages/Webinars";
 import Announcements from "./pages/Announcements";
 import ForgotPassword from "./pages/ForgotPassword";
@@ -157,6 +159,22 @@ export default function App() {
               }
             />
             <Route
+              path="/course/:courseId/month/:monthNumber/quiz/:contentId"
+              element={
+                <Protected>
+                  <Quiz />
+                </Protected>
+              }
+            />
+            <Route
+              path="/quiz-exam/:quizId"
+              element={
+                <Protected>
+                  <QuizExam />
+                </Protected>
+              }
+            />
+            <Route
               path="/course/:courseId/month/:monthNumber"
               element={
                 <Protected>
@@ -186,11 +204,11 @@ export default function App() {
           </Routes>
         </Layout>
       )}
-        </AuthProvider>
         <ErrorNotifications />
         <VisitorTracker />
         <WhatsAppButton />
         <FomoNotification />
+        </AuthProvider>
       </ErrorBoundary>
     </ErrorProvider>
   );

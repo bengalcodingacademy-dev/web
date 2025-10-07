@@ -1,23 +1,67 @@
 import { useState, useEffect, useMemo, useRef } from "react";
 import { useAuth } from "../lib/authContext";
+import { api } from "../lib/api";
 
 export default function FomoNotification() {
+  console.log('FOMO: Component rendered');
+  
   const [showFomoNotification, setShowFomoNotification] = useState(false);
   const [fomoData, setFomoData] = useState(null);
   const [isAnimatingOut, setIsAnimatingOut] = useState(false);
   const [shouldRender, setShouldRender] = useState(false);
+  const [userPurchases, setUserPurchases] = useState(null);
   const auth = useAuth();
   const user = auth?.user;
   const isInitialized = useRef(false);
+  
+  console.log('FOMO: Component state:', { 
+    user: !!user, 
+    userPurchases: !!userPurchases, 
+    showFomoNotification, 
+    isInitialized: isInitialized.current 
+  });
+
+  // Fetch user's purchase data when user is authenticated
+  useEffect(() => {
+    if (user && !userPurchases) {
+      const fetchUserPurchases = async () => {
+        try {
+          console.log('FOMO: Fetching user purchases...');
+          const response = await api.get('/me/summary');
+          console.log('FOMO: Received user purchases data:', response.data);
+          console.log('FOMO: Courses array length:', response.data?.courses?.length);
+          console.log('FOMO: Courses array:', response.data?.courses);
+          setUserPurchases(response.data);
+        } catch (error) {
+          console.error('FOMO: Failed to fetch user purchases:', error);
+        }
+      };
+      fetchUserPurchases();
+    }
+  }, [user, userPurchases]);
 
   // Memoize the user's purchase status to prevent unnecessary re-renders
   const hasPurchasedCourse = useMemo(() => {
-    if (!auth || !user) return false;
-    return user?.purchases?.some(
-      (purchase) =>
-        purchase.course?.slug === "fswd" && purchase.status === "PAID"
-    );
-  }, [auth, user?.purchases]);
+    if (!auth || !user || !userPurchases) {
+      console.log('FOMO: Missing auth/user/userPurchases:', { auth: !!auth, user: !!user, userPurchases: !!userPurchases });
+      return false;
+    }
+    
+    console.log('FOMO: Full userPurchases data:', userPurchases);
+    
+    // Check if user has any courses (this means they have purchased something)
+    const hasAnyCourse = userPurchases?.courses && userPurchases.courses.length > 0;
+    
+    console.log('FOMO: Has any course:', hasAnyCourse);
+    console.log('FOMO: Courses array:', userPurchases?.courses);
+    
+    if (hasAnyCourse) {
+      console.log('FOMO: User has purchased course(s), stopping notifications');
+      return true;
+    }
+    
+    return false;
+  }, [auth, user, userPurchases]);
 
   // Dummy names for FOMO notifications
   const dummyNames = [
@@ -89,8 +133,15 @@ export default function FomoNotification() {
       return;
     }
 
+    // Don't start FOMO notifications until we have user data
+    if (!user || !userPurchases) {
+      console.log('FOMO: Waiting for user data to load...', { user: !!user, userPurchases: !!userPurchases });
+      return;
+    }
+
     // Check if user has purchased the course - if yes, don't show notifications
     if (hasPurchasedCourse) {
+      console.log('FOMO: User has purchased course, stopping notifications');
       isInitialized.current = true;
       return; // Don't show FOMO notifications if user has purchased
     }
@@ -123,7 +174,7 @@ export default function FomoNotification() {
       clearInterval(interval);
       isInitialized.current = false; // Reset on cleanup
     };
-  }, [hasPurchasedCourse]); // Only depend on the memoized purchase status
+  }, [hasPurchasedCourse, user, userPurchases]); // Depend on user data and purchase status
 
   // Close notification function
   const closeNotification = () => {
