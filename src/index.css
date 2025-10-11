@@ -284,3 +284,60 @@ body::after {
 }
 
 /* use shadow via: shadow-[var(--shadow-soft)] */
+
+/* FOMO Notification Animations */
+@keyframes slideInLeft {
+  0% {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideOutLeft {
+  0% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+}
+
+@keyframes progressBar {
+  0% {
+    width: 100%;
+  }
+  100% {
+    width: 0%;
+  }
+}
+
+@keyframes neonGlow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(0, 195, 255, 0.3), 0 0 40px rgba(0, 195, 255, 0.1);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(0, 195, 255, 0.5), 0 0 60px rgba(0, 195, 255, 0.2);
+  }
+}
+
+.animate-slideInLeft {
+  animation: slideInLeft 0.5s ease-out;
+}
+
+.animate-slideOutLeft {
+  animation: slideOutLeft 0.5s ease-in;
+}
+
+.animate-progressBar {
+  animation: progressBar 5s linear;
+}
+
+.animate-neonGlow {
+  animation: neonGlow 2s ease-in-out infinite;
+}
