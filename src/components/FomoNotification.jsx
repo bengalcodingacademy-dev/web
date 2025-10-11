@@ -3,8 +3,6 @@ import { useAuth } from "../lib/authContext";
 import { api } from "../lib/api";
 
 export default function FomoNotification() {
-  console.log('FOMO: Component rendered');
-  
   const [showFomoNotification, setShowFomoNotification] = useState(false);
   const [fomoData, setFomoData] = useState(null);
   const [isAnimatingOut, setIsAnimatingOut] = useState(false);
@@ -12,25 +10,15 @@ export default function FomoNotification() {
   const auth = useAuth();
   const user = auth?.user;
   const isInitialized = useRef(false);
-  
-  console.log('FOMO: Component state:', { 
-    user: !!user, 
-    showFomoNotification, 
-    isInitialized: isInitialized.current 
-  });
 
   // Simple logic: Show FOMO only for non-logged-in users
   const shouldShowFomo = useMemo(() => {
-    console.log('FOMO: Checking if should show FOMO:', { user: !!user, auth: !!auth });
-    
     // If user is logged in, don't show FOMO notifications
     if (user) {
-      console.log('FOMO: User is logged in, not showing FOMO notifications');
       return false;
     }
     
     // If user is not logged in, show FOMO notifications
-    console.log('FOMO: User is not logged in, will show FOMO notifications');
     return true;
   }, [user, auth]);
 
@@ -106,7 +94,6 @@ export default function FomoNotification() {
 
     // Only show FOMO for non-logged-in users
     if (!shouldShowFomo) {
-      console.log('FOMO: Not showing FOMO notifications (user is logged in)');
       isInitialized.current = true;
       return;
     }
@@ -127,7 +114,7 @@ export default function FomoNotification() {
       // Notification will be hidden when progress bar animation ends via onAnimationEnd
     };
 
-    // Show first notification after 2 seconds for testing, then every 15 seconds
+    // Show first notification after 2 seconds, then every 15 seconds
     const initialTimeout = setTimeout(displayFomoNotification, 2000);
     const interval = setInterval(displayFomoNotification, 15000);
 
@@ -143,14 +130,11 @@ export default function FomoNotification() {
 
   // Close notification function
   const closeNotification = () => {
-    setIsAnimatingOut(true);
-
-    // Hide notification after animation completes
-    setTimeout(() => {
-      setShouldRender(false);
-      setShowFomoNotification(false);
-      setIsAnimatingOut(false);
-    }, 500); // Animation duration
+    // Immediate close - no animation delay
+    setShouldRender(false);
+    setShowFomoNotification(false);
+    setIsAnimatingOut(false);
+    setFomoData(null);
   };
 
   return (
@@ -162,7 +146,15 @@ export default function FomoNotification() {
             isAnimatingOut ? "animate-slideOutLeft" : "animate-slideInLeft"
           }`}
         >
-          <div className="bg-black/80 backdrop-blur-md rounded-xl shadow-2xl border border-bca-cyan/30 p-4 max-w-sm relative overflow-hidden animate-neonGlow">
+          <div 
+            className="bg-black/80 backdrop-blur-md rounded-xl shadow-2xl border border-bca-cyan/30 p-4 max-w-sm relative overflow-hidden animate-neonGlow cursor-pointer"
+            onClick={(e) => {
+              // Only close if clicking on the notification area, not the close button
+              if (e.target === e.currentTarget || e.target.closest('.notification-content')) {
+                closeNotification();
+              }
+            }}
+          >
             {/* Progress Bar */}
             <div className="absolute top-0 left-0 right-0 h-1 bg-bca-cyan/20 rounded-t-xl overflow-hidden">
               <div
@@ -183,11 +175,15 @@ export default function FomoNotification() {
 
             {/* Close Button */}
             <button
-              onClick={closeNotification}
-              className="absolute top-2 right-2 w-6 h-6 flex items-center justify-center text-bca-cyan/60 hover:text-bca-gold transition-all duration-200 hover:scale-110"
+              onClick={(e) => {
+                e.stopPropagation();
+                closeNotification();
+              }}
+              className="absolute top-2 right-2 w-8 h-8 flex items-center justify-center text-bca-cyan/60 hover:text-bca-gold transition-all duration-200 hover:scale-110 z-20 bg-black/20 hover:bg-black/40 rounded-full backdrop-blur-sm"
+              title="Close notification"
             >
               <svg
-                className="w-4 h-4"
+                className="w-5 h-5"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -201,7 +197,7 @@ export default function FomoNotification() {
               </svg>
             </button>
 
-            <div className="flex items-center space-x-3 pr-6 relative z-10">
+            <div className="flex items-center space-x-3 pr-6 relative z-10 notification-content">
               {/* User Image with Neon Effect */}
               <div className="flex-shrink-0">
                 <div className="w-10 h-10 bg-gradient-to-br from-bca-cyan/20 to-bca-gold/20 rounded-full flex items-center justify-center border border-bca-cyan/30 shadow-lg shadow-bca-cyan/20">

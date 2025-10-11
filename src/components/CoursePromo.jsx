@@ -12,6 +12,7 @@ export default function CoursePromo() {
     minutes: 0,
     seconds: 0
   });
+  const [earlyBirdDaysLeft, setEarlyBirdDaysLeft] = useState(0);
   const navigate = useNavigate();
 
   // Static randomly generated emojis - generated once and never re-rendered
@@ -67,6 +68,23 @@ export default function CoursePromo() {
     setShowEnrollmentPopup(true);
   };
 
+  // Calculate days remaining for early bird offer
+  const calculateEarlyBirdDaysLeft = () => {
+    // Simple approach: create dates and calculate difference
+    const today = new Date();
+    const offerEnd = new Date('2025-10-20');
+    
+    // Set both dates to start of day to avoid time issues
+    today.setHours(0, 0, 0, 0);
+    offerEnd.setHours(0, 0, 0, 0);
+    
+    const timeDiff = offerEnd.getTime() - today.getTime();
+    const daysLeft = Math.ceil(timeDiff / (1000 * 3600 * 24));
+    
+    
+    return Math.max(0, daysLeft);
+  };
+
   const handleEnrollNow = () => {
     setShowEnrollmentPopup(false);
     navigate('/course/fswd');
@@ -89,6 +107,10 @@ export default function CoursePromo() {
       } else {
         setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 });
       }
+
+      // Update early bird offer days left
+      const daysLeft = calculateEarlyBirdDaysLeft();
+      setEarlyBirdDaysLeft(daysLeft);
     };
 
     calculateTimeLeft();
@@ -227,6 +249,98 @@ export default function CoursePromo() {
             </div>
           </div>
 
+          {/* Early Bird Offer Section */}
+          {earlyBirdDaysLeft > 0 && (
+          <div className="mb-12 relative">
+            
+            {/* Animated Background Effects */}
+            <div className="absolute inset-0 bg-gradient-to-r from-bca-cyan/5 via-bca-gold/5 to-bca-cyan/5 rounded-3xl blur-xl"></div>
+            <div className="absolute -top-2 -left-2 w-20 h-20 bg-bca-cyan/20 rounded-full blur-2xl animate-pulse"></div>
+            <div className="absolute -bottom-2 -right-2 w-24 h-24 bg-bca-gold/20 rounded-full blur-2xl animate-pulse" style={{animationDelay: '1s'}}></div>
+            
+            <div className="relative bg-gradient-to-br from-bca-gray-800/90 via-bca-gray-900/90 to-bca-gray-800/90 backdrop-blur-md rounded-3xl p-6 md:p-8 border-2 border-bca-cyan/30 shadow-[0_0_30px_rgba(0,195,255,0.2)] hover:shadow-[0_0_40px_rgba(0,195,255,0.3)] transition-all duration-500">
+              {/* Flashy Header */}
+              <div className="text-center mb-6">
+                <div className="inline-flex items-center gap-2 bg-gradient-to-r from-bca-red to-bca-gold px-4 py-2 rounded-full mb-3 animate-bounce">
+                  <span className="text-2xl animate-pulse">🔥</span>
+                  <span className="text-white font-bold text-sm md:text-base">LIMITED TIME OFFER</span>
+                  <span className="text-2xl animate-pulse">🔥</span>
+                </div>
+                <h3 className="text-2xl md:text-4xl font-bold text-white mb-2">
+                  <span className="bg-gradient-to-r from-bca-cyan via-bca-gold to-bca-cyan bg-clip-text text-transparent">
+                    Special Price: ₹1,200/Month
+                  </span>
+                </h3>
+                <p className="text-bca-gray-300 text-sm md:text-base">
+                  <span className="line-through text-bca-gray-400">Regular Price: ₹1,500/Month</span>
+                  <span className="text-bca-gold font-semibold ml-2">Save ₹300 Every Month!</span>
+                </p>
+              </div>
+              
+              {/* Offer Details */}
+              <div className="grid md:grid-cols-2 gap-6 items-center">
+                <div className="space-y-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 bg-bca-gold/20 rounded-full flex items-center justify-center">
+                      <span className="text-bca-gold text-lg">⏰</span>
+                    </div>
+                    <div>
+                      <p className="text-white font-semibold">Limited Time Offer</p>
+                      <p className="text-bca-gray-300 text-sm">Valid until October 20, 2025</p>
+                      <p className="text-bca-cyan text-xs font-bold">
+                        {earlyBirdDaysLeft} {earlyBirdDaysLeft === 1 ? 'day' : 'days'} remaining!
+                      </p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 bg-bca-cyan/20 rounded-full flex items-center justify-center">
+                      <span className="text-bca-cyan text-lg">💰</span>
+                    </div>
+                    <div>
+                      <p className="text-white font-semibold">Total Savings</p>
+                      <p className="text-bca-gold font-bold">₹1,800 (6 months)</p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 bg-bca-gold/20 rounded-full flex items-center justify-center">
+                      <span className="text-bca-gold text-lg">🎯</span>
+                    </div>
+                    <div>
+                      <p className="text-white font-semibold">Exclusive Access</p>
+                      <p className="text-bca-gray-300 text-sm">Priority support & bonus materials</p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="text-center">
+                  <div className="bg-gradient-to-br from-bca-gray-800/50 to-bca-gray-900/50 rounded-2xl p-6 border border-bca-gold/30">
+                    <p className="text-bca-gray-300 text-sm mb-2">Early Bird Price</p>
+                    <div className="text-4xl md:text-5xl font-bold text-bca-gold mb-2">
+                      ₹1,200
+                    </div>
+                    <p className="text-bca-gray-300 text-sm mb-4">per month</p>
+                    <button
+                      onClick={handleEnrollClick}
+                      className="w-full bg-gradient-to-r from-bca-cyan to-bca-gold hover:from-bca-gold hover:to-bca-cyan text-white font-bold py-3 px-6 rounded-xl transition-all duration-300 transform hover:scale-105 hover:shadow-[0_0_20px_rgba(0,195,255,0.4)]"
+                    >
+                      🚀 Grab This Offer Now!
+                    </button>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Urgency Message */}
+              <div className="mt-6 text-center">
+                <p className="text-bca-cyan font-semibold">
+                  ⏰ Only {earlyBirdDaysLeft} {earlyBirdDaysLeft === 1 ? 'day' : 'days'} left! Don't miss this amazing opportunity!
+                </p>
+              </div>
+            </div>
+          </div>
+          )}
+
           {/* Image Slideshow Display */}
           <div className="relative">
             <div 
@@ -327,7 +441,7 @@ export default function CoursePromo() {
                   </div>
                   <div>
                     <p className="font-bold text-white text-2xl mb-1 drop-shadow-[0_0_3px_rgba(255,255,255,0.2)]">Enrollment Start</p>
-                    <p className="text-bca-gray-300 text-xl font-medium">October 13, 2025</p>
+                    <p className="text-bca-gray-300 text-xl font-medium">October 11, 2025</p>
                   </div>
                 </div>
                 
@@ -368,15 +482,6 @@ export default function CoursePromo() {
               </div>
 
               
-              {/* Course Fee */}
-              <div className="text-center mb-8">
-                <div className="inline-block bg-gradient-to-r from-bca-cyan/20 to-bca-gold/20 rounded-xl p-4 border border-bca-cyan/30 shadow-[0_0_20px_rgba(0,189,255,0.3)]">
-                  <p className="text-xl md:text-2xl font-bold text-bca-cyan bg-gradient-to-r from-bca-cyan via-bca-gold to-bca-cyan bg-clip-text text-transparent drop-shadow-[0_0_8px_rgba(0,189,255,0.6)]">
-                    Course Fee Rs. 1500 / Month
-                  </p>
-                </div>
-              </div>
-              
               {/* Enroll Now Button */}
               <div className="text-center">
                 <button 
@@ -401,7 +506,7 @@ export default function CoursePromo() {
                     Important Notice
                   </h3>
                   <p className="text-white/90 text-base leading-relaxed mb-8">
-                    আমাদের FSWD With AWS & DEVOPS ব্যাচের এনরোলমেন্ট শুরু হবে ৫ অক্টোবর, ২০২৫ এবং এনরোলমেন্ট শেষ হবে ২০ নভেম্বর, ২০২৫। ২০ নভেম্বরের পর এই ব্যাচে আর কাউকে এনরোল করানো হবে না।
+                    আমাদের FSWD With AWS & DEVOPS ব্যাচের এনরোলমেন্ট শুরু হবে ১১ অক্টোবর, ২০২৫ এবং এনরোলমেন্ট শেষ হবে ২০ নভেম্বর, ২০২৫। ২০ নভেম্বরের পর এই ব্যাচে আর কাউকে এনরোল করানো হবে না।
                   </p>
                   <div className="flex gap-4 justify-center">
                     <button 
