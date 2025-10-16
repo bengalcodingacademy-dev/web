@@ -142,7 +142,12 @@ const RazorpayPayment = ({
             const verifyResponse = await api.post('/purchases/verify-payment', {
               razorpayOrderId: response.razorpay_order_id,
               razorpayPaymentId: response.razorpay_payment_id,
-              razorpaySignature: response.razorpay_signature
+              razorpaySignature: response.razorpay_signature,
+              // Include required context for server-side verification and DB writes
+              courseId: course.id,
+              isMonthlyPayment,
+              monthNumber,
+              totalMonths
             });
 
             console.log('Verification response:', verifyResponse.data);
