@@ -10,6 +10,10 @@ export default function Layout({ children }) {
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
 
+  useEffect(() => {
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}, [location.pathname]);
+
   const handleLogout = () => {
     setShowLogoutConfirm(true);
   };
