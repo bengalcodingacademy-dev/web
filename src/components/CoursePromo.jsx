@@ -18,7 +18,7 @@ export default function CoursePromo() {
   // Static randomly generated emojis - generated once and never re-rendered
   const staticRandomEmojis = useMemo(() => {
     const emojiList = ['⚛️', '🚀', '☁️', '🐳', '🔐', '⚡', '🌐', '💻', '🔧', '📱', '🎯', '🔥', '💎', '🌟', '🎮', '🕹️', '🎲', '🧩', '💾', '💿', '📀', '🖥️', '⌨️', '🖱️', '🖨️', '📷', '📹', '📺', '📻', '📞', '☎️', '📠', '🔌', '🔋', '💡', '🔦', '🕯️', '🧯', '🛠️', '⚙️', '🔩', '⚖️', '🔬', '🔭', '📡', '🛰️', '🚁', '✈️', '🛸', '🛰️', '🌍', '🌎', '🌏', '🗺️', '🧭', '⏰', '⏲️', '⏱️', '🕰️', '⌚', '📱', '💻', '🖥️', '⌨️', '🖱️', '🖨️', '📷', '📹', '📺', '📻', '📞', '☎️', '📠', '🔌', '🔋', '💡', '🔦', '🕯️', '🧯', '🛠️', '⚙️', '🔩', '⚖️', '🔬', '🔭', '📡', '🛰️', '🚁', '✈️', '🛸', '🛰️', '🌍', '🌎', '🌏', '🗺️', '🧭', '⏰', '⏲️', '⏱️', '🕰️', '⌚'];
-    
+
     return Array.from({ length: 30 }, (_, i) => ({
       id: i,
       emoji: emojiList[Math.floor(Math.random() * emojiList.length)],
@@ -73,15 +73,15 @@ export default function CoursePromo() {
     // Simple approach: create dates and calculate difference
     const today = new Date();
     const offerEnd = new Date('2025-10-20');
-    
+
     // Set both dates to start of day to avoid time issues
     today.setHours(0, 0, 0, 0);
     offerEnd.setHours(0, 0, 0, 0);
-    
+
     const timeDiff = offerEnd.getTime() - today.getTime();
     const daysLeft = Math.ceil(timeDiff / (1000 * 3600 * 24));
-    
-    
+
+
     return Math.max(0, daysLeft);
   };
 
@@ -155,18 +155,18 @@ export default function CoursePromo() {
       {/* Additional emojis specifically positioned in middle and bottom sections */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {/* Middle section emojis */}
-        <div className="absolute top-1/2 left-1/4 text-2xl opacity-25 animate-float" style={{animationDelay: '1.2s', animationDuration: '4s', filter: 'hue-rotate(120deg)'}}>💻</div>
-        <div className="absolute top-1/2 right-1/3 text-3xl opacity-25 animate-float" style={{animationDelay: '2.8s', animationDuration: '5s', filter: 'hue-rotate(240deg)'}}>🖥️</div>
-        <div className="absolute top-1/2 left-1/2 text-2xl opacity-25 animate-float" style={{animationDelay: '0.5s', animationDuration: '3.5s', filter: 'hue-rotate(60deg)'}}>⌨️</div>
-        <div className="absolute top-1/2 right-1/4 text-2xl opacity-25 animate-float" style={{animationDelay: '3.2s', animationDuration: '4.5s', filter: 'hue-rotate(180deg)'}}>🖱️</div>
-        
+        <div className="absolute top-1/2 left-1/4 text-2xl opacity-25 animate-float" style={{ animationDelay: '1.2s', animationDuration: '4s', filter: 'hue-rotate(120deg)' }}>💻</div>
+        <div className="absolute top-1/2 right-1/3 text-3xl opacity-25 animate-float" style={{ animationDelay: '2.8s', animationDuration: '5s', filter: 'hue-rotate(240deg)' }}>🖥️</div>
+        <div className="absolute top-1/2 left-1/2 text-2xl opacity-25 animate-float" style={{ animationDelay: '0.5s', animationDuration: '3.5s', filter: 'hue-rotate(60deg)' }}>⌨️</div>
+        <div className="absolute top-1/2 right-1/4 text-2xl opacity-25 animate-float" style={{ animationDelay: '3.2s', animationDuration: '4.5s', filter: 'hue-rotate(180deg)' }}>🖱️</div>
+
         {/* Bottom section emojis */}
-        <div className="absolute bottom-1/4 left-1/5 text-3xl opacity-25 animate-float" style={{animationDelay: '1.8s', animationDuration: '4.2s', filter: 'hue-rotate(300deg)'}}>📱</div>
-        <div className="absolute bottom-1/3 right-1/5 text-2xl opacity-25 animate-float" style={{animationDelay: '0.8s', animationDuration: '3.8s', filter: 'hue-rotate(45deg)'}}>📷</div>
-        <div className="absolute bottom-1/5 left-1/3 text-2xl opacity-25 animate-float" style={{animationDelay: '2.5s', animationDuration: '4.8s', filter: 'hue-rotate(150deg)'}}>📹</div>
-        <div className="absolute bottom-1/6 right-1/3 text-3xl opacity-25 animate-float" style={{animationDelay: '1.5s', animationDuration: '3.2s', filter: 'hue-rotate(270deg)'}}>📺</div>
-        <div className="absolute bottom-1/4 left-2/3 text-2xl opacity-25 animate-float" style={{animationDelay: '3.5s', animationDuration: '4.5s', filter: 'hue-rotate(90deg)'}}>🖨️</div>
-        <div className="absolute bottom-1/5 right-2/3 text-2xl opacity-25 animate-float" style={{animationDelay: '0.3s', animationDuration: '3.7s', filter: 'hue-rotate(210deg)'}}>🎮</div>
+        <div className="absolute bottom-1/4 left-1/5 text-3xl opacity-25 animate-float" style={{ animationDelay: '1.8s', animationDuration: '4.2s', filter: 'hue-rotate(300deg)' }}>📱</div>
+        <div className="absolute bottom-1/3 right-1/5 text-2xl opacity-25 animate-float" style={{ animationDelay: '0.8s', animationDuration: '3.8s', filter: 'hue-rotate(45deg)' }}>📷</div>
+        <div className="absolute bottom-1/5 left-1/3 text-2xl opacity-25 animate-float" style={{ animationDelay: '2.5s', animationDuration: '4.8s', filter: 'hue-rotate(150deg)' }}>📹</div>
+        <div className="absolute bottom-1/6 right-1/3 text-3xl opacity-25 animate-float" style={{ animationDelay: '1.5s', animationDuration: '3.2s', filter: 'hue-rotate(270deg)' }}>📺</div>
+        <div className="absolute bottom-1/4 left-2/3 text-2xl opacity-25 animate-float" style={{ animationDelay: '3.5s', animationDuration: '4.5s', filter: 'hue-rotate(90deg)' }}>🖨️</div>
+        <div className="absolute bottom-1/5 right-2/3 text-2xl opacity-25 animate-float" style={{ animationDelay: '0.3s', animationDuration: '3.7s', filter: 'hue-rotate(210deg)' }}>🎮</div>
       </div>
 
 
@@ -178,13 +178,13 @@ export default function CoursePromo() {
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
               <div className="w-96 h-96 bg-gradient-to-r from-bca-cyan/10 to-bca-gold/10 rounded-full blur-3xl animate-pulse"></div>
             </div>
-            
+
             {/* Static Floating Tech Icons - Pure CSS, won't re-render */}
-            <div className="absolute top-1/4 left-1/4 text-3xl opacity-30 animate-bounce pointer-events-none" style={{animationDelay: '0.5s'}}>⚛️</div>
-            <div className="absolute bottom-1/3 right-1/4 text-3xl opacity-30 animate-bounce pointer-events-none" style={{animationDelay: '1.0s'}}>☁️</div>
-            <div className="absolute top-1/2 left-2 text-2xl opacity-30 animate-bounce pointer-events-none" style={{animationDelay: '1.5s'}}>🎨</div>
-            <div className="absolute top-1/2 right-2 text-2xl opacity-30 animate-bounce pointer-events-none" style={{animationDelay: '2.5s'}}>🚀</div>
-            
+            <div className="absolute top-1/4 left-1/4 text-3xl opacity-30 animate-bounce pointer-events-none" style={{ animationDelay: '0.5s' }}>⚛️</div>
+            <div className="absolute bottom-1/3 right-1/4 text-3xl opacity-30 animate-bounce pointer-events-none" style={{ animationDelay: '1.0s' }}>☁️</div>
+            <div className="absolute top-1/2 left-2 text-2xl opacity-30 animate-bounce pointer-events-none" style={{ animationDelay: '1.5s' }}>🎨</div>
+            <div className="absolute top-1/2 right-2 text-2xl opacity-30 animate-bounce pointer-events-none" style={{ animationDelay: '2.5s' }}>🚀</div>
+
             {/* Main Title with Neon Effects */}
             <div className="relative z-10">
               <h1 className="text-4xl md:text-6xl font-bold text-white mb-4 drop-shadow-[0_0_20px_rgba(255,255,255,0.3)]">
@@ -228,19 +228,19 @@ export default function CoursePromo() {
                 <div className="text-4xl font-bold text-bca-gold mb-2 drop-shadow-[0_0_8px_rgba(253,176,0,0.6)]">{timeLeft.days}</div>
                 <div className="text-sm text-bca-gray-300 font-medium">Days</div>
               </div>
-              
+
               {/* Hours */}
               <div className="bg-gradient-to-br from-bca-gray-800/80 to-bca-gray-900/80 rounded-xl p-6 border border-bca-cyan/30 shadow-[0_0_25px_rgba(0,189,255,0.4)] min-w-[100px] hover:shadow-[0_0_35px_rgba(0,189,255,0.6)] transition-all duration-300">
                 <div className="text-4xl font-bold text-bca-cyan mb-2 drop-shadow-[0_0_8px_rgba(0,189,255,0.6)]">{timeLeft.hours}</div>
                 <div className="text-sm text-bca-gray-300 font-medium">Hours</div>
               </div>
-              
+
               {/* Minutes */}
               <div className="bg-gradient-to-br from-bca-gray-800/80 to-bca-gray-900/80 rounded-xl p-6 border border-bca-gold/30 shadow-[0_0_25px_rgba(253,176,0,0.4)] min-w-[100px] hover:shadow-[0_0_35px_rgba(253,176,0,0.6)] transition-all duration-300">
                 <div className="text-4xl font-bold text-bca-gold mb-2 drop-shadow-[0_0_8px_rgba(253,176,0,0.6)]">{timeLeft.minutes}</div>
                 <div className="text-sm text-bca-gray-300 font-medium">Minutes</div>
               </div>
-              
+
               {/* Seconds */}
               <div className="bg-gradient-to-br from-bca-gray-800/80 to-bca-gray-900/80 rounded-xl p-6 border border-bca-cyan/30 shadow-[0_0_25px_rgba(0,189,255,0.4)] min-w-[100px] hover:shadow-[0_0_35px_rgba(0,189,255,0.6)] transition-all duration-300">
                 <div className="text-4xl font-bold text-bca-cyan mb-2 drop-shadow-[0_0_8px_rgba(0,189,255,0.6)] animate-pulse">{timeLeft.seconds}</div>
@@ -251,99 +251,120 @@ export default function CoursePromo() {
 
           {/* Early Bird Offer Section */}
           {earlyBirdDaysLeft > 0 && (
-          <div className="mb-12 relative">
-            
-            {/* Animated Background Effects */}
-            <div className="absolute inset-0 bg-gradient-to-r from-bca-cyan/5 via-bca-gold/5 to-bca-cyan/5 rounded-3xl blur-xl"></div>
-            <div className="absolute -top-2 -left-2 w-20 h-20 bg-bca-cyan/20 rounded-full blur-2xl animate-pulse"></div>
-            <div className="absolute -bottom-2 -right-2 w-24 h-24 bg-bca-gold/20 rounded-full blur-2xl animate-pulse" style={{animationDelay: '1s'}}></div>
-            
-            <div className="relative bg-gradient-to-br from-bca-gray-800/90 via-bca-gray-900/90 to-bca-gray-800/90 backdrop-blur-md rounded-3xl p-6 md:p-8 border-2 border-bca-cyan/30 shadow-[0_0_30px_rgba(0,195,255,0.2)] hover:shadow-[0_0_40px_rgba(0,195,255,0.3)] transition-all duration-500">
-              {/* Flashy Header */}
-              <div className="text-center mb-6">
-                <div className="inline-flex items-center gap-2 bg-gradient-to-r from-bca-red to-bca-gold px-4 py-2 rounded-full mb-3 animate-bounce">
-                  <span className="text-2xl animate-pulse">🔥</span>
-                  <span className="text-white font-bold text-sm md:text-base">LIMITED TIME OFFER</span>
-                  <span className="text-2xl animate-pulse">🔥</span>
+            <div className="mb-12 relative">
+
+              {/* Animated Background Effects */}
+              <div className="absolute inset-0 bg-gradient-to-r from-bca-cyan/5 via-bca-gold/5 to-bca-cyan/5 rounded-3xl blur-xl"></div>
+              <div className="absolute -top-2 -left-2 w-20 h-20 bg-bca-cyan/20 rounded-full blur-2xl animate-pulse"></div>
+              <div className="absolute -bottom-2 -right-2 w-24 h-24 bg-bca-gold/20 rounded-full blur-2xl animate-pulse" style={{ animationDelay: '1s' }}></div>
+
+              <div className="relative bg-gradient-to-br from-bca-gray-800/90 via-bca-gray-900/90 to-bca-gray-800/90 backdrop-blur-md rounded-3xl p-6 md:p-8 border-2 border-bca-cyan/30 shadow-[0_0_30px_rgba(0,195,255,0.2)] hover:shadow-[0_0_40px_rgba(0,195,255,0.3)] transition-all duration-500">
+                {/* Flashy Header */}
+                <div className="text-center mb-6">
+                  <div className="inline-flex items-center gap-2 bg-gradient-to-r from-bca-red to-bca-gold px-4 py-2 rounded-full mb-3 animate-bounce">
+                    <span className="text-2xl animate-pulse">🔥</span>
+                    <span className="text-white font-bold text-sm md:text-base">LIMITED TIME OFFER</span>
+                    <span className="text-2xl animate-pulse">🔥</span>
+                  </div>
+                  <h3 className="text-2xl md:text-4xl font-bold text-white mb-2">
+                    <span className="bg-gradient-to-r from-bca-cyan via-bca-gold to-bca-cyan bg-clip-text text-transparent">
+                      Special Price: ₹1,200/Month
+                    </span>
+                  </h3>
+                  <p className="text-bca-gray-300 text-sm md:text-base">
+                    <span className="line-through text-bca-gray-400">Regular Price: ₹1,500/Month</span>
+                    <span className="text-bca-gold font-semibold ml-2">Save ₹300 Every Month!</span>
+                  </p>
                 </div>
-                <h3 className="text-2xl md:text-4xl font-bold text-white mb-2">
-                  <span className="bg-gradient-to-r from-bca-cyan via-bca-gold to-bca-cyan bg-clip-text text-transparent">
-                    Special Price: ₹1,200/Month
-                  </span>
-                </h3>
-                <p className="text-bca-gray-300 text-sm md:text-base">
-                  <span className="line-through text-bca-gray-400">Regular Price: ₹1,500/Month</span>
-                  <span className="text-bca-gold font-semibold ml-2">Save ₹300 Every Month!</span>
-                </p>
-              </div>
-              
-              {/* Offer Details */}
-              <div className="grid md:grid-cols-2 gap-6 items-center">
-                <div className="space-y-4">
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 bg-bca-gold/20 rounded-full flex items-center justify-center">
-                      <span className="text-bca-gold text-lg">⏰</span>
+
+                {/* Offer Details */}
+                <div className="grid md:grid-cols-2 gap-6 items-center">
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 bg-bca-gold/20 rounded-full flex items-center justify-center">
+                        <span className="text-bca-gold text-lg">⏰</span>
+                      </div>
+                      <div>
+                        <p className="text-white font-semibold">Limited Time Offer</p>
+                        <p className="text-bca-gray-300 text-sm">Valid until October 20, 2025</p>
+                        <p className="text-bca-cyan text-xs font-bold">
+                          {earlyBirdDaysLeft} {earlyBirdDaysLeft === 1 ? 'day' : 'days'} remaining!
+                        </p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="text-white font-semibold">Limited Time Offer</p>
-                      <p className="text-bca-gray-300 text-sm">Valid until October 20, 2025</p>
-                      <p className="text-bca-cyan text-xs font-bold">
-                        {earlyBirdDaysLeft} {earlyBirdDaysLeft === 1 ? 'day' : 'days'} remaining!
-                      </p>
+
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 bg-bca-cyan/20 rounded-full flex items-center justify-center">
+                        <span className="text-bca-cyan text-lg">💰</span>
+                      </div>
+                      <div>
+                        <p className="text-white font-semibold">Total Savings</p>
+                        <p className="text-bca-gold font-bold">₹1,800 (6 months)</p>
+                      </div>
                     </div>
-                  </div>
-                  
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 bg-bca-cyan/20 rounded-full flex items-center justify-center">
-                      <span className="text-bca-cyan text-lg">💰</span>
-                    </div>
-                    <div>
-                      <p className="text-white font-semibold">Total Savings</p>
-                      <p className="text-bca-gold font-bold">₹1,800 (6 months)</p>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 bg-bca-gold/20 rounded-full flex items-center justify-center">
-                      <span className="text-bca-gold text-lg">🎯</span>
-                    </div>
-                    <div>
-                      <p className="text-white font-semibold">Exclusive Access</p>
-                      <p className="text-bca-gray-300 text-sm">Priority support & bonus materials</p>
+
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 bg-bca-gold/20 rounded-full flex items-center justify-center">
+                        <span className="text-bca-gold text-lg">🎯</span>
+                      </div>
+                      <div>
+                        <p className="text-white font-semibold">Exclusive Access</p>
+                        <p className="text-bca-gray-300 text-sm">Priority support & bonus materials</p>
+                      </div>
                     </div>
                   </div>
+
+                  <div className="text-center">
+                    <div className="bg-gradient-to-br from-bca-gray-800/50 to-bca-gray-900/50 rounded-2xl p-6 border border-bca-gold/30">
+                      <p className="text-bca-gray-300 text-sm mb-2">Early Bird Price</p>
+                      <div className="text-4xl md:text-5xl font-bold text-bca-gold mb-2">
+                        ₹1,200
+                      </div>
+                      <p className="text-bca-gray-300 text-sm mb-4">per month</p>
+
+                      {/* 🎁 Coupon Section */}
+                      <div className="bg-bca-gray-950/70 border border-bca-gold/40 rounded-xl py-3 mb-4 shadow-[0_0_15px_rgba(245,158,11,0.15)] hover:shadow-[0_0_25px_rgba(245,158,11,0.25)] transition-all duration-300">
+
+                        <div className="flex justify-center items-center gap-2">
+                          <span className="px-4 py-1 bg-gradient-to-r from-bca-gold to-bca-cyan rounded-lg font-bold text-black tracking-widest shadow-md">
+                            DIWALI20
+                          </span>
+                          <button
+                            onClick={() => navigator.clipboard.writeText("DIWALI20")}
+                            className="text-xs text-bca-cyan hover:text-bca-gold transition-colors font-medium"
+                          >
+                            Copy
+                          </button>
+                        </div>
+                        <p className="text-bca-gray-300 text-xs mt-1">
+                          Use this coupon to get 20% off on your purchase!
+                        </p>
+                      </div>
+
+                      <button
+                        onClick={handleEnrollClick}
+                        className="w-full bg-gradient-to-r from-bca-cyan to-bca-gold hover:from-bca-gold hover:to-bca-cyan text-white font-bold py-3 px-6 rounded-xl transition-all duration-300 transform hover:scale-105 hover:shadow-[0_0_20px_rgba(0,195,255,0.4)]"
+                      >
+                        🚀 Grab This Offer Now!
+                      </button>
+                    </div>
+                  </div>
+
                 </div>
-                
-                <div className="text-center">
-                  <div className="bg-gradient-to-br from-bca-gray-800/50 to-bca-gray-900/50 rounded-2xl p-6 border border-bca-gold/30">
-                    <p className="text-bca-gray-300 text-sm mb-2">Early Bird Price</p>
-                    <div className="text-4xl md:text-5xl font-bold text-bca-gold mb-2">
-                      ₹1,200
-                    </div>
-                    <p className="text-bca-gray-300 text-sm mb-4">per month</p>
-                    <button
-                      onClick={handleEnrollClick}
-                      className="w-full bg-gradient-to-r from-bca-cyan to-bca-gold hover:from-bca-gold hover:to-bca-cyan text-white font-bold py-3 px-6 rounded-xl transition-all duration-300 transform hover:scale-105 hover:shadow-[0_0_20px_rgba(0,195,255,0.4)]"
-                    >
-                      🚀 Grab This Offer Now!
-                    </button>
-                  </div>
+
+                {/* Urgency Message */}
+                <div className="mt-6 text-center">
+                  <p className="text-bca-cyan font-semibold">
+                    ⏰ Only {earlyBirdDaysLeft} {earlyBirdDaysLeft === 1 ? 'day' : 'days'} left! Don't miss this amazing opportunity!
+                  </p>
                 </div>
-              </div>
-              
-              {/* Urgency Message */}
-              <div className="mt-6 text-center">
-                <p className="text-bca-cyan font-semibold">
-                  ⏰ Only {earlyBirdDaysLeft} {earlyBirdDaysLeft === 1 ? 'day' : 'days'} left! Don't miss this amazing opportunity!
-                </p>
               </div>
             </div>
-          </div>
           )}
 
           {/* Image Slideshow Display */}
           <div className="relative">
-            <div 
+            <div
               className="w-full max-w-4xl mx-auto aspect-[16/9] relative overflow-hidden rounded-2xl border-2 border-bca-cyan/30 bg-gradient-to-br from-bca-gray-800/50 to-bca-gray-900/50 backdrop-blur-sm shadow-[0_0_50px_rgba(0,189,255,0.3)] transition-all duration-300 hover:border-bca-cyan/60 hover:shadow-[0_0_80px_rgba(0,189,255,0.5)] hover:scale-[1.02] cursor-pointer"
               onMouseEnter={() => setIsHovered(true)}
               onMouseLeave={() => setIsHovered(false)}
@@ -352,13 +373,12 @@ export default function CoursePromo() {
               {images.map((image, index) => (
                 <div
                   key={image.id}
-                  className={`absolute inset-0 transition-all duration-1000 ease-in-out ${
-                    index === currentImage
+                  className={`absolute inset-0 transition-all duration-1000 ease-in-out ${index === currentImage
                       ? 'opacity-100 translate-x-0'
                       : index < currentImage
-                      ? 'opacity-0 -translate-x-full'
-                      : 'opacity-0 translate-x-full'
-                  }`}
+                        ? 'opacity-0 -translate-x-full'
+                        : 'opacity-0 translate-x-full'
+                    }`}
                 >
                   <img
                     src={image.src}
@@ -378,11 +398,10 @@ export default function CoursePromo() {
                 <button
                   key={index}
                   onClick={() => setCurrentImage(index)}
-                  className={`w-4 h-4 rounded-full transition-all duration-300 border-2 ${
-                    index === currentImage
+                  className={`w-4 h-4 rounded-full transition-all duration-300 border-2 ${index === currentImage
                       ? 'bg-bca-cyan border-bca-cyan shadow-[0_0_15px_#00bdff] scale-110'
                       : 'bg-transparent border-white/40 hover:border-bca-cyan/60 hover:bg-bca-cyan/20 hover:shadow-[0_0_10px_rgba(0,189,255,0.4)]'
-                  }`}
+                    }`}
                 />
               ))}
             </div>
@@ -419,8 +438,8 @@ export default function CoursePromo() {
             {/* Enhanced Background Effects */}
             <div className="absolute inset-0 bg-gradient-to-r from-bca-gold/5 via-bca-cyan/5 to-bca-gold/5 rounded-3xl blur-xl"></div>
             <div className="absolute -top-4 -left-4 w-24 h-24 bg-bca-gold/20 rounded-full blur-2xl animate-pulse"></div>
-            <div className="absolute -bottom-4 -right-4 w-32 h-32 bg-bca-cyan/20 rounded-full blur-2xl animate-pulse" style={{animationDelay: '1s'}}></div>
-            
+            <div className="absolute -bottom-4 -right-4 w-32 h-32 bg-bca-cyan/20 rounded-full blur-2xl animate-pulse" style={{ animationDelay: '1s' }}></div>
+
             <div className="relative bg-gradient-to-br from-bca-gray-800/90 to-bca-gray-900/90 backdrop-blur-md rounded-3xl p-8 md:p-12 border-2 border-bca-gold/40 shadow-[0_0_50px_rgba(253,176,0,0.4)] hover:shadow-[0_0_60px_rgba(253,176,0,0.6)] transition-all duration-500">
               {/* Title */}
               <div className="text-center mb-8">
@@ -429,7 +448,7 @@ export default function CoursePromo() {
                 </h3>
                 <div className="w-24 h-1 bg-gradient-to-r from-bca-gold to-bca-cyan mx-auto mt-3 rounded-full shadow-[0_0_8px_rgba(253,176,0,0.5)]"></div>
               </div>
-              
+
               {/* Enrollment Dates */}
               <div className="flex flex-col md:flex-row justify-center items-center mb-8 gap-12 relative">
                 {/* Enrollment Start */}
@@ -444,7 +463,7 @@ export default function CoursePromo() {
                     <p className="text-bca-gray-300 text-xl font-medium">October 11, 2025</p>
                   </div>
                 </div>
-                
+
                 {/* Animated Arrow */}
                 <div className="hidden md:flex items-center justify-center relative">
                   <div className="flex items-center">
@@ -452,21 +471,21 @@ export default function CoursePromo() {
                     <div className="w-28 h-1 bg-gradient-to-r from-green-400 to-bca-cyan relative overflow-hidden rounded-full">
                       <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/50 to-transparent animate-[shimmer_2s_ease-in-out_infinite]"></div>
                     </div>
-                    
+
                     {/* Arrow Head */}
                     <div className="relative ml-1">
                       <svg className="w-5 h-5 text-bca-cyan" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/>
+                        <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z" />
                       </svg>
                     </div>
-                    
+
                     {/* Arrow Line 2 */}
                     <div className="w-28 h-1 bg-gradient-to-r from-bca-cyan to-pink-400 relative overflow-hidden rounded-full">
-                      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/50 to-transparent animate-[shimmer_2s_ease-in-out_infinite]" style={{animationDelay: '1s'}}></div>
+                      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/50 to-transparent animate-[shimmer_2s_ease-in-out_infinite]" style={{ animationDelay: '1s' }}></div>
                     </div>
                   </div>
                 </div>
-                
+
                 {/* Enrollment End */}
                 <div className="flex items-center gap-4 group">
                   <div className="w-16 h-16 bg-gradient-to-br from-pink-500/30 to-pink-500/15 rounded-xl flex items-center justify-center border-2 border-pink-500/50 shadow-[0_0_25px_rgba(236,72,153,0.4)] group-hover:shadow-[0_0_35px_rgba(236,72,153,0.6)] transition-all duration-300 group-hover:scale-105">
@@ -481,10 +500,10 @@ export default function CoursePromo() {
                 </div>
               </div>
 
-              
+
               {/* Enroll Now Button */}
               <div className="text-center">
-                <button 
+                <button
                   onClick={handleEnrollClick}
                   className="px-12 py-4 bg-gradient-to-r from-bca-gold via-bca-cyan to-bca-gold text-black font-bold text-xl rounded-xl shadow-[0_0_30px_rgba(253,176,0,0.5)] border-2 border-bca-gold/50 hover:border-bca-cyan/50 hover:shadow-[0_0_40px_rgba(0,189,255,0.6)] transition-all duration-300 transform hover:scale-105 hover:from-bca-gold/90 hover:via-bca-cyan/90 hover:to-bca-gold/90 relative overflow-hidden group"
                 >
@@ -509,13 +528,13 @@ export default function CoursePromo() {
                     আমাদের FSWD With AWS & DEVOPS ব্যাচের এনরোলমেন্ট শুরু হবে ১১ অক্টোবর, ২০২৫ এবং এনরোলমেন্ট শেষ হবে ২০ নভেম্বর, ২০২৫। ২০ নভেম্বরের পর এই ব্যাচে আর কাউকে এনরোল করানো হবে না।
                   </p>
                   <div className="flex gap-4 justify-center">
-                    <button 
+                    <button
                       onClick={() => setShowEnrollmentPopup(false)}
                       className="px-6 py-2 bg-bca-gray-600 text-white rounded-lg hover:bg-bca-gray-500 transition-colors"
                     >
                       Cancel
                     </button>
-                    <button 
+                    <button
                       onClick={handleEnrollNow}
                       className="px-8 py-3 bg-gradient-to-r from-bca-gold to-bca-cyan text-black font-bold rounded-xl hover:from-bca-gold/90 hover:to-bca-cyan/90 transition-all duration-300 transform hover:scale-105 shadow-[0_0_20px_rgba(253,176,0,0.4)]"
                     >
