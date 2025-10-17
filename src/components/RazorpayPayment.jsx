@@ -3,19 +3,23 @@ import { motion } from 'framer-motion';
 import { api } from '../lib/api';
 import { useAuth } from '../lib/authContext';
 
-const RazorpayPayment = ({ 
-  isOpen, 
-  onClose, 
-  course, 
-  onSuccess, 
+const RazorpayPayment = ({
+  isOpen,
+  onClose,
+  course,
+  onSuccess,
   onError,
   isMonthlyPayment = false,
   monthNumber = 1,
-  totalMonths = 1
+  totalMonths = 1,
+  couponCode = null,
+  discountedAmountRupees = null
 }) => {
   const { user } = useAuth();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [finalAmountRupees, setFinalAmountRupees] = useState(null);
+  // Coupon UI is on course page; modal only respects couponCode
 
   // Reset state when modal opens/closes
   useEffect(() => {
@@ -87,16 +91,16 @@ const RazorpayPayment = ({
         courseId: course.id,
         isMonthlyPayment,
         monthNumber,
-        totalMonths
+        totalMonths,
+        couponCode: couponCode || undefined
       });
-
       const orderResponse = await api.post('/purchases/create-order', {
         courseId: course.id,
         isMonthlyPayment,
         monthNumber,
-        totalMonths
+        totalMonths,
+        couponCode: couponCode || undefined
       });
-
       console.log('Order response:', orderResponse.data);
 
       // ✅ Handle different response formats
@@ -104,13 +108,9 @@ const RazorpayPayment = ({
       let purchase = null;
 
       if (orderResponse.data.order?.id) {
-        // Format: { order: {...}, purchase: {...} }
-        console.log('Using nested order + purchase format');
         order = orderResponse.data.order;
         purchase = orderResponse.data.purchase;
       } else if (orderResponse.data.id) {
-        // Format: { id: "...", amount: ..., ... } (direct Razorpay order)
-        console.log('Using flat order format');
         order = orderResponse.data;
       } else {
         console.error('Unexpected order response:', orderResponse.data);
@@ -147,7 +147,8 @@ const RazorpayPayment = ({
               courseId: course.id,
               isMonthlyPayment,
               monthNumber,
-              totalMonths
+              totalMonths,
+              couponCode: couponCode || undefined
             });
 
             console.log('Verification response:', verifyResponse.data);
@@ -187,6 +188,53 @@ const RazorpayPayment = ({
     }
   };
 
+  // Apply coupon by preparing a preview order
+  const applyCoupon = async () => {
+    try {
+      setLoading(true);
+      setError('');
+      setPreviewOrder(null);
+      setFinalAmountRupees(null);
+
+      const code = couponInput.trim().toUpperCase();
+      if (!code) {
+        setError('Enter a valid coupon');
+        setLoading(false);
+        return;
+      }
+
+      const res = await api.post('/purchases/create-order', {
+        courseId: course.id,
+        isMonthlyPayment,
+        monthNumber,
+        totalMonths,
+        couponCode: code
+      });
+
+      const order = res.data.order?.id ? res.data.order : res.data;
+      if (!order?.amount) throw new Error('Failed to prepare order for coupon');
+
+      setPreviewOrder(order);
+      setAppliedCoupon({ code });
+      setFinalAmountRupees((order.amount || 0) / 100);
+    } catch (e) {
+      const msg = e.response?.data?.error || 'Enter a valid coupon';
+      setError(msg);
+      setAppliedCoupon(null);
+      setPreviewOrder(null);
+      setFinalAmountRupees(null);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const clearCoupon = () => {
+    setAppliedCoupon(null);
+    setCouponInput('');
+    setPreviewOrder(null);
+    setFinalAmountRupees(null);
+  };
+
   if (!isOpen) return null;
 
   return (
@@ -206,21 +254,80 @@ const RazorpayPayment = ({
           </p>
         </div>
 
-        <div className="mb-6 p-4 bg-bca-gray-700 rounded-lg">
+        <div className="mb-6 p-5 rounded-xl bg-gradient-to-br from-bca-gray-800 via-bca-gray-850 to-bca-gray-900 border border-bca-gray-700/70 shadow-[0_0_25px_rgba(255,255,255,0.03)]">
+          {/* Header */}
           <div className="flex justify-between items-center mb-2">
-            <span className="text-bca-gray-300">Amount:</span>
-            <span className="text-xl font-bold text-bca-gold">
-              ₹{isMonthlyPayment 
-                ? (parseFloat(course.monthlyFeeRupees) || 0).toFixed(2) 
-                : (parseFloat(course.priceRupees) || 0).toFixed(2)}
-            </span>
+            <span className="text-bca-gray-200 text-base font-medium tracking-wide">Amount Payable</span>
+
+            <div className="flex items-baseline gap-2">
+              {/* Final or discounted amount */}
+              <span className="text-2xl font-bold text-bca-gold drop-shadow-[0_0_6px_rgba(245,158,11,0.25)]">
+                ₹{(
+                  discountedAmountRupees ??
+                  finalAmountRupees ??
+                  (isMonthlyPayment
+                    ? parseFloat(course.monthlyFeeRupees) || 0
+                    : parseFloat(course.priceRupees) || 0)
+                ).toFixed(2)}
+              </span>
+
+              {/* Original crossed price */}
+              {(discountedAmountRupees || finalAmountRupees) &&
+                ((discountedAmountRupees ?? finalAmountRupees) <
+                  (isMonthlyPayment
+                    ? parseFloat(course.monthlyFeeRupees) || 0
+                    : parseFloat(course.priceRupees) || 0)) && (
+                  <span className="text-sm text-bca-gray-500 line-through">
+                    ₹{(
+                      isMonthlyPayment
+                        ? parseFloat(course.monthlyFeeRupees) || 0
+                        : parseFloat(course.priceRupees) || 0
+                    ).toFixed(2)}
+                  </span>
+                )}
+            </div>
           </div>
+
+          {/* Coupon success + savings */}
+          {(discountedAmountRupees || finalAmountRupees) &&
+            ((discountedAmountRupees ?? finalAmountRupees) <
+              (isMonthlyPayment
+                ? parseFloat(course.monthlyFeeRupees) || 0
+                : parseFloat(course.priceRupees) || 0)) && (
+              <div className="mt-2 bg-green-500/10 border border-green-500/30 rounded-lg px-3 py-2 flex items-center justify-between">
+                <div className="flex items-center gap-2 text-green-400 text-sm font-medium">
+                  <svg
+                    className="w-4 h-4 flex-shrink-0"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    viewBox="0 0 24 24"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                  </svg>
+                  Coupon applied successfully
+                </div>
+
+                <span className="text-green-300 text-sm font-semibold">
+                  You saved ₹
+                  {(
+                    (isMonthlyPayment
+                      ? parseFloat(course.monthlyFeeRupees)
+                      : parseFloat(course.priceRupees)) -
+                    (discountedAmountRupees ?? finalAmountRupees)
+                  ).toFixed(2)}
+                </span>
+              </div>
+            )}
+
+          {/* Monthly note */}
           {isMonthlyPayment && (
-            <div className="text-sm text-bca-gray-400">
+            <div className="text-sm text-bca-gray-400 mt-2">
               Monthly payment • {totalMonths} months total
             </div>
           )}
         </div>
+
 
         <div className="mb-6 p-4 bg-blue-500/10 rounded-lg border border-blue-500/30">
           <div className="flex items-start gap-3">

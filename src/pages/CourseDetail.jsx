@@ -49,15 +49,21 @@ export default function CourseDetail() {
   const [showAllSidebarIncludes, setShowAllSidebarIncludes] = useState(false);
   const [showAllDefaultIncludes, setShowAllDefaultIncludes] = useState(false);
   const [showFullDescription, setShowFullDescription] = useState(false);
+  // Coupon state
+  const [showCoupon, setShowCoupon] = useState(false);
+  const [couponInput, setCouponInput] = useState('');
+  const [appliedCoupon, setAppliedCoupon] = useState(null); // string code
+  const [discountedAmountRupees, setDiscountedAmountRupees] = useState(null);
+  const [couponError, setCouponError] = useState('');
   const navigate = useNavigate();
   const { user } = useAuth();
 
-  useEffect(() => { 
+  useEffect(() => {
     const loadData = async () => {
       try {
         const courseRes = await api.get(`/courses/${slug}`);
         setCourse(courseRes.data);
-        
+
         // Load purchases if user is logged in
         if (user) {
           try {
@@ -72,7 +78,7 @@ export default function CourseDetail() {
         console.error('Error loading course:', error);
       }
     };
-    
+
     loadData();
   }, [slug, user]);
 
@@ -85,8 +91,8 @@ export default function CourseDetail() {
   // Check if user has purchased this course (regular or monthly)
   const hasPurchasedCourse = () => {
     if (!user || !course) return false;
-    return purchases.some(purchase => 
-      purchase.courseId === course.id && 
+    return purchases.some(purchase =>
+      purchase.courseId === course.id &&
       purchase.status === 'PAID' &&
       (purchase.type === 'regular' || purchase.type === 'monthly')
     );
@@ -96,7 +102,7 @@ export default function CourseDetail() {
     if (!user) return navigate('/login?next=' + encodeURIComponent(`/course/${slug}`));
     setShowPayment(true);
   };
-  
+
   const goToCourse = () => {
     navigate(`/course/${course.id}/access`);
   };
@@ -118,6 +124,44 @@ export default function CourseDetail() {
     setTimeout(() => {
       navigate(`/course/${course.id}/access`);
     }, 2000);
+  };
+
+  // Preview and apply coupon on course page
+  const applyCoupon = async () => {
+    try {
+      setCouponError('');
+      const code = couponInput.trim().toUpperCase();
+      if (!code) {
+        setCouponError('Enter a valid coupon');
+        return;
+      }
+
+      const isMonthly = !!course?.isMonthlyPayment;
+      const res = await api.post('/purchases/create-order', {
+        courseId: course.id,
+        isMonthlyPayment: isMonthly,
+        monthNumber: isMonthly ? 1 : null,
+        totalMonths: isMonthly ? course?.durationMonths : null,
+        couponCode: code
+      });
+
+      const order = res.data.order?.id ? res.data.order : res.data;
+      if (!order?.amount) throw new Error('Invalid order preview');
+      setAppliedCoupon(code);
+      setDiscountedAmountRupees((order.amount || 0) / 100);
+    } catch (e) {
+      const msg = e.response?.data?.error || 'Enter a valid coupon';
+      setCouponError(msg);
+      setAppliedCoupon(null);
+      setDiscountedAmountRupees(null);
+    }
+  };
+
+  const clearCoupon = () => {
+    setAppliedCoupon(null);
+    setDiscountedAmountRupees(null);
+    setCouponInput('');
+    setCouponError('');
   };
 
   const handlePaymentError = (error) => {
@@ -170,7 +214,7 @@ export default function CourseDetail() {
               className="mb-8"
             >
               <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-4">{course.title}</h1>
-              
+
               {/* Course Info Tags */}
               <div className="flex flex-wrap gap-2 sm:gap-4 mb-6">
                 <div className="flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-1 bg-green-500/20 rounded-full text-green-400 text-xs sm:text-sm">
@@ -195,7 +239,7 @@ export default function CourseDetail() {
               className="mb-6 sm:mb-8"
             >
               <h2 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-bca-cyan to-bca-gold bg-clip-text text-transparent mb-3 sm:mb-4 drop-shadow-[0_0_10px_rgba(0,189,255,0.3)]">About Course</h2>
-              <div 
+              <div
                 className="text-bca-gray-300 leading-relaxed prose prose-invert max-w-none text-sm sm:text-base"
                 dangerouslySetInnerHTML={{ __html: course.aboutCourse || course.shortDesc }}
               />
@@ -211,20 +255,19 @@ export default function CourseDetail() {
               >
                 <h2 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-bca-gold to-bca-red bg-clip-text text-transparent mb-3 sm:mb-4 drop-shadow-[0_0_10px_rgba(253,176,0,0.3)]">Course Description</h2>
                 <div className="relative">
-                  <div 
-                    className={`text-bca-gray-300 leading-relaxed prose prose-invert max-w-none text-sm sm:text-base transition-all duration-300 ${
-                      !showFullDescription ? 'overflow-hidden' : ''
-                    }`}
+                  <div
+                    className={`text-bca-gray-300 leading-relaxed prose prose-invert max-w-none text-sm sm:text-base transition-all duration-300 ${!showFullDescription ? 'overflow-hidden' : ''
+                      }`}
                     style={{
                       display: !showFullDescription ? '-webkit-box' : 'block',
                       WebkitLineClamp: !showFullDescription ? 5 : 'unset',
                       WebkitBoxOrient: !showFullDescription ? 'vertical' : 'unset'
                     }}
-                    dangerouslySetInnerHTML={{ 
-                      __html: showFullDescription 
-                        ? course.longDesc 
-                        : course.longDesc.length > 500 
-                          ? course.longDesc.substring(0, 500) + '...' 
+                    dangerouslySetInnerHTML={{
+                      __html: showFullDescription
+                        ? course.longDesc
+                        : course.longDesc.length > 500
+                          ? course.longDesc.substring(0, 500) + '...'
                           : course.longDesc
                     }}
                   />
@@ -363,10 +406,10 @@ export default function CourseDetail() {
             >
               <h2 className="text-xl sm:text-2xl font-bold text-white mb-3 sm:mb-4">This Course Includes</h2>
               <p className="text-bca-gray-300 mb-4 sm:mb-6 text-sm sm:text-base">
-                Explore the comprehensive learning experience awaiting you on this course detail page. 
+                Explore the comprehensive learning experience awaiting you on this course detail page.
                 From fundamental concepts to advanced techniques, discover what you will learn and how it will propel your skills to new heights.
               </p>
-              
+
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {courseIncludes.length > 0 ? (
                   <>
@@ -513,7 +556,7 @@ export default function CourseDetail() {
               <p className="text-bca-gray-300 mb-6">
                 Immerse yourself in a wealth of knowledge with our comprehensive course content.
               </p>
-              
+
               <div className="space-y-3">
                 {courseModules.length > 0 ? courseModules.map((module, index) => (
                   <div key={index} className="bg-bca-gray-800 rounded-lg border border-bca-gray-700 overflow-hidden">
@@ -528,7 +571,7 @@ export default function CourseDetail() {
                     </button>
                     {expandedModules[index] && (
                       <div className="px-6 pb-4">
-                        <div 
+                        <div
                           className="text-bca-gray-300 prose prose-invert max-w-none"
                           dangerouslySetInnerHTML={{ __html: module.content || 'Module content will be available soon.' }}
                         />
@@ -555,7 +598,7 @@ export default function CourseDetail() {
                         </div>
                       )}
                     </div>
-                    
+
                     <div className="bg-bca-gray-800 rounded-lg border border-bca-gray-700 overflow-hidden">
                       <button
                         onClick={() => toggleModule(1)}
@@ -574,7 +617,7 @@ export default function CourseDetail() {
                         </div>
                       )}
                     </div>
-                    
+
                     <div className="bg-bca-gray-800 rounded-lg border border-bca-gray-700 overflow-hidden">
                       <button
                         onClick={() => toggleModule(2)}
@@ -593,7 +636,7 @@ export default function CourseDetail() {
                         </div>
                       )}
                     </div>
-                    
+
                     <div className="bg-bca-gray-800 rounded-lg border border-bca-gray-700 overflow-hidden">
                       <button
                         onClick={() => toggleModule(3)}
@@ -612,7 +655,7 @@ export default function CourseDetail() {
                         </div>
                       )}
                     </div>
-                    
+
                     <div className="bg-bca-gray-800 rounded-lg border border-bca-gray-700 overflow-hidden">
                       <button
                         onClick={() => toggleModule(4)}
@@ -631,7 +674,7 @@ export default function CourseDetail() {
                         </div>
                       )}
                     </div>
-                    
+
                     <div className="bg-bca-gray-800 rounded-lg border border-bca-gray-700 overflow-hidden">
                       <button
                         onClick={() => toggleModule(5)}
@@ -650,7 +693,7 @@ export default function CourseDetail() {
                         </div>
                       )}
                     </div>
-                    
+
                     <div className="bg-bca-gray-800 rounded-lg border border-bca-gray-700 overflow-hidden">
                       <button
                         onClick={() => toggleModule(6)}
@@ -687,8 +730,8 @@ export default function CourseDetail() {
                 {/* Course Banner */}
                 <div className="relative h-32 sm:h-40 lg:h-48 bg-gradient-to-br from-blue-600 to-purple-600 flex items-center justify-center">
                   {course.imageUrl && (
-                    <img 
-                      src={course.imageUrl} 
+                    <img
+                      src={course.imageUrl}
                       alt={course.title}
                       className="w-full h-full object-cover"
                     />
@@ -720,7 +763,7 @@ export default function CourseDetail() {
                         {course.isMonthlyPayment ? (
                           <div>
                             <div className="flex items-center gap-2 sm:gap-3 mb-2">
-                              <span className="text-2xl sm:text-3xl font-bold text-blue-500">₹{(parseFloat(course.monthlyFeeRupees) || 0).toFixed(2)}</span>
+                              <span className="text-2xl sm:text-3xl font-bold text-blue-500">₹{(discountedAmountRupees ?? (parseFloat(course.monthlyFeeRupees) || 0)).toFixed(2)}</span>
                               <span className="text-sm sm:text-lg text-bca-gray-400">per month</span>
                             </div>
                             <div className="text-xs sm:text-sm text-bca-gray-300 mb-2">
@@ -734,13 +777,92 @@ export default function CourseDetail() {
                           </div>
                         ) : (
                           <div className="flex items-center gap-2 sm:gap-3">
-                            <span className="text-2xl sm:text-3xl font-bold text-blue-500">₹{(parseFloat(course.priceRupees) || 0).toFixed(2)}</span>
+                            <span className="text-2xl sm:text-3xl font-bold text-blue-500">₹{(discountedAmountRupees ?? (parseFloat(course.priceRupees) || 0)).toFixed(2)}</span>
                             <span className="text-sm sm:text-lg text-bca-gray-400 line-through">₹{Math.round((parseFloat(course.priceRupees) || 0) * 1.8).toFixed(2)}</span>
                           </div>
                         )}
                       </>
                     )}
                   </div>
+
+                  {/* Coupon section - only if not already purchased */}
+                  {!hasPurchasedCourse() && (
+                    <div className="mb-5">
+                      <div className="rounded-2xl border border-cyan-500/40 bg-bca-gray-900/80 shadow-[0_0_25px_rgba(0,189,255,0.15)] overflow-hidden">
+
+                        {/* Header (dropdown toggle) */}
+                        <button
+                          onClick={() => setShowCoupon((prev) => !prev)}
+                          className="w-full flex items-center justify-between px-4 py-3 text-left focus:outline-none hover:bg-bca-gray-800/80 transition-colors"
+                        >
+                          <div className="flex items-center gap-3">
+                            <div className="w-8 h-8 rounded-full bg-cyan-500/20 border border-cyan-400/40 flex items-center justify-center">
+                              <svg className="w-4 h-4 text-cyan-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20 12H4" />
+                              </svg>
+                            </div>
+                            <span className="text-base font-semibold text-cyan-300">
+                              Have a coupon?
+                            </span>
+                          </div>
+                          <svg
+                            className={`w-5 h-5 text-cyan-300 transition-transform duration-300 ${showCoupon ? "rotate-180" : ""}`}
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                          </svg>
+                        </button>
+
+                        {/* Dropdown content */}
+                        <div
+                          className={`transition-all duration-300 ease-in-out overflow-hidden ${showCoupon ? "max-h-40 opacity-100 p-4" : "max-h-0 opacity-0 p-0"
+                            }`}
+                        >
+                          {!appliedCoupon ? (
+                            <div className="flex flex-col sm:flex-row sm:items-center gap-3 w-full">
+                              <input
+                                value={couponInput}
+                                onChange={(e) => setCouponInput(e.target.value.toUpperCase())}
+                                placeholder="ENTER COUPON"
+                                className="flex-1 w-full px-4 py-3 rounded-xl bg-bca-gray-950 border border-cyan-400/40 
+                         text-white placeholder-bca-gray-500 focus:outline-none focus:ring-1 
+                         focus:ring-bca-gold focus:border-bca-gold uppercase tracking-widest 
+                         text-sm transition-all"
+                              />
+                              <button
+                                onClick={applyCoupon}
+                                className="w-full sm:w-auto px-5 py-3 rounded-xl bg-bca-gold text-black font-semibold 
+                         hover:bg-bca-gold/80 transition-all shadow-lg text-center"
+                              >
+                                Apply
+                              </button>
+                            </div>
+                          ) : (
+                            <div className="flex items-center justify-between flex-wrap gap-2">
+                              <div className="text-green-400 font-medium text-sm sm:text-base">
+                                ✅ Coupon applied: <span className="font-bold">{appliedCoupon}</span>
+                              </div>
+                              <button
+                                onClick={clearCoupon}
+                                className="text-bca-red hover:text-red-400 text-sm font-medium underline underline-offset-2"
+                              >
+                                Remove
+                              </button>
+                            </div>
+                          )}
+
+                          {couponError && (
+                            <div className="mt-2 text-red-400 text-sm">{couponError}</div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+
+
 
                   {/* Course Includes */}
                   <div className="mb-4 sm:mb-6">
@@ -806,15 +928,15 @@ export default function CourseDetail() {
 
                   {/* Buy Now Button */}
                   {hasPurchasedCourse() ? (
-                    <button 
-                      onClick={goToCourse} 
+                    <button
+                      onClick={goToCourse}
                       className="w-full py-3 sm:py-4 bg-gradient-to-r from-green-500 to-emerald-500 text-white font-bold text-base sm:text-lg rounded-lg hover:from-green-400 hover:to-emerald-400 transition-all duration-300 shadow-lg hover:shadow-xl"
                     >
                       Go to Course
                     </button>
                   ) : (
-                    <button 
-                      onClick={startPayment} 
+                    <button
+                      onClick={startPayment}
                       className="w-full py-3 sm:py-4 bg-bca-gold text-black font-bold text-base sm:text-lg rounded-lg hover:bg-bca-gold/80 transition-colors"
                     >
                       {course.isMonthlyPayment ? 'Pay First Month' : 'Buy Now'}
@@ -830,7 +952,7 @@ export default function CourseDetail() {
       {/* Payment Success/Error Messages */}
       {paymentSuccess && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             className="w-full max-w-md rounded-xl bg-bca-gray-800 border border-green-500/30 p-6 text-center"
@@ -849,7 +971,7 @@ export default function CourseDetail() {
 
       {paymentError && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             className="w-full max-w-md rounded-xl bg-bca-gray-800 border border-red-500/30 p-6 text-center"
@@ -861,7 +983,7 @@ export default function CourseDetail() {
             </div>
             <h3 className="text-xl font-bold text-red-400 mb-2">Payment Failed</h3>
             <p className="text-bca-gray-300 mb-4">{paymentError}</p>
-            <button 
+            <button
               onClick={() => setPaymentError('')}
               className="px-4 py-2 rounded-xl bg-bca-gold text-black hover:bg-bca-gold/80 transition-colors"
             >
@@ -881,6 +1003,8 @@ export default function CourseDetail() {
         isMonthlyPayment={course?.isMonthlyPayment}
         monthNumber={1}
         totalMonths={course?.durationMonths}
+        couponCode={appliedCoupon}
+        discountedAmountRupees={discountedAmountRupees}
       />
     </div>
   );
